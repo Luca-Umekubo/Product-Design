@@ -63,4 +63,6 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 
 Arena:
 
-![image1] (image1.png)
+![image1](Image1.png)
+![image1](Image2.png)
+![image1](Image3.png)
