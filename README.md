@@ -59,6 +59,14 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 - firechain:
   - any hit from your team causes a mini-explosion that can damage anyone in a small radius around the hit player for 30 seconds.
 
+## arena events
+
+- certain environmental events will trigger after some amount of time at random to make the later game more interesting
+- events will be announced with a countdown 5 seconds before they occur so players can prepare
+- zero g: gravity will be turned off temporarily, causing players to just freely bounce around in the arena
+- trampoline: the arena turns bouncy
+- watch your step: parts of the floor get outlined in red before temporarily disappearing shortly after, making it possible for players to fall through.
+
 ## Concept images:
 
 ### Arena:
