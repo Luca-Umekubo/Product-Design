@@ -25,7 +25,7 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 - when a player has a ball, they can either quick throw, a throw with less speed, or go into an aiming state described below.
 - when a player has a ball, they can go into an aiming state either from the ground or mid jump. if in the air, pause in the air where they are, hovering, if on the ground, movement speed reduced. this aiming state gives a chace for the players on the other side to anticipate the throw and try to dodge it. the player throwing can pump fake to try and draw out a dodge and the player dodging has a dodge left right, duck or jump on a cooldown, so they have to anticipate a throw vs a pump fake.
 - after balls are thrown, they dont fly/fall off the arena/platform like players could, instead kept in by an invisible wall that only affects the balls
-- players cant directly catch a throw, as it is too fast, but if a player on your team gets hit by a ball, it will fly in a random direction and you can catch it to keep the hit player in and the thrown player to lose a life. catching a ball also gives one life back to an out player or the lowest health player on the team.
+- players can catch dodgeballs using a special mechanic. When the ball is approaching them, a small dot will appear on their screen. If they are able to flick their mouse to the dot, it allows them to catch the ball. The location of the dot on the screen depends on what part of the player's torso the ball is headed for. A ball headed for the chest will make a dot in the middle of the screen, rendering it easy to catch, whereas towards the extremities will be farther up down or to the side, making it harder to catch.
 - at a random time around halfway through the game, a powerup will spawn on the centerline and if a player hits it with a ball or touches it physically, it will activate for the team.
 - teams/players also cannot horde balls, and they will go to the other team if held too long
 - dodgeballs also have a bit of knockback, so they can push an enemy off the stage
@@ -44,6 +44,8 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
         - can go invisible and create a decoy in their place that goes into the aim animation.
     - character 3: agressor
         - ability to set ball on fire, leaving a temporary trail of flames on the ground wherever the ball is thrown that doesnt do damage but players cannot cross and will be knocked back from it, creating a way for the agressor to crowd/herd the enemy team. fire ball also does more knockback with an explosion doing splash knockback.
+    - character 4: speedster
+        - has the ability to slow down time for any balls headed towards them. The downside of this is that it also slows down the player so that if anyone else throws a ball at them, they are very slow to dodge.
 
 ## powerups
 
@@ -58,6 +60,10 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
     - when collected, a rain of dodgeballs spawns on your side of the arena, all created balls despawn after 15 seconds
 - firechain:
     - any hit from your team causes a mini-explosion that can damage anyone in a small radius around the hit player for 30 seconds.
+- glock:
+    - one person just gets a gun
+- hugh:
+    - all textures become hugh's face
 
 ## Concept images:
 
