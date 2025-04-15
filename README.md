@@ -67,6 +67,12 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 - trampoline: the arena turns bouncy
 - watch your step: parts of the floor get outlined in red before temporarily disappearing shortly after, making it possible for players to fall through.
 
+## other gamemodes??
+
+- battle royale: everyone for themselves, larger arena, some obstacles
+- boss battles: everyone is on the same team fighting an AI dodgeball monster
+- capture the flag: to win, a team must bring a flag on the opposing side back towards their own side for a certain amount of time without getting out
+
 ## Concept images:
 
 ### Arena:
