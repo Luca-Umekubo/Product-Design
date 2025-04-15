@@ -4,7 +4,7 @@ Fast-paced, first-person team dodgeball chaos with unique characters and abiliti
 
 ## about the game
 
-Imagine a party pvp minigame meets a first person shooter meets dodgeball. this game is a fast paced multiplayer dodgeball fighter/shooter set on a raised platform in a neon lit arena where you have to time dodges, choose and use abilities, and collect powerups to eliminate the other team. the game focuses on fluid and fun movement while trying to capture the fun/frustration of a party game as well as the competetiveness of a first person shooter like overwatch, halo, splitgate, or krunker. the target audience is any casual or competetive gamer that likes the feeling of fast paced first person shooter games with quick and responsive movement. it should be really fun to play/motivating to win and the mechanics should feel rewarding and engaging.
+Imagine a party pvp minigame meets a first person shooter meets dodgeball. this game is a fast paced multiplayer dodgeball fighter/shooter set on a raised platform in a neon lit arena where you have to time dodges, choose and use abilities, and collect powerups to eliminate the other team. the game focuses on fluid and fun movement while trying to capture the fun/frustration of a party game as well as the competetiveness of a first person shooter like overwatch, halo, splitgate, or krunker. the target audience is any casual or competetive gamer that likes the feeling of fast paced first person shooter games with quick and responsive movement. it should be really fun to play/motivating to win and the mechanics should feel rewarding and engaging. Main game mode is a quick (3 minute) best 2/3 deathmatch where a team gets a point if they wipe out or have more players by the end of time than the other team. Tied @ end of regulation triggers overtime where stage starts deteriorating.
 
 ## features basic overview
 
@@ -16,7 +16,7 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 - quick time event inspired showdown dodge feature
 - slow mo replays and highlights like rocket league or overwatch, enhancing competetive vibe and gloating opportunity
 - powerups for added chaos and chance for tables to turn
-- varied maps with moving features like super smash bros
+- varied maps with moving features like super smash bros -- different map pools for more competitive modes
 - optional vanilla or powered modes
 
 ## gameplay
@@ -27,11 +27,12 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 - when a player has a ball, they can either quick throw, a throw with less speed, or go into an aiming state described below.
 - when a player has a ball, they can go into an aiming state either from the ground or mid jump. if in the air, pause in the air where they are, hovering, if on the ground, movement speed reduced. this aiming state gives a chace for the players on the other side to anticipate the throw and try to dodge it. the player throwing can pump fake to try and draw out a dodge and the player dodging has a dodge left right, duck or jump on a cooldown, so they have to anticipate a throw vs a pump fake.
 - after balls are thrown, they dont fly/fall off the arena/platform like players could, instead kept in by an invisible wall that only affects the balls
-- players can catch incoming balls but it requires a high skill quicktime event
-- if a player on your team gets hit by a ball or blocks an incoming ball with their own, it will fly in a random direction and you can catch it to keep the hit player in and the thrown player to lose a life. catching a ball also gives one life back to an out player or the lowest health player on the team.
+- players can catch incoming balls but it requires a high skill quicktime event that grants the 'catch' passive or stuns them.  The quicktime is a randomly strewn set of targets to click, the lower the player's catching skill, the greater the range of targets. If someone fails to catch the ball, they will be stunned for .5 seconds (enough to be hit by ball). If the player suceeds, they gain the 'catch' skill for the next .5 seconds, to catch a ball they must get hit by the ball while their crosshair is looking at it. Even with the 'catch' skill activated, if a player is hit with their crosshair off the ball, they will be out
+- if a player on your team gets hit by a ball or blocks an incoming ball with their own, it will fly in a random direction and slow down, you can catch it with the standard skill to keep the hit player in and the thrown player to lose a life. catching a ball also gives one life back to an out player or the lowest health player on the team.
 - at a random time around halfway through the game, a powerup will spawn on the centerline and if a player hits it with a ball or touches it physically, it will activate for the team.
 - teams/players also cannot horde balls, and they will go to the other team if held too long
 - dodgeballs also have a bit of knockback, so they can push an enemy off the stage
+- ball trail skins, default one changes color based on ball speed
 
 ## interface
 
