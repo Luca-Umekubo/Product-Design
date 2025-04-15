@@ -104,3 +104,14 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 ![image4](Image5.jpeg)
 ![image4](Image6.png)
 ![image4](Image7.png)
+
+Meaningful Suggestions:
+ - ranked mode --> allow players to compete with one another in a more competitive environment, possibly to unlock cosmetics
+ - modifiers --> at the start of the round, players should be able to vote for modifiers to spice up the games
+ - timed throws --> make it so that players have to time their throws to increase difficulty (like green timing in 2k). Different characters have diffent timings. Timing affects accuracy and speed of throws
+ - catching/knocking balls --> this would be a fun feature that could be implemented by giving users a short time frame and a small target that players would have to click on to be able to catch/knock balls. Knocking would have a slightly larger target.
+
+ Less-Meaningful Suggestions:
+ - add cosmetics like skins, emotes, taunts, victory/loss animations, kill animations, icons, etc.
+ - new powerup --> lets users push the barrier closer to the opponents, allowing them to get closer to their opposition
+ - add rotating arenas to improve the ambiance of the game
