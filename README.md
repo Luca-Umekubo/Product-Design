@@ -37,27 +37,27 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 ## Power system
 
 - players can choose between three characters, each with a unique power and the same ultimate throw that charges up .
-    - ultimate throw: ultimate ability that charges up over a while and can be activated like smash bros or overwatch, giving their next throw even faster speed (visualized by on fire ball) and more time in the aim state. this throw also has much more knockback and can knock players off the stage more easily.
-    - character 1: architect
-        - can summon temporary walls to hide behind for a few seconds with a long cooldown
-    - character 2: trickster
-        - can go invisible and create a decoy in their place that goes into the aim animation.
-    - character 3: agressor
-        - ability to set ball on fire, leaving a temporary trail of flames on the ground wherever the ball is thrown that doesnt do damage but players cannot cross and will be knocked back from it, creating a way for the agressor to crowd/herd the enemy team. fire ball also does more knockback with an explosion doing splash knockback.
+  - ultimate throw: ultimate ability that charges up over a while and can be activated like smash bros or overwatch, giving their next throw even faster speed (visualized by on fire ball) and more time in the aim state. this throw also has much more knockback and can knock players off the stage more easily.
+  - character 1: architect
+    - can summon temporary walls to hide behind for a few seconds with a long cooldown
+  - character 2: trickster
+    - can go invisible and create a decoy in their place that goes into the aim animation.
+  - character 3: agressor
+    - ability to set ball on fire, leaving a temporary trail of flames on the ground wherever the ball is thrown that doesnt do damage but players cannot cross and will be knocked back from it, creating a way for the agressor to crowd/herd the enemy team. fire ball also does more knockback with an explosion doing splash knockback.
 
 ## powerups
 
 - time slow:
-    - when collected, a 10 second period starts where the other team's movement and thrown balls will be slower
+  - when collected, a 10 second period starts where the other team's movement and thrown balls will be slower
 - hunt:
-    - when collected, each player on that team gets a player on the other team to "hunt" for a certain amount of time. if they hit their target, their targets lives go to zero and
-    - their targets will be shown on their screen and above their heads so the opposing team can see who is hunting who
+  - when collected, each player on that team gets a player on the other team to "hunt" for a certain amount of time. if they hit their target, their targets lives go to zero and
+  - their targets will be shown on their screen and above their heads so the opposing team can see who is hunting who
 - golden ball:
-    - when collected, a short period starts where the balls turn golden and immediatley do full health damage instead of one life
+  - when collected, a short period starts where the balls turn golden and immediatley do full health damage instead of one life
 - ballstorm:
-    - when collected, a rain of dodgeballs spawns on your side of the arena, all created balls despawn after 15 seconds
+  - when collected, a rain of dodgeballs spawns on your side of the arena, all created balls despawn after 15 seconds
 - firechain:
-    - any hit from your team causes a mini-explosion that can damage anyone in a small radius around the hit player for 30 seconds.
+  - any hit from your team causes a mini-explosion that can damage anyone in a small radius around the hit player for 30 seconds.
 
 ## Concept images:
 
@@ -68,9 +68,15 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 ![image1](Image3.png)
 ![image4](Image4.jpeg)
 
-
 ### POV:
 
 ![image4](Image5.jpeg)
 ![image4](Image6.png)
 ![image4](Image7.png)
+
+## Extra Ideas:
+
+-catch ball feature where when a player is throwing it at you, you have to hit a button to time it perfectly to catch the ball. If you click the catch button and you don't time it right, you get hit.
+-when a player dies and are spectating, they should stand on the invisible platform around the arena and be able to move around to spectate. As a way to get back in, they can catch a ball that is flying off the map, and if they catch it they are back in.
+-Instead of balls hitting an invisible wall they will fall off the map and respawn back in the middle, that way people can catch the ball to get back in.
+-I want to see ragdoll efects, especially when a player gets hit. Maybe create an exemplified effect when they get out.
