@@ -79,6 +79,11 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 - emojis? dances? skins?
 - perhaps these can be bought with currency from winning games, or they are just given randomly after a game is won
 
+## stats
+
+- players can see how many eliminations they have, how many deaths they have, etc. in their profile in the menu
+- after matches are over, an mvp can be crowned, and other titles can be awarded depending on statistics
+
 ## Concept images:
 
 ### Arena:
