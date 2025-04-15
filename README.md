@@ -72,6 +72,12 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 - battle royale: everyone for themselves, larger arena, some obstacles
 - boss battles: everyone is on the same team fighting an AI dodgeball monster
 - capture the flag: to win, a team must bring a flag on the opposing side back towards their own side for a certain amount of time without getting out
+- ranked mode?
+
+## cosmetics
+
+- emojis? dances? skins?
+- perhaps these can be bought with currency from winning games, or they are just given randomly after a game is won
 
 ## Concept images:
 
