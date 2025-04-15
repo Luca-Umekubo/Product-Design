@@ -79,3 +79,19 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 ![image4](Image5.jpeg)
 ![image4](Image6.png)
 ![image4](Image7.png)
+
+
+
+#
+Added Ideas: 
+Stage Progression. As time goes on, the platform starts crumbling and shrinking, makingit harder to dodge balls and making players more wary of their own steps. This starts slowly and ramps up but leaves a small area after a long time.
+
+
+Curveball techniques: Holding the ball when throwing it and using joystick/arrow keys can create curving spins for more unique shots. The ball will curve in the air based on the spin, leading to more unpredictable throws and accurate snipes. The longer you hold, the more drastic the curve, capping out at a specific level
+
+
+Minor changes: Cosmetic ball trails like fire, lightning ice that are purely cosmetic but cool to collect. They linger for a bit then go away.
+
+Each ball having slightly different weights and bounce to make each throw more dynamic. You can tell based on the color of the ball or design.
+
+
