@@ -42,8 +42,8 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
         - can summon temporary walls to hide behind for a few seconds with a long cooldown
     - character 2: trickster
         - can go invisible and create a decoy in their place that goes into the aim animation.
-    - character 3: agressor
-        - ability to set ball on fire, leaving a temporary trail of flames on the ground wherever the ball is thrown that doesnt do damage but players cannot cross and will be knocked back from it, creating a way for the agressor to crowd/herd the enemy team. fire ball also does more knockback with an explosion doing splash knockback.
+    - character 3: aggressor
+        - ability to set ball on fire, leaving a temporary trail of flames on the ground wherever the ball is thrown that doesnt do damage but players cannot cross and will be knocked back from it, creating a way for the aggressor to crowd/herd the enemy team. fire ball also does more knockback with an explosion doing splash knockback.
     - character 4: speedster
         - has the ability to slow down time for any balls headed towards them. The downside of this is that it also slows down the player so that if anyone else throws a ball at them, they are very slow to dodge.
 
