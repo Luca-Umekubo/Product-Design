@@ -73,6 +73,7 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 ![image4](Image5.jpeg)
 ![image4](Image6.png)
 ![image4](Image7.png)
+<<<<<<< HEAD
 
 ## Extra Ideas:
 
@@ -80,3 +81,5 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 -when a player dies and are spectating, they should stand on the invisible platform around the arena and be able to move around to spectate. As a way to get back in, they can catch a ball that is flying off the map, and if they catch it they are back in.
 -Instead of balls hitting an invisible wall they will fall off the map and respawn back in the middle, that way people can catch the ball to get back in.
 -I want to see ragdoll efects, especially when a player gets hit. Maybe create an exemplified effect when they get out.
+=======
+>>>>>>> origin/BjornBranch
