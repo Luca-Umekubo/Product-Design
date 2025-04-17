@@ -87,8 +87,9 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 
 ## stats
 
-- players can see how many eliminations they have, how many deaths they have, etc. in their profile in the menu
-- after matches are over, an mvp can be crowned, and other titles can be awarded depending on statistics
+- players can see how many eliminations they have, how many deaths they have, assists (if a player passes another player a ball within 10 seconds of an elemination), K/D, points (a calculation based on the players stats, TBD). in their profile in the menu
+- the menu is a counter-strike, valorant style hud that appears when the user presses tab
+- after matches are over, an mvp can be crowned based on the player with the most points, and other titles can be awarded, highlighting the player with the highest of each statistc
 
 ## Concept images:
 
@@ -106,12 +107,12 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 ![image4](Image7.png)
 
 Meaningful Suggestions:
- - ranked mode --> allow players to compete with one another in a more competitive environment, possibly to unlock cosmetics
- - modifiers --> at the start of the round, players should be able to vote for modifiers to spice up the games
- - timed throws --> make it so that players have to time their throws to increase difficulty (like green timing in 2k). Different characters have diffent timings. Timing affects accuracy and speed of throws
- - catching/knocking balls --> this would be a fun feature that could be implemented by giving users a short time frame and a small target that players would have to click on to be able to catch/knock balls. Knocking would have a slightly larger target.
+ - ranked mode --> allow players to compete with one another in a more competitive environment. No random events, players are put on a random map. Possibility of adding elo and matchmaking, assigning players of similar elo (skill level) together if the game has enough players to always allow for a player to queue within their group (a range of elos in which all players of those skill levels are matched together).
+ - modifiers --> at the start of each non-competitive round, a random modifier will be applied. Modifiers will enable at a random time in the round, for a set amount of time based on the modifier.
+ - throw charging --> when charging a throw, the player moves very slow. Over the course of a second, the throw speed increases from 50% speed to 100% speed. A small bar moves from empty to full to show how much their throw is charged and thusly, the speed their throw will be at. Where the bar is on the screen is yet to be determined
+ - catching/knocking balls --> this would be a fun feature that could be implemented by giving users a short time frame and a small target that players would have to click on to be able to catch/knock balls. Knocking would have a slightly larger target. If the player clicks within the target while not holding a ball, they will catch the ball. If the player clicks on the target while holding a ball, they knock the ball away, resulting in no hit. The location of the target that the player has to click on is based on where the ball is approaching the player. If it's approaching the players head, it will appear at the top of the screen, their legs, the bottom of the screen, etc.
 
  Less-Meaningful Suggestions:
  - add cosmetics like skins, emotes, taunts, victory/loss animations, kill animations, icons, etc.
- - new powerup --> lets users push the barrier closer to the opponents, allowing them to get closer to their opposition
- - add rotating arenas to improve the ambiance of the game
+ - new powerup --> lets users push the center line closer to the opponents, allowing them to get closer to their opposition
+ - add multiple maps
