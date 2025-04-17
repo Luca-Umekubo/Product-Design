@@ -4,7 +4,7 @@ Fast-paced, first-person team dodgeball chaos with unique characters and abiliti
 
 ## about the game
 
-Imagine a party pvp minigame meets a first person shooter meets dodgeball. this game is a fast paced multiplayer dodgeball fighter/shooter set on a raised platform in a neon lit arena where you have to time dodges, choose and use abilities, and collect powerups to eliminate the other team. the game focuses on fluid and fun movement while trying to capture the fun/frustration of a party game as well as the competitiveness of a first person shooter like overwatch, halo, splitgate, or krunker. the target audience is any casual or competitive gamer that likes the feeling of fast paced first person shooter games with quick and responsive movement. it should be really fun to play/motivating to win and the mechanics should feel rewarding and engaging.
+Imagine a party pvp minigame meets a first person shooter meets dodgeball. this game is a fast paced multiplayer dodgeball fighter/shooter set on a raised platform in a neon lit arena where you have to time dodges, choose and use abilities, and collect powerups to eliminate the other team. the game focuses on fluid and fun movement while trying to capture the fun/frustration of a party game as well as the competetiveness of a first person shooter like overwatch, halo, splitgate, or krunker. the target audience is any casual or competetive gamer that likes the feeling of fast paced first person shooter games with quick and responsive movement. it should be really fun to play/motivating to win and the mechanics should feel rewarding and engaging. Main game mode is a quick (3 minute) best 2/3 deathmatch where a team gets a point if they wipe out or have more players by the end of time than the other team. Tied @ end of regulation triggers overtime where stage starts deteriorating.
 
 ## features basic overview
 
@@ -16,25 +16,32 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 - quick time event inspired showdown dodge feature
 - slow mo replays and highlights like rocket league or overwatch, enhancing competitive vibe and gloating opportunity
 - powerups for added chaos and chance for tables to turn
+- varied maps with moving features like super smash bros -- different map pools for more competitive modes
+- optional vanilla or powered modes
 
 ## gameplay
 
-- players spawned on a raised platform above a void in a large neon arena
-- each player has 2 lives, and after they are lost, they are out and spectate (possiblity to get back in?)
-- a few balls (half of players?) start in the center of the field, and a quicktime event determines how fast you can get to the centerline to grab a ball happens at the beginning
- - throw charging --> when charging a throw, the player moves very slow. Over the course of a second, the throw speed increases from 50% speed to 100% speed. A small bar moves from empty to full to show how much their throw is charged and thusly, the speed their throw will be at. Where the bar is on the screen is yet to be determined. this aiming state gives a chace for the players on the other side to anticipate the throw and try to dodge it. the player throwing can pump fake to try and draw out a dodge and the player dodging has a dodge left right, duck or jump on a cooldown, so they have to anticipate a throw vs a pump fake.
-- after balls are thrown, they dont fly/fall off the arena/platform like players could, instead kept in by an invisible wall that only affects the balls
+- players spawned on opposite ends of a raised platform above a void in a large neon lined arena.
+  - teams: There will be a line in the middle between the two teams with balls starting spawned on the line
+  - single: everyone spawns in a seperate place around the edge of the arena, hunger games style, with balls in the middle.
+- each player has 2 lives, which are lost by being hit with a ball. After they are lost, they are out and spectate. Spectators are placed on an invisible platform around the arena which they can walk around and watch the game. If a ball bounces off the platform and a spectating player catches the ball, they are spawned back into a corner of the arena with 1 life.
+- a few balls (half of the total amount of players in the game) start in the center of the field, and a timer at the top of the screen counts down to start the game. Once players pickup a ball they have to wait 2 seconds before they can start to throw it.
+- when a player has a ball, they can either quick throw, a throw with less speed and accuracy, or go into an aiming state described below.
+- when a player has a ball, they can go into an aiming state either from the ground or mid jump. if in the air, pause in the air where they are, hovering, if on the ground, movement speed reduced (more suseptible to enemy throws). this aiming state gives a chace for the players on the other side to anticipate the throw and try to dodge it. the player throwing can pump fake to try and draw out a dodge and the player dodging has a dodge left right, duck or jump on a cooldown, so they have to anticipate a throw vs a pump fake.
+- after balls are thrown, they will bounce around the ground of the arena, but if one falls off the side of the arena, it will respawn in the center.
 - catching/knocking balls --> this would be a fun feature that could be implemented by giving users a short time frame and a small target that players would have to click on to be able to catch/knock balls. Knocking would have a slightly larger target. If the player clicks within the target while not holding a ball, they will catch the ball. If the player clicks on the target while holding a ball, they knock the ball away, resulting in no hit. The location of the target that the player has to click on is based on where the ball is approaching the player. If it's approaching the players head, it will appear at the top of the screen, their legs, the bottom of the screen, etc.
-- at a random time around halfway through the game, a powerup will spawn on the centerline and if a player hits it with a ball or touches it physically, it will activate for the team.
-- teams/players also cannot hoard balls, and they will go to the other team if held too long
-- dodgeballs also have a bit of knockback, so they can push an enemy off the stage
+- if a player on your team gets hit by a ball or blocks an incoming ball with their own, it will fly in a random direction and slow down, you can catch it with the standard skill to keep the hit player in and the thrown player to lose a life. catching a ball also gives one life back to an out player (first player to get out) or the lowest health player on the team.
+- teams/players also cannot horde balls, and they will go to the other team if held too long. (if more than 80% of the balls are on one side for 10 seconds it will spawn but in the middle of the other side of the arena nearest the enemy team)
+- dodgeballs also have a bit of knockback, so they can push an enemy off the stage to immediately eliminate both their lives
  - modifiers --> at the start of each non-competitive round, a random modifier will be applied. Modifiers will enable at a random time in the round, for a set amount of time based on the modifier.
 
 ## interface
 
-- fighting game-like interface with a timer on the top right so the match doesn't go on too long, and the profile pictures/of the players on their team with their number of lives and ultimate ability charge bar underneath
+- timer in top middle with player counts on each side of the time for each team.
+- Underneath the timer is the amount of lives that you have (2 hearts minecraft style and if you lose one then that heart becomes blacked out)
+- On the top left hand side there is an opaque board with all your teammates profile pictures and the amount of lives they have left next to them.
+- At very bottom of screen is your ultimate ability charge bar.
 - timer should last for 3-5 minutes dependent on play testing; start with 4 minutes 
-- players should be in the top middle, and list players from left to right.
 
 
 ## Power system
@@ -61,23 +68,20 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
         - Cooldown afterward lasts for 45 seconds. 
         - they can slow down time for 5 seconds.
         - once used, cooldown starts again.
+      - can set a spin to any ball they throw by adjusting a point placed on a ball picture (similar to 8 ball mobile game)
 
 ## powerups
+Powerups appear as floating items that are randomly spawned around the map, making sure to be evenly placed on either side(one on your side one on the other side)
 
 - time slow:
   - when collected, a 10 second period starts where the other team's movement and thrown balls will be slower
   - movement 1.5 x slower, thrown balls 1.75 x slower (test)
 - hunt:
-  - when collected, each player on that team gets a player on the other team to "hunt" for a certain amount of time. if they hit their target, their target's lives go to zero and
-  - their targets will be shown on their screen and above their heads so the opposing team can see who is hunting who so they know who to dodge
-  - lasts for 25 seconds
+  - when collected, each player on that team gets a player on the other team to "hunt" for a certain amount of time. if they hit their target, their targets lives go to zero. Their targets will be shown on their screen and above their heads so the opposing team can see who is hunting who. This powerup lasts for 10 seconds.
 - golden ball:
-  - when collected, a short period starts where the balls turn golden and immediately do full health damage instead of one life
-  - this means that all lives are taken off instead of just one
-  - This applies for both teams, not only the team that collects it
-  - lasts for 30 seconds
+  - when collected, a for 5 seconds, the balls turn golden and immediatley do full health damage instead of one life 
 - ballstorm:
-  - when collected, a rain of a fixed amt (undecided amt) of dodgeballs spawns on your side of the arena, all created balls despawn after 15 seconds. They wont despawn until the 15 seconds is up even if thrown to other side.
+  - when collected, a rain of dodgeballs spawns on your side of the arena, which can be picked up by your team and will not damage you when it falls from the sky, all created balls despawn after 15 seconds
 - firechain:
     - any time you hit an opponent on the other with a ball, it causes a mini-explosion that can damage anyone in a small radius around the hit player for a certain amt of time (undeceided, was originally 30s, but I think thats too long).
 - glock:
@@ -130,3 +134,19 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 ![image4](Image5.jpeg)
 ![image4](Image6.png)
 ![image4](Image7.png)
+
+## Extra Ideas:
+
+-Graveyard Zone: when a player dies, they respawn on a thin straight platform behind their teammates where the catching ability has no cooldown. The platform should stretch the entire back side of both ends and should be wide enough for 4 steps. If they can catch a ball that is flying off the map, they respawn back into the game. The graveyard zone should be surrounded by invisible walls so the dead player cannot fall off or couldn't influence the game with abilities but, dodgeballs should pass though the barrier to be caught. Apart from physically restraining the player, the gameplay in the graveyard zone should be identical to standard play (abilities, movement, ect. are all used normally). 
+-Balls will fall off the map and respawn in the middle once they hit a zone below the map
+-Players ragdoll when they get hit and have an animation upon death that can be changed by the dead player with skins(fireworks, skull, ghost, ect.)
+-Stage Progression. During overtime, the platform starts crumbling and shrinking, making it harder to dodge balls and making players more wary of their own steps. The dimentions of the stage shrink 5% every 30 seconds with a minimum size of 10% of original dimentions.
+
+> > > > > > > origin/BjornBranch
+
+-Curveball techniques: The spin/curve of the ball can be changed before the ball is thrown using joystick/arrow keys can create curving spins for more unique shots. The player can press a button to enable spin editing and it will be visualized by moving a dot on a dodgeball in the bottom right corner. The dot at the bottom will be backspin, left will be left-spin, ect. The dot will be able to move in 2 dimensions so angular spin is possible (45 degrees, 128 degrees, ect.) The ball will curve in the air based on the spin, leading to enable hitting people around corners and more difficult catches. The spin will not be reflected in the crosshair so the player must approximately adjust based on the spin they set
+
+
+-Cosmetics: 
+  Ball trails, default goes from yellow to red based on the speed of the ball, fire and ice skins can be purchased. They linger for a bit then go away.
+  Death animations, default is blank but players can add fireworks that explode upon death, a ghost that comes out of their corpse
