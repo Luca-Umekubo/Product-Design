@@ -21,22 +21,26 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 
 ## gameplay
 
-- players spawned on a raised platform above a void in a large neon arena
-- each player has 2 lives, and after they are lost, they are out and spectate (possablity to get back in?)
-- a few balls (half of players?) start in the center of the field, and a quicktime event determines how fast you can get to the cetnerline to grab a ball happens at the beggining
-- when a player has a ball, they can either quick throw, a throw with less speed, or go into an aiming state described below.
-- when a player has a ball, they can go into an aiming state either from the ground or mid jump. if in the air, pause in the air where they are, hovering, if on the ground, movement speed reduced. this aiming state gives a chace for the players on the other side to anticipate the throw and try to dodge it. the player throwing can pump fake to try and draw out a dodge and the player dodging has a dodge left right, duck or jump on a cooldown, so they have to anticipate a throw vs a pump fake.
-- after balls are thrown, they dont fly/fall off the arena/platform like players could, instead kept in by an invisible wall that only affects the balls
-- players can catch incoming balls but it requires a high skill quicktime event that grants the 'catch' passive or stuns them.  The quicktime is a randomly strewn set of targets to click, the lower the player's catching skill, the greater the range of targets. If someone fails to catch the ball, they will be stunned for .5 seconds (enough to be hit by ball). If the player suceeds, they gain the 'catch' skill for the next .5 seconds, to catch a ball they must get hit by the ball while their crosshair is looking at it. Even with the 'catch' skill activated, if a player is hit with their crosshair off the ball, they will be out
-- if a player on your team gets hit by a ball or blocks an incoming ball with their own, it will fly in a random direction and slow down, you can catch it with the standard skill to keep the hit player in and the thrown player to lose a life. catching a ball also gives one life back to an out player or the lowest health player on the team.
-- at a random time around halfway through the game, a powerup will spawn on the centerline and if a player hits it with a ball or touches it physically, it will activate for the team.
-- teams/players also cannot horde balls, and they will go to the other team if held too long
-- dodgeballs also have a bit of knockback, so they can push an enemy off the stage
-- ball trail skins, default one changes color based on ball speed
+- players spawned on opposite ends of a raised platform above a void in a large neon lined arena.
+  - teams: There will be a line in the middle between the two teams with balls starting spawned on the line
+  - single: everyone spawns in a seperate place around the edge of the arena, hunger games style, with balls in the middle.
+- each player has 2 lives, which are lost by being hit with a ball. After they are lost, they are out and spectate. Spectators are placed on an invisible platform around the arena which they can walk around and watch the game. If a ball bounces off the platform and a spectating player catches the ball, they are spawned back into a corner of the arena with 1 life.
+- a few balls (half of the total amount of players in the game) start in the center of the field, and a timer at the top of the screen counts down to start the game. Once players pickup a ball they have to wait 2 seconds before they can start to throw it.
+- when a player has a ball, they can either quick throw, a throw with less speed and accuracy, or go into an aiming state described below.
+- when a player has a ball, they can go into an aiming state either from the ground or mid jump. if in the air, pause in the air where they are, hovering, if on the ground, movement speed reduced (more suseptible to enemy throws). this aiming state gives a chace for the players on the other side to anticipate the throw and try to dodge it. the player throwing can pump fake to try and draw out a dodge and the player dodging has a dodge left right, duck or jump on a cooldown, so they have to anticipate a throw vs a pump fake.
+- after balls are thrown, they will bounce around the ground of the arena, but if one falls off the side of the arena, it will respawn in the center.
+- players can catch incoming balls but it requires a high skill quicktime event that grants the 'catch' passive or stuns them. The quicktime is a randomly strewn set of targets to click, the lower the player's catching skill, the greater the range of targets. If someone fails to catch the ball, they will be stunned for .5 seconds (enough to be hit by ball). If the player suceeds, they gain the 'catch' skill for the next .5 seconds, to catch a ball they must get hit by the ball while their crosshair is looking at it. Even with the 'catch' skill activated, if a player is hit with their crosshair off the ball, they will be out
+- if a player on your team gets hit by a ball or blocks an incoming ball with their own, it will fly in a random direction and slow down, you can catch it with the standard skill to keep the hit player in and the thrown player to lose a life. catching a ball also gives one life back to an out player (first player to get out) or the lowest health player on the team.
+- at 2 times, a third and to thirds way through the game, a powerup will spawn on the centerline and if a player hits it with a ball or touches it physically, it will activate for the team. (any of the random powerups)
+- teams/players also cannot horde balls, and they will go to the other team if held too long. (if more than 80% of the balls are on one side for 10 seconds it will spawn but in the middle of the other side of the arena nearest the enemy team)
+- dodgeballs also have a bit of knockback, so they can push an enemy off the stage to immediately eliminate both their lives
 
 ## interface
 
-- fighting game-like interface with a timer on the top so the match doesnt go on too long, and the profile pictures/of the players on their team with their number of lives and ultimate ability charge bar underneath
+- timer in top middle with player counts on each side of the time for each team.
+- Underneath the timer is the amount of lives that you have (2 hearts minecraft style and if you lose one then that heart becomes blacked out)
+- On the top left hand side there is an opaque board with all your teammates profile pictures and the amount of lives they have left next to them.
+- At very bottom of screen is your ultimate ability charge bar.
 
 ## Power system
 
@@ -50,12 +54,12 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
     - ability to set ball on fire, leaving a temporary trail of flames on the ground wherever the ball is thrown that doesnt do damage but players cannot cross and will be knocked back from it, creating a way for the agressor to crowd/herd the enemy team. fire ball also does more knockback with an explosion doing splash knockback.
     - ultimate throw: ultimate ability that charges up over a while and can be activated like smash bros or overwatch, giving their next throw even faster speed (visualized by on fire ball) and more time in the aim state. this throw also has much more knockback and can knock players off the stage more easily.
     - character 1: architect
-        - can summon temporary walls to hide behind for a few seconds with a long cooldown
+      - can summon temporary walls to hide behind for a few seconds with a long cooldown
     - character 2: trickster
-        - can go invisible and create a decoy in their place that goes into the aim animation.
-        - can set a spin to any ball they throw by adjusting a point placed on a ball picture (similar to 8 ball mobile game)
+      - can go invisible and create a decoy in their place that goes into the aim animation.
+      - can set a spin to any ball they throw by adjusting a point placed on a ball picture (similar to 8 ball mobile game)
     - character 3: agressor
-        - ability to set ball on fire, leaving a temporary trail of flames on the ground wherever the ball is thrown that doesnt do damage but players cannot cross and will be knocked back from it, creating a way for the agressor to crowd/herd the enemy team. fire ball also does more knockback with an explosion doing splash knockback.
+      - ability to set ball on fire, leaving a temporary trail of flames on the ground wherever the ball is thrown that doesnt do damage but players cannot cross and will be knocked back from it, creating a way for the agressor to crowd/herd the enemy team. fire ball also does more knockback with an explosion doing splash knockback.
 
 ## powerups
 
@@ -94,21 +98,16 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 -Instead of balls hitting an invisible wall they will fall off the map and respawn back in the middle, that way people can catch the ball to get back in.
 -I want to see ragdoll efects, especially when a player gets hit. Maybe create an exemplified effect when they get out.
 =======
->>>>>>> origin/BjornBranch
 
-
-
+> > > > > > > origin/BjornBranch
 
 #
-Added Ideas: 
+
+Added Ideas:
 Stage Progression. As time goes on, the platform starts crumbling and shrinking, makingit harder to dodge balls and making players more wary of their own steps. This starts slowly and ramps up but leaves a small area after a long time.
 
-
 Curveball techniques: Holding the ball when throwing it and using joystick/arrow keys can create curving spins for more unique shots. The ball will curve in the air based on the spin, leading to more unpredictable throws and accurate snipes. The longer you hold, the more drastic the curve, capping out at a specific level
-
 
 Minor changes: Cosmetic ball trails like fire, lightning ice that are purely cosmetic but cool to collect. They linger for a bit then go away.
 
 Each ball having slightly different weights and bounce to make each throw more dynamic. You can tell based on the color of the ball or design.
-
-
