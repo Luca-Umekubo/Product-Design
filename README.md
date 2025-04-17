@@ -32,30 +32,50 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 
 ## interface
 
-- fighting game-like interface with a timer on the top so the match doesn't go on too long, and the profile pictures/of the players on their team with their number of lives and ultimate ability charge bar underneath
+- fighting game-like interface with a timer on the top right so the match doesn't go on too long, and the profile pictures/of the players on their team with their number of lives and ultimate ability charge bar underneath
+- timer should last for 3-5 minutes dependent on play testing; start with 4 minutes 
+- players should be in the top middle, and list players from left to right.
+
 
 ## Power system
 
 - players can choose between three characters, each with a unique power and the same ultimate throw that charges up .
-    - ultimate throw: ultimate ability that charges up over a while and can be activated like smash bros or overwatch, giving their next throw even faster speed (visualized by on fire ball) and more time in the aim state. this throw also has much more knockback and can knock players off the stage more easily.
+    - ultimate throw: ultimate ability that charges up over a while and can be activated like smash bros or overwatch, giving their next throw even faster speed (visualized by on fire ball and 2x the speed (test)) and more time in the aim state (1.5x to start by test this). this throw also has much more knockback and can knock players off the stage more easily.
+    - this knockback is relevant when the user catches or knocks the ball. If the ball hits the user, the user is eliminated. However, if the opposite-sided user catches or knocks the ball, they will also be knocked back, meaning they might get knocked off the map. This should move the user back by the height of 2 players for a catch and by the height of 1 player if the user knocks it. 
     - character 1: architect
         - can summon temporary walls to hide behind for a few seconds with a long cooldown
+        - twice the height of the user and 3x the width of the user
+        - lasts for 5 seconds
     - character 2: trickster
         - can go invisible and create a decoy in their place that goes into the aim animation.
+        - invisible for 10 seconds
     - character 3: aggressor
         - ability to set ball on fire, leaving a temporary trail of flames on the ground wherever the ball is thrown that doesnt do damage but players cannot cross and will be knocked back from it, creating a way for the aggressor to crowd/herd the enemy team. fire ball also does more knockback with an explosion doing splash knockback.
+        - the trail of flames lasts for 15 seconds(test this)
+        - however, the user gets this ability for 35 seconds(test)
+        - The knockback effect is the same as ultimate throw.
+        - because this shouldn't look like ultimate throw, the flame on the ball is much smaller, and is only really visualized when it hits the ground ( could also make this ice to make it more visible and obvious)
+        - If the explosion hits a player with a splash knockback, this knockback does no damage and should only move the player back by 1 player height length
     - character 4: speedster
         - has the ability to slow down time for any balls headed towards them. The downside of this is that it also slows down the player so that if anyone else throws a ball at them, they are very slow to dodge.
+        - Cooldown afterward lasts for 45 seconds. 
+        - they can slow down time for 5 seconds.
+        - once used, cooldown starts again.
 
 ## powerups
 
 - time slow:
   - when collected, a 10 second period starts where the other team's movement and thrown balls will be slower
+  - movement 1.5 x slower, thrown balls 1.75 x slower (test)
 - hunt:
   - when collected, each player on that team gets a player on the other team to "hunt" for a certain amount of time. if they hit their target, their target's lives go to zero and
-  - their targets will be shown on their screen and above their heads so the opposing team can see who is hunting who
+  - their targets will be shown on their screen and above their heads so the opposing team can see who is hunting who so they know who to dodge
+  - lasts for 25 seconds
 - golden ball:
   - when collected, a short period starts where the balls turn golden and immediately do full health damage instead of one life
+  - this means that all lives are taken off instead of just one
+  - This applies for both teams, not only the team that collects it
+  - lasts for 30 seconds
 - ballstorm:
   - when collected, a rain of dodgeballs spawns on your side of the arena, all created balls despawn after 15 seconds
 - firechain:
