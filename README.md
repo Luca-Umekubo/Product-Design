@@ -22,13 +22,13 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 - players spawned on a raised platform above a void in a large neon arena
 - each player has 2 lives, and after they are lost, they are out and spectate (possiblity to get back in?)
 - a few balls (half of players?) start in the center of the field, and a quicktime event determines how fast you can get to the centerline to grab a ball happens at the beginning
-- when a player has a ball, they can either quick throw, a throw with less speed, or go into an aiming state described below.
-- when a player has a ball, they can go into an aiming state either from the ground or mid jump. if in the air, pause in the air where they are, hovering, if on the ground, movement speed reduced. this aiming state gives a chace for the players on the other side to anticipate the throw and try to dodge it. the player throwing can pump fake to try and draw out a dodge and the player dodging has a dodge left right, duck or jump on a cooldown, so they have to anticipate a throw vs a pump fake.
+ - throw charging --> when charging a throw, the player moves very slow. Over the course of a second, the throw speed increases from 50% speed to 100% speed. A small bar moves from empty to full to show how much their throw is charged and thusly, the speed their throw will be at. Where the bar is on the screen is yet to be determined. this aiming state gives a chace for the players on the other side to anticipate the throw and try to dodge it. the player throwing can pump fake to try and draw out a dodge and the player dodging has a dodge left right, duck or jump on a cooldown, so they have to anticipate a throw vs a pump fake.
 - after balls are thrown, they dont fly/fall off the arena/platform like players could, instead kept in by an invisible wall that only affects the balls
-- players can catch dodgeballs using a special mechanic. When the ball is approaching them, a small dot will appear on their screen. If they are able to flick their mouse to the dot, it allows them to catch the ball. The location of the dot on the screen depends on what part of the player's torso the ball is headed for. A ball headed for the chest will make a dot in the middle of the screen, rendering it easy to catch, whereas towards the extremities will be farther up down or to the side, making it harder to catch.
+- catching/knocking balls --> this would be a fun feature that could be implemented by giving users a short time frame and a small target that players would have to click on to be able to catch/knock balls. Knocking would have a slightly larger target. If the player clicks within the target while not holding a ball, they will catch the ball. If the player clicks on the target while holding a ball, they knock the ball away, resulting in no hit. The location of the target that the player has to click on is based on where the ball is approaching the player. If it's approaching the players head, it will appear at the top of the screen, their legs, the bottom of the screen, etc.
 - at a random time around halfway through the game, a powerup will spawn on the centerline and if a player hits it with a ball or touches it physically, it will activate for the team.
 - teams/players also cannot hoard balls, and they will go to the other team if held too long
 - dodgeballs also have a bit of knockback, so they can push an enemy off the stage
+ - modifiers --> at the start of each non-competitive round, a random modifier will be applied. Modifiers will enable at a random time in the round, for a set amount of time based on the modifier.
 
 ## interface
 
@@ -84,7 +84,7 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
     - one person just gets a gun
 - hugh:
     - all textures become hugh's face
-
+ - push out --> lets users push the center line closer to the opponents, allowing them to get closer to their opposition
 ## arena events
 
 - certain environmental events will trigger after some amount of time at random to make the later game more interesting
@@ -98,18 +98,22 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 - battle royale: everyone for themselves, larger arena, some obstacles
 - boss battles: everyone is on the same team fighting an AI dodgeball monster
 - capture the flag: to win, a team must bring a flag on the opposing side back towards their own side for a certain amount of time without getting out
-- ranked mode?
+ - ranked mode --> allow players to compete with one another in a more competitive environment. No random events, players are put on a random map. Possibility of adding elo and matchmaking, assigning players of similar elo (skill level) together if the game has enough players to always allow for a player to queue within their group (a range of elos in which all players of those skill levels are matched together).
 
 ## cosmetics
 
-- emojis? dances? skins?
 - perhaps these can be bought with currency from winning games, or they are just given randomly after a game is won
+- add cosmetics like skins, emotes, taunts, victory/loss animations, kill animations, icons, etc.
 
 ## stats
 
 - players can see how many eliminations they have, how many deaths they have, assists (if a player passes another player a ball within 10 seconds of an elemination), K/D, points (a calculation based on the players stats, TBD). in their profile in the menu
 - the menu is a counter-strike, valorant style hud that appears when the user presses tab
 - after matches are over, an mvp can be crowned based on the player with the most points, and other titles can be awarded, highlighting the player with the highest of each statistc
+
+## maps
+
+ - Add TBD map designs 
 
 ## Concept images:
 
@@ -125,14 +129,3 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 ![image4](Image5.jpeg)
 ![image4](Image6.png)
 ![image4](Image7.png)
-
-Meaningful Suggestions:
- - ranked mode --> allow players to compete with one another in a more competitive environment. No random events, players are put on a random map. Possibility of adding elo and matchmaking, assigning players of similar elo (skill level) together if the game has enough players to always allow for a player to queue within their group (a range of elos in which all players of those skill levels are matched together).
- - modifiers --> at the start of each non-competitive round, a random modifier will be applied. Modifiers will enable at a random time in the round, for a set amount of time based on the modifier.
- - throw charging --> when charging a throw, the player moves very slow. Over the course of a second, the throw speed increases from 50% speed to 100% speed. A small bar moves from empty to full to show how much their throw is charged and thusly, the speed their throw will be at. Where the bar is on the screen is yet to be determined
- - catching/knocking balls --> this would be a fun feature that could be implemented by giving users a short time frame and a small target that players would have to click on to be able to catch/knock balls. Knocking would have a slightly larger target. If the player clicks within the target while not holding a ball, they will catch the ball. If the player clicks on the target while holding a ball, they knock the ball away, resulting in no hit. The location of the target that the player has to click on is based on where the ball is approaching the player. If it's approaching the players head, it will appear at the top of the screen, their legs, the bottom of the screen, etc.
-
- Less-Meaningful Suggestions:
- - add cosmetics like skins, emotes, taunts, victory/loss animations, kill animations, icons, etc.
- - new powerup --> lets users push the center line closer to the opponents, allowing them to get closer to their opposition
- - add multiple maps
