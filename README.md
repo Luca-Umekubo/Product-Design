@@ -81,10 +81,10 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 - firechain:
     - any time you hit an opponent on the other with a ball, it causes a mini-explosion that can damage anyone in a small radius around the hit player for a certain amt of time (undeceided, was originally 30s, but I think thats too long).
 - glock:
- - push out --> lets users push the center line closer to the opponents, allowing them to get closer to their opposition
-    - all textures become hugh's face (ask tyler hugh and luca ig)
-- hugh:                                 ^^^^^^^^^^^^^^^^
     - one person just gets a gun (up to interpretation)
+- hugh:                                 ^^^^^^^^^^^^^^^^
+    - all textures become hugh's face (ask tyler hugh and luca ig)
+- push out --> lets users push the center line closer to the opponents, allowing them to get closer to their opposition
 ## arena events
 
 - at the start of the round, players should be able to vote for modifiers/environmental events to spice up the games
@@ -100,8 +100,7 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 - boss battles: everyone is on the same team fighting an AI dodgeball monster. This monster will have a certain amt of health and each dodgeball hit will contribute to taking it down. there will be critical points on the monster that do more damage than others. for example, a headshot does more damage than a leg shot.
 - capture the flag: to win, a team must bring a flag on the opposing side back towards their own side for a certain amount of time without getting out. getting out respawns you to your side
  - ranked mode --> allow players to compete with one another in a more competitive environment. No random events, players are put on a random map. Possibility of adding elo and matchmaking, assigning players of similar elo (skill level) together if the game has enough players to always allow for a player to queue within their group (a range of elos in which all players of those skill levels are matched together).
-- ranked mode?: no random modifiers or events. random map. queue with other with similar mmr
-
+ 
 ## cosmetics (MERGE TYLER'S EDITS INTO THIS AND STUFF ABOVE)
 
 - perhaps these can be bought with currency from winning games, or they are just given randomly after a game is won
