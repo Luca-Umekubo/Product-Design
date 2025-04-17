@@ -82,24 +82,15 @@ Powerups appear as floating items that are randomly spawned around the map, maki
 
 ## Extra Ideas:
 
--catch ball feature where when a player is throwing it at you, you have to hit a button to time it perfectly to catch the ball. If you click the catch button and you don't time it right, you get hit.
--when a player dies and are spectating, they should stand on the invisible platform around the arena and be able to move around to spectate. As a way to get back in, they can catch a ball that is flying off the map, and if they catch it they are back in.
--Instead of balls hitting an invisible wall they will fall off the map and respawn back in the middle, that way people can catch the ball to get back in.
--I want to see ragdoll efects, especially when a player gets hit. Maybe create an exemplified effect when they get out.
+-Graveyard Zone: when a player dies, they respawn on a thin straight platform behind their teammates where the catching ability has no cooldown. The platform should stretch the entire back side of both ends and should be wide enough for 4 steps. If they can catch a ball that is flying off the map, they respawn back into the game. The graveyard zone should be surrounded by invisible walls so the dead player cannot fall off or couldn't influence the game with abilities but, dodgeballs should pass though the barrier to be caught. Apart from physically restraining the player, the gameplay in the graveyard zone should be identical to standard play (abilities, movement, ect. are all used normally). 
+-Balls will fall off the map and respawn in the middle once they hit a zone below the map
+-Players ragdoll when they get hit and have an animation upon death that can be changed by the dead player with skins(fireworks, skull, ghost, ect.)
+-Stage Progression. During overtime, the platform starts crumbling and shrinking, making it harder to dodge balls and making players more wary of their own steps. The dimentions of the stage shrink 5% every 30 seconds with a minimum size of 10% of original dimentions.
 
 
+-Curveball techniques: The spin/curve of the ball can be changed before the ball is thrown using joystick/arrow keys can create curving spins for more unique shots. The player can press a button to enable spin editing and it will be visualized by moving a dot on a dodgeball in the bottom right corner. The dot at the bottom will be backspin, left will be left-spin, ect. The dot will be able to move in 2 dimensions so angular spin is possible (45 degrees, 128 degrees, ect.) The ball will curve in the air based on the spin, leading to enable hitting people around corners and more difficult catches. The spin will not be reflected in the crosshair so the player must approximately adjust based on the spin they set
 
 
-#
-Added Ideas: 
-Stage Progression. As time goes on, the platform starts crumbling and shrinking, makingit harder to dodge balls and making players more wary of their own steps. This starts slowly and ramps up but leaves a small area after a long time.
-
-
-Curveball techniques: Holding the ball when throwing it and using joystick/arrow keys can create curving spins for more unique shots. The ball will curve in the air based on the spin, leading to more unpredictable throws and accurate snipes. The longer you hold, the more drastic the curve, capping out at a specific level
-
-
-Minor changes: Cosmetic ball trails like fire, lightning ice that are purely cosmetic but cool to collect. They linger for a bit then go away.
-
-Each ball having slightly different weights and bounce to make each throw more dynamic. You can tell based on the color of the ball or design.
-
-
+-Cosmetics: 
+  Ball trails, default goes from yellow to red based on the speed of the ball, fire and ice skins can be purchased. They linger for a bit then go away.
+  Death animations, default is blank but players can add fireworks that explode upon death, a ghost that comes out of their corpse
