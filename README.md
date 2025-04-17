@@ -77,30 +77,32 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
   - This applies for both teams, not only the team that collects it
   - lasts for 30 seconds
 - ballstorm:
-  - when collected, a rain of dodgeballs spawns on your side of the arena, all created balls despawn after 15 seconds
+  - when collected, a rain of a fixed amt (undecided amt) of dodgeballs spawns on your side of the arena, all created balls despawn after 15 seconds. They wont despawn until the 15 seconds is up even if thrown to other side.
 - firechain:
-    - any hit from your team causes a mini-explosion that can damage anyone in a small radius around the hit player for 30 seconds.
+    - any time you hit an opponent on the other with a ball, it causes a mini-explosion that can damage anyone in a small radius around the hit player for a certain amt of time (undeceided, was originally 30s, but I think thats too long).
 - glock:
-    - one person just gets a gun
-- hugh:
-    - all textures become hugh's face
  - push out --> lets users push the center line closer to the opponents, allowing them to get closer to their opposition
+    - all textures become hugh's face (ask tyler hugh and luca ig)
+- hugh:                                 ^^^^^^^^^^^^^^^^
+    - one person just gets a gun (up to interpretation)
 ## arena events
 
-- certain environmental events will trigger after some amount of time at random to make the later game more interesting
+- at the start of the round, players should be able to vote for modifiers/environmental events to spice up the games
+- the modifiers will randomly be active for a fixed amt of time during the match
 - events will be announced with a countdown 5 seconds before they occur so players can prepare
-- zero g: gravity will be turned off temporarily, causing players to just freely bounce around in the arena
+- VERY LOW g: gravity will be turned down very low temporarily, causing players to just freely bounce around in the arena
 - trampoline: the arena turns bouncy
-- watch your step: parts of the floor get outlined in red before temporarily disappearing shortly after, making it possible for players to fall through.
+- watch your step: parts of the floor get outlined in red before temporarily disappearing shortly after, making it possible for players to fall through and be eliminated.
 
 ## other gamemodes??
 
-- battle royale: everyone for themselves, larger arena, some obstacles
-- boss battles: everyone is on the same team fighting an AI dodgeball monster
-- capture the flag: to win, a team must bring a flag on the opposing side back towards their own side for a certain amount of time without getting out
+- battle royale: everyone for themselves, larger arena, some obstacles (based on theme of arena)
+- boss battles: everyone is on the same team fighting an AI dodgeball monster. This monster will have a certain amt of health and each dodgeball hit will contribute to taking it down. there will be critical points on the monster that do more damage than others. for example, a headshot does more damage than a leg shot.
+- capture the flag: to win, a team must bring a flag on the opposing side back towards their own side for a certain amount of time without getting out. getting out respawns you to your side
  - ranked mode --> allow players to compete with one another in a more competitive environment. No random events, players are put on a random map. Possibility of adding elo and matchmaking, assigning players of similar elo (skill level) together if the game has enough players to always allow for a player to queue within their group (a range of elos in which all players of those skill levels are matched together).
+- ranked mode?: no random modifiers or events. random map. queue with other with similar mmr
 
-## cosmetics
+## cosmetics (MERGE TYLER'S EDITS INTO THIS AND STUFF ABOVE)
 
 - perhaps these can be bought with currency from winning games, or they are just given randomly after a game is won
 - add cosmetics like skins, emotes, taunts, victory/loss animations, kill animations, icons, etc.
