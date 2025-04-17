@@ -41,33 +41,27 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 ## Power system
 
 - players can choose between three characters, each with a unique power and the same ultimate throw that charges up .
-  - ultimate throw: ultimate ability that charges up over a while and can be activated like smash bros or overwatch, giving their next throw even faster speed (visualized by on fire ball) and more time in the aim state. this throw also has much more knockback and can knock players off the stage more easily.
+  - ultimate throw: ultimate ability that charges after x amount of hits, and can be activated by holding the throw button for 0.5 seconds like smash bros or overwatch, giving their next throw even faster speed (This speed will be shown by a flaming ball) and double the time in the aim state(Giving you twice as long to aim and throw your ultimate). This throw also has double the knockback and can knock players off the stage more easily.
   - character 1: architect
     - can summon temporary walls to hide behind for a few seconds with a long cooldown
+    The architect can spawn a 2 by 2 grid blocked wall, that gets destroyed when It gets hit by an ultimate dodgeball or by 3 regular dodgeball hits.
   - character 2: trickster
-    - can go invisible and create a decoy in their place that goes into the aim animation.
+    - can go invisible and create a decoy in their place that goes into the aim animation. The decoy has the exact same skin and lasts for 7 seconds, throwing two fake dodgeballs before it fades into nothingness and the real player is revealed. This has a long cooldown as well
   - character 3: agressor
-    - ability to set ball on fire, leaving a temporary trail of flames on the ground wherever the ball is thrown that doesnt do damage but players cannot cross and will be knocked back from it, creating a way for the agressor to crowd/herd the enemy team. fire ball also does more knockback with an explosion doing splash knockback.
-    - ultimate throw: ultimate ability that charges up over a while and can be activated like smash bros or overwatch, giving their next throw even faster speed (visualized by on fire ball) and more time in the aim state. this throw also has much more knockback and can knock players off the stage more easily.
-    - character 1: architect
-        - can summon temporary walls to hide behind for a few seconds with a long cooldown
-    - character 2: trickster
-        - can go invisible and create a decoy in their place that goes into the aim animation.
-        - can set a spin to any ball they throw by adjusting a point placed on a ball picture (similar to 8 ball mobile game)
-    - character 3: agressor
-        - ability to set ball on fire, leaving a temporary trail of flames on the ground wherever the ball is thrown that doesnt do damage but players cannot cross and will be knocked back from it, creating a way for the agressor to crowd/herd the enemy team. fire ball also does more knockback with an explosion doing splash knockback.
+    - ability to set ball on fire, leaving a temporary trail of flames on the ground wherever the ball is thrown that doesnt do damage but players cannot cross and will be knocked back from it, creating a way for the agressor to crowd/herd the enemy team. fire ball also does more knockback with an explosion doing splash knockback. Every 8 balls thrown, the agressor can add flames to their ball. The flames last for 5 seconds, and only 2 fire trails can exist on the field at one time, so that multiple agressors cannot easily cheese matches
+    
 
 ## powerups
+Powerups appear as floating items that are randomly spawned around the map, making sure to be evenly placed on either side(one on your side one on the other side)
 
 - time slow:
-  - when collected, a 10 second period starts where the other team's movement and thrown balls will be slower
+  - when collected, a 10 second period starts where the other team's movement and thrown balls will be slower. The team's thrown balls will decrease by 20% speed and their movement decreases by 15%
 - hunt:
-  - when collected, each player on that team gets a player on the other team to "hunt" for a certain amount of time. if they hit their target, their targets lives go to zero and
-  - their targets will be shown on their screen and above their heads so the opposing team can see who is hunting who
+  - when collected, each player on that team gets a player on the other team to "hunt" for a certain amount of time. if they hit their target, their targets lives go to zero. Their targets will be shown on their screen and above their heads so the opposing team can see who is hunting who. This powerup lasts for 10 seconds.
 - golden ball:
-  - when collected, a short period starts where the balls turn golden and immediatley do full health damage instead of one life
+  - when collected, a for 5 seconds, the balls turn golden and immediatley do full health damage instead of one life 
 - ballstorm:
-  - when collected, a rain of dodgeballs spawns on your side of the arena, all created balls despawn after 15 seconds
+  - when collected, a rain of dodgeballs spawns on your side of the arena, which can be picked up by your team and will not damage you when it falls from the sky, all created balls despawn after 15 seconds
 - firechain:
   - any hit from your team causes a mini-explosion that can damage anyone in a small radius around the hit player for 30 seconds.
 
