@@ -30,6 +30,36 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 - dodgeballs also have a bit of knockback, so they can push an enemy off the stage
  - modifiers --> at the start of each non-competitive round, a random modifier will be applied. Modifiers will enable at a random time in the round, for a set amount of time based on the modifier.
 
+## FROM HERE TO LINE 62 IS BRODY'S EDITS THAT DIDN'T GET ADDED THE FIRST TIME
+
+## about the game
+
+Imagine a party pvp minigame meets a first person shooter meets dodgeball. this game is a fast paced multiplayer dodgeball fighter/shooter set on a raised platform in a neon lit arena where you have to time dodges/catches/knocks, choose and use abilities, and collect powerups to eliminate the other team. the game focuses on fluid and fun movement while trying to capture the fun/frustration of a party game as well as the competitiveness of a first person shooter like overwatch, halo, splitgate, or krunker. The target audience is any casual or competitive gamer that likes the feeling of fast paced first person shooter games with quick and responsive movement. It should be really fun to play/motivating to win and the mechanics should feel rewarding and engaging.
+
+## features basic overview
+
+- first person perspective
+- fluid movement, making a responsive and quick game
+- multiplayer (1v1, 2v2, 3v3, 4v4) dodgeball
+- unique character abilities
+- charged ultimate ability/throw
+- buttons/keys to dodge, jump, crouch, etc
+- slow mo replays and highlights like rocket league or overwatch, enhancing competitive vibe and gloating opportunity
+- powerups for added chaos and chance for tables to turn
+
+## gameplay
+
+- players spawned on a raised platform above a void in a large arena, with rotating maps. Each arena has a theme (space, aqauatic, etc). they are all the same size, with a dividing line in the middle. different arenas have different terrain/structures to add more strategy to the game. an example could be a tree to hide behind or a bounce platform that launches the player up.
+- each player has 2 lives, and after they are lost, they are out and spectate (possiblity to get back in?). spectators are free to fly around the arena while being hidden from the alive players, like in minecraft.
+- a few balls (half the number of players) start in the center of the field. once the game starts, players all run to the balls and try to grab them before the enemy can. there is a 5 second grace period after the first ball is grabbed.
+- when a player has a ball, they can either a throw animation where they need to time their click(s) in order to determine the speed and accuracy of their throw.
+- when a player is in an aiming state, their movement speed is reduced (in air and on the ground). this aiming state gives a chance for the players on the other side to anticipate the throw and try to dodge it, or hit them while they are vulnerable. the player throwing can pump fake to try and draw out a dodge and the player dodging has a dodge left right, duck or jump on a cooldown, so they have to anticipate a throw vs a pump fake.
+- after balls are thrown, they dont fly/fall off the arena/platform like players could, instead kept in by an invisible wall that only affects the balls
+- players can catch dodgeballs using a special mechanic. when the ball is approaching them, a small dot will appear on their screen. it will disappear after a short amount of time (say 1 second). if they are able to click on the dot in time, it allows them to catch the ball. The location of the dot on the screen depends on what part of the player's torso the ball is headed for. A ball headed for the chest will make a dot in the middle of the screen, rendering it easy to catch, whereas towards the extremities will be farther up down or to the side, making it harder to catch. A player can also knock the ball away if they have a ball in their hand. The functionality is the same as catching the ball, just with a slightly larger target. If a player has a ball, they can also choose to catch it, but it will be more difficult, so the target will be smaller than normal.
+- at a random time around halfway through the game, a powerup will spawn on the centerline and if a player hits it with a ball or touches it physically, it will activate for the team.
+- teams/players also cannot hoard balls, and they will go to the other team if held too long (about 1 minute)
+- dodgeballs also have a bit of knockback, so they can push an enemy off the stage
+
 ## interface
 
 - fighting game-like interface with a timer on the top right so the match doesn't go on too long, and the profile pictures/of the players on their team with their number of lives and ultimate ability charge bar underneath
