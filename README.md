@@ -35,7 +35,7 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 - dodgeballs also have a bit of knockback, so they can push an enemy off the stage to immediately eliminate both their lives
  - modifiers --> at the start of each non-competitive round, a random modifier will be applied. Modifiers will enable at a random time in the round, for a set amount of time based on the modifier.
 
-## FROM HERE TO LINE 62 IS BRODY'S EDITS THAT DIDN'T GET ADDED THE FIRST TIME
+## LINES 38-66 ARE BRODY'S EDITS THAT DIDN'T GET ADDED THE FIRST TIME
 
 ## about the game
 
