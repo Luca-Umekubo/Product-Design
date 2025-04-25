@@ -1,4 +1,3 @@
-# Player.gd (Attached to Player CharacterBody3D)
 extends CharacterBody3D
 
 @export var sensitivity: float = 0.1
@@ -27,7 +26,7 @@ func _input(event):
 			var position = ball_spawn_point.global_position
 			var direction = -camera.global_transform.basis.z
 			var velocity = direction * throw_speed
-			rpc_id(1, "request_spawn_ball", position, velocity) # Request server to spawn ball
+			get_parent().rpc_id(1, "request_spawn_ball", position, velocity) # Call RPC on Main node
 
 func _physics_process(delta):
 	if is_multiplayer_authority():
@@ -52,7 +51,3 @@ func _physics_process(delta):
 @rpc("reliable")
 func update_puppet_transform(transform):
 	puppet_transform = transform
-
-@rpc("any_peer", "call_remote")
-func request_spawn_ball(position, velocity):
-	pass # Handled by Main.gd on the server

@@ -13,6 +13,7 @@ size = Vector3(10, 0.1, 10)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_glv2v")
+is_server = false
 
 [node name="Ground" type="StaticBody3D" parent="."]
 
