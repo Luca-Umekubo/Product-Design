@@ -1,4 +1,3 @@
-# Main.gd (Attached to Main Node3D)
 extends Node3D
 
 const Player = preload("res://Player.tscn")
@@ -9,6 +8,7 @@ const Ball = preload("res://Ball.tscn")
 
 var ball_counter: int = 0
 var balls: Dictionary = {} # Tracks balls {ball_id: {node, position, velocity}}
+var spawn_points: Array = [] # Array to hold spawn point nodes
 
 func _ready():
 	var peer = ENetMultiplayerPeer.new()
@@ -29,12 +29,21 @@ func _ready():
 		timer.autostart = true
 		timer.timeout.connect(_sync_balls)
 		add_child(timer)
+	
+	# Retrieve spawn points from the scene
+	spawn_points = get_tree().get_nodes_in_group("spawn_points")
 
 func spawn_player(id):
 	var player = Player.instantiate()
 	player.name = str(id)
 	player.set_multiplayer_authority(id)
 	add_child(player)
+	# Set player position to a random spawn point
+	if spawn_points.size() > 0:
+		var spawn_point = spawn_points[randi() % spawn_points.size()]
+		player.global_position = spawn_point.global_position
+	else:
+		print("Warning: No spawn points defined in the scene!")
 
 func _player_connected(id):
 	spawn_player(id)

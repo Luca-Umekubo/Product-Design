@@ -30,19 +30,30 @@ func _input(event):
 
 func _physics_process(delta):
 	if is_multiplayer_authority():
-		var velocity = Vector3.ZERO
+		# Horizontal movement
+		var input_dir = Vector3.ZERO
 		if Input.is_action_pressed("ui_up"):
-			velocity.z -= 1
+			input_dir.z -= 1
 		if Input.is_action_pressed("ui_down"):
-			velocity.z += 1
+			input_dir.z += 1
 		if Input.is_action_pressed("ui_left"):
-			velocity.x -= 1
+			input_dir.x -= 1
 		if Input.is_action_pressed("ui_right"):
-			velocity.x += 1
-		if velocity.length() > 1:
-			velocity = velocity.normalized()
-		velocity = global_transform.basis * velocity
-		self.velocity = velocity * speed
+			input_dir.x += 1
+		if input_dir.length() > 1:
+			input_dir = input_dir.normalized()
+		var horizontal_velocity = global_transform.basis * input_dir * speed
+		
+		# Apply horizontal velocity
+		self.velocity.x = horizontal_velocity.x
+		self.velocity.z = horizontal_velocity.z
+		
+		# Apply gravity if not on floor
+		if not is_on_floor():
+			self.velocity.y -= 9.8 * delta  # Gravity (9.8 m/s²)
+		else:
+			self.velocity.y = 0  # Reset vertical velocity when on floor
+		
 		move_and_slide()
 		rpc("update_puppet_transform", global_transform)
 	else:
