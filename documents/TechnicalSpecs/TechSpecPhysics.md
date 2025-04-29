@@ -1,48 +1,24 @@
 
-## 2. Core Physics Components
+## 2. Core Components
 
-### 2.1 Physics Manager
-The central system responsible for overseeing all physics interactions in the game.
-
-#### Variables:
-- `physicsTimeStep: float` - Fixed time step for physics calculations (typically 0.02 seconds)
-- `gravityStrength: Vector3` - Gravity vector affecting players and balls
-- `physicsLayers: Dictionary<string, int>` - Physics layer mappings for collision filtering
-- `physicsMaterials: Dictionary<string, PhysicsMaterial>` - Different material types for surfaces
-- `collisionMatrix: bool[,]` - Matrix defining which layers collide with each other
-- `simulationSpeed: float` - Current speed of physics simulation (used for time slow power-up)
-- `normalSimulationSpeed: float` - Default simulation speed
-- `slowedSimulationSpeed: float` - Slowed simulation speed for power-ups
-
-#### Methods:
-- `Initialize()` - Set up physics system
-- `SetGravity(Vector3 gravity)` - Modify gravity vector
-- `SetTimeScale(float timeScale)` - Adjust physics simulation speed
-- `RegisterCollisionHandler(GameObject obj, ICollisionHandler handler)` - Register collision callbacks
-- `CreatePhysicsObject(GameObject obj, PhysicsObjectType type)` - Initialize physics for an object
-- `ApplyKnockback(Rigidbody target, Vector3 direction, float force)` - Apply knockback to an object
-- `CheckGrounded(Transform transform, float distance)` - Check if an object is grounded
-- `SimulateTrajectory(Vector3 startPos, Vector3 velocity, int steps)` - Calculate projectile trajectory
-- `GetBounceDirection(Vector3 incomingDir, Vector3 surfaceNormal)` - Calculate bounce reflection
-
-### 2.2 Player Movement Controller
-System managing player character movement and physics.
+### 2.1 Player Movement Controller
+The central system responsible for managing all player movement and physics interactions.
 
 #### Variables:
 - `rigidbody: Rigidbody` - Physics component for the player
 - `collider: CapsuleCollider` - Collision shape for the player
-- `movementSpeed: float` - Base movement speed
-- `sprintSpeed: float` - Faster movement speed
-- `acceleration: float` - Acceleration rate when changing direction
-- `deceleration: float` - Deceleration rate when stopping
+- `movementSpeed: float` - Base movement speed (units per second)
+- `sprintSpeed: float` - Faster movement speed when sprint is activated
+- `acceleration: float` - Acceleration rate when changing direction (units per second²)
+- `deceleration: float` - Deceleration rate when stopping (units per second²)
 - `airControl: float` - Movement control factor while in air (0-1)
-- `jumpForce: float` - Upward force applied when jumping
-- `maxJumpHeight: float` - Maximum jump height
-- `coyoteTime: float` - Time window after leaving a platform where jump is still allowed
-- `jumpBufferTime: float` - Time window where jump input is buffered if pressed before landing
-- `groundCheckDistance: float` - Distance for ground detection rays
-- `groundLayers: LayerMask` - Layers considered as ground
-- `slopeLimit: float` - Maximum slope angle player can traverse
+- `jumpForce: float` - Upward force applied when jumping (Newtons)
+- `maxJumpHeight: float` - Maximum jump height (units)
+- `coyoteTime: float` - Time window after leaving a platform where jump is still allowed (seconds)
+- `jumpBufferTime: float` - Time window where jump input is buffered if pressed before landing (seconds)
+- `groundCheckDistance: float` - Distance for ground detection rays (units)
+- `groundLayers: LayerMask` - Layers considered as ground for collision detection
+- `slopeLimit: float` - Maximum slope angle player can traverse (degrees)
 - `friction: float` - Ground friction coefficient
 - `airDrag: float` - Air resistance coefficient
 - `gravity: float` - Custom gravity scale for player
@@ -60,77 +36,29 @@ System managing player character movement and physics.
 - `ProcessMovementInput(Vector2 input)` - Process raw input into movement
 - `UpdateMovement()` - Apply movement physics
 - `Jump()` - Initiate jump
-- `Dodge(DodgeDirection direction)` - Perform dodge action
 - `SetState(PlayerMovementState newState)` - Change movement state
 - `ApplyGroundMovement()` - Handle ground movement
 - `ApplyAirMovement()` - Handle air movement
 - `GroundCheck()` - Check if player is on ground
 - `HandleSlopes()` - Handle movement on slopes
 - `ApplyGravity()` - Apply custom gravity
-- `EnterAimState()` - Enter ball aiming state
-- `ExitAimState()` - Exit ball aiming state
-- `HoverInAir()` - Suspend player in air during aim state
-- `ReduceMovementSpeed(float factor)` - Reduce movement speed (for aim state)
 - `GetMoveDirection()` - Get normalized movement direction
 - `OnCollision(Collision collision)` - Handle collisions
 
-### 2.3 Ball Physics Controller
-System managing dodgeball physics behavior.
-
-#### Variables:
-- `rigidbody: Rigidbody` - Physics component for the ball
-- `collider: SphereCollider` - Collision shape for the ball
-- `bounciness: float` - Bounciness coefficient
-- `drag: float` - Air resistance
-- `mass: float` - Ball mass
-- `throwSpeed: float` - Base throw speed
-- `quickThrowSpeedMultiplier: float` - Speed multiplier for quick throws
-- `chargedThrowSpeedMultiplier: float` - Speed multiplier for charged throws
-- `ultimateThrowSpeedMultiplier: float` - Speed multiplier for ultimate throws
-- `knockbackForce: float` - Force applied to players when hit
-- `catchWindow: float` - Time window for catching after teammate hit
-- `currentState: BallState` - Current state (idle, thrown, held, etc.)
-- `ownerTeam: Team` - Team that last touched the ball
-- `lastThrownBy: Player` - Player who last threw the ball
-- `throwDirection: Vector3` - Direction the ball was thrown
-- `throwVelocity: Vector3` - Velocity vector of throw
-- `heldTime: float` - Time ball has been held by current player
-- `maxHoldTime: float` - Maximum allowed hold time before auto-transfer
-- `isPoweredUp: bool` - Whether ball has power-up effects
-- `trailRenderer: TrailRenderer` - Visual trail following the ball
-- `collisionLayers: LayerMask` - Layers ball can collide with
-
-#### Methods:
-- `Initialize()` - Set up ball physics
-- `Throw(Vector3 direction, float chargeLevel, bool isUltimate)` - Throw ball with parameters
-- `QuickThrow(Vector3 direction)` - Perform quick throw
-- `Bounce(Vector3 normal)` - Handle ball bounce
-- `OnHit(Player hitPlayer)` - Process hit on player
-- `BePickedUp(Player player)` - Handle ball pickup
-- `BeDropped()` - Handle ball being dropped
-- `UpdatePhysics()` - Update ball physics state
-- `ApplyGravity()` - Apply gravity to ball
-- `CheckBoundaries()` - Keep ball within arena boundaries
-- `ApplyKnockback(Player player)` - Apply knockback to hit player
-- `EnableTrail(bool enabled)` - Enable/disable visual trail
-- `SetPowerUpEffect(PowerUpType powerUp)` - Apply power-up effect to ball
-- `ResetState()` - Reset ball to default state
-- `OnCollision(Collision collision)` - Handle collision events
-
-### 2.4 Dodge and Counter System
+### 2.2 Dodge System
 System for managing dodge mechanics and timing windows.
 
 #### Variables:
-- `dodgeCooldown: float` - Cooldown time between dodges
-- `dodgeDuration: float` - Duration of dodge action
-- `dodgeDistance: float` - Distance covered during dodge
-- `dodgeSpeed: float` - Speed of dodge movement
-- `currentDodgeCooldown: float` - Current remaining cooldown
+- `dodgeCooldown: float` - Cooldown time between dodges (seconds)
+- `dodgeDuration: float` - Duration of dodge action (seconds)
+- `dodgeDistance: float` - Distance covered during dodge (units)
+- `dodgeSpeed: float` - Speed of dodge movement (units per second)
+- `currentDodgeCooldown: float` - Current remaining cooldown (seconds)
 - `dodgeDirections: Dictionary<DodgeAction, Vector3>` - Mapping of dodge inputs to movement vectors
 - `canDodge: bool` - Whether player can currently dodge
 - `isDodging: bool` - Whether player is currently dodging
-- `dodgeInvulnerabilityTime: float` - Brief invulnerability window during dodge
-- `perfectDodgeWindow: float` - Timing window for perfect dodge
+- `dodgeInvulnerabilityTime: float` - Brief invulnerability window during dodge (seconds)
+- `perfectDodgeWindow: float` - Timing window for perfect dodge (seconds)
 - `dodgeType: DodgeType` - Type of dodge performed (regular, perfect)
 
 #### Methods:
@@ -138,34 +66,80 @@ System for managing dodge mechanics and timing windows.
 - `StartDodge()` - Begin dodge movement and effects
 - `EndDodge()` - End dodge state
 - `UpdateDodgeCooldown()` - Update dodge cooldown timer
-- `CheckPerfectDodgeTiming(Ball incomingBall)` - Check for perfect dodge timing
+- `CheckPerfectDodgeTiming()` - Check for perfect dodge timing
 - `ApplyDodgeMovement()` - Apply dodge movement physics
 - `SetDodgeInvulnerability(bool enabled)` - Toggle dodge invulnerability
 - `GetDodgeVector(DodgeDirection direction)` - Get movement vector for dodge
 
-### 2.5 Showdown System
-System for managing quick-time event style dodgeball confrontations.
+### 2.3 Aim State Controller
+System for managing the aiming state when the player is preparing to throw.
 
 #### Variables:
-- `isInShowdown: bool` - Whether showdown is active
-- `showdownTimeScale: float` - Time scale during showdown (slow-mo)
-- `showdownDuration: float` - Maximum duration of showdown
-- `attacker: Player` - Player throwing the ball
-- `defender: Player` - Player attempting to dodge
-- `successWindow: float` - Time window for successful dodge input
-- `showdownCamera: Camera` - Special camera for showdown moments
-- `cameraTransitionSpeed: float` - Speed of camera transition to showdown view
+- `isAiming: bool` - Whether player is currently in aim state
+- `aimStateMovementFactor: float` - Movement speed factor in aim state (0-1)
+- `aimStateGravityFactor: float` - Gravity factor in aim state (0-1)
+- `aimStateMaxDuration: float` - Maximum duration of aim state (seconds)
+- `currentAimTime: float` - Current time spent in aim state (seconds)
+- `aimingFromAir: bool` - Whether aiming was initiated while airborne
+- `originalVelocity: Vector3` - Velocity before entering aim state
+- `hoverHeight: float` - Height maintained during hover
+- `hoverStability: float` - How stable the hover is (less wobble)
 
 #### Methods:
-- `InitiateShowdown(Player attacker, Player defender)` - Start showdown sequence
-- `EndShowdown()` - End showdown and return to normal gameplay
-- `ProcessAttackerInput(bool inputReceived)` - Handle attacker's throw timing
-- `ProcessDefenderInput(DodgeDirection direction)` - Handle defender's dodge input
-- `EvaluateShowdownResult()` - Determine outcome of showdown
-- `TransitionToShowdownCamera()` - Change camera to showdown view
-- `RestoreNormalCamera()` - Return to normal camera view
-- `SlowDownTime()` - Activate slow-motion effect
-- `RestoreNormalTime()` - Return to normal time scale
+- `EnterAimState()` - Enter aiming state
+- `ExitAimState()` - Exit aiming state
+- `UpdateAimState()` - Update aim state timer and effects
+- `HoverInAir()` - Suspend player in air during aim state
+- `ReduceMovementSpeed()` - Apply movement speed reduction during aim
+- `RestoreMovement()` - Restore normal movement parameters
+
+### 2.4 Input Handler
+System managing player input for movement and actions.
+
+#### Variables:
+- `moveInput: Vector2` - Raw movement input vector
+- `lookInput: Vector2` - Raw look/aim input vector
+- `jumpInput: bool` - Jump button state
+- `sprintInput: bool` - Sprint button state
+- `dodgeInput: bool` - Dodge button state
+- `aimInput: bool` - Aim button state
+- `throwInput: bool` - Throw button state
+- `inputBuffer: Queue<InputCommand>` - Buffer for stored inputs
+- `inputBufferTime: float` - How long inputs are stored in buffer (seconds)
+- `inputSmoothingFactor: float` - Input smoothing for analog sticks
+
+#### Methods:
+- `ProcessInput()` - Process all input for current frame
+- `GetMovementVector()` - Get processed movement vector
+- `GetLookRotation()` - Get processed look rotation
+- `BufferInput(InputCommand command)` - Store input for later processing
+- `ProcessInputBuffer()` - Process buffered inputs
+- `SmoothInput(Vector2 rawInput)` - Apply smoothing to raw input
+- `MapDodgeDirection()` - Map current input to a dodge direction
+
+### 2.5 Camera Controller
+System for managing the player's first-person camera.
+
+#### Variables:
+- `camera: Camera` - Reference to the player's camera
+- `lookSensitivity: Vector2` - Sensitivity for look input (x and y axes)
+- `maxLookAngleUp: float` - Maximum upward look angle
+- `maxLookAngleDown: float` - Maximum downward look angle
+- `currentPitch: float` - Current pitch angle (looking up/down)
+- `currentYaw: float` - Current yaw angle (looking left/right)
+- `cameraSmoothing: float` - Smoothing factor for camera movement
+- `headBobEnabled: bool` - Whether head bob effect is enabled
+- `headBobFrequency: float` - Frequency of head bob
+- `headBobAmplitude: float` - Amplitude of head bob
+- `headBobSprintMultiplier: float` - Head bob multiplier when sprinting
+
+#### Methods:
+- `Initialize()` - Set up camera controller
+- `UpdateCamera(Vector2 lookInput)` - Update camera based on look input
+- `ProcessHeadBob(float moveSpeed)` - Apply head bob effect based on movement
+- `SetFOV(float fov)` - Adjust camera field of view
+- `CalculatePitchYaw(Vector2 lookInput)` - Calculate new pitch and yaw from input
+- `ApplyCameraSway(float intensity)` - Apply slight camera sway for realism
 
 ## 3. Technical Implementation
 
@@ -173,169 +147,167 @@ System for managing quick-time event style dodgeball confrontations.
 Details on character controller implementation.
 
 #### Variables:
-- `inputBuffer: Queue<InputCommand>` - Buffer for stored inputs
-- `smoothingFactor: float` - Input smoothing for analog sticks
 - `rootMotion: bool` - Whether to use animation root motion
 - `footstepDetectors: List<Transform>` - Points for footstep detection
 - `environmentDetectors: List<Sensor>` - Sensors for detecting environment
 - `movementStateTimer: Dictionary<PlayerMovementState, float>` - Timers for different states
 - `momentumConservation: float` - How much momentum is conserved in direction changes
+- `stepHeight: float` - Maximum height of step the player can automatically climb
+- `slideThreshold: float` - Angle at which player begins to slide down slopes
+- `maxGroundedVelocity: float` - Maximum velocity while grounded
+- `maxAirVelocity: float` - Maximum velocity while in air
 
 #### Methods:
 - `ApplyRootMotion(Vector3 rootMotionDelta)` - Apply root motion from animation
-- `SmoothInput(Vector2 rawInput)` - Apply smoothing to raw input
-- `ProcessInputBuffer()` - Process buffered inputs
-- `BufferInput(InputCommand command)` - Store input for later processing
 - `UpdateAnimationState()` - Update animation based on movement
 - `CalculateMovementVector()` - Calculate final movement vector
+- `ApplyForce(Vector3 force)` - Apply an external force to the player
+- `StepUpCheck()` - Check if player should step up over small obstacles
+- `ClampVelocity(bool isGrounded)` - Clamp velocity based on grounded state
+- `CalculateFriction()` - Calculate friction based on surface and movement
 
-### 3.2 Ball Physics Implementation
-Details on ball physics implementation.
-
-#### Variables:
-- `velocityRetention: float` - Percentage of velocity retained after bounce
-- `spinFactor: float` - How much spin affects trajectory
-- `windupTime: float` - Time to reach maximum throw power
-- `velocityPredictionSteps: int` - Steps used in trajectory prediction
-- `throwAngleVariance: float` - Small random variance in throw angle
-- `ballSleepVelocity: float` - Velocity below which ball goes to sleep
-- `audioVelocityThresholds: float[]` - Velocity thresholds for different bounce sounds
-
-#### Methods:
-- `CalculateThrowPower(float chargeTime)` - Calculate throw power based on charge time
-- `ApplySpin(Vector3 spinAxis, float spinPower)` - Apply spin to ball
-- `PredictTrajectory()` - Predict and visualize ball trajectory
-- `UpdateBallState()` - Update ball state machine
-- `ProcessBoundaryCollision(Vector3 collisionPoint)` - Handle boundary collisions
-- `SnapToBallPoint(Transform hand)` - Snap ball to player's hand
-
-### 3.3 Special Movement States
+### 3.2 Special Movement States
 Implementation of special movement states.
 
 #### Variables:
-- `aimStateMovementFactor: float` - Movement speed factor in aim state
-- `aimStateGravityFactor: float` - Gravity factor in aim state
-- `aimStateMaxDuration: float` - Maximum duration of aim state
-- `hoverHeight: float` - Height maintained during hover
-- `hoverStability: float` - How stable the hover is (less wobble)
 - `knockbackResistance: float` - Resistance to knockback forces
 - `timeDilation: float` - Time dilation during special states
+- `stateTransitionSpeed: float` - How quickly player transitions between states
+- `fallingThreshold: float` - Velocity threshold to enter falling state
+- `landingRecoveryTime: float` - Time to recover after hard landing (seconds)
+- `slideControlFactor: float` - How much control player has while sliding
 
 #### Methods:
-- `EnterAimState()` - Enter aiming state
-- `MaintainHover()` - Maintain hover position/height
-- `ExitSpecialState()` - Exit any special movement state
 - `TransitionBetweenStates(PlayerMovementState from, PlayerMovementState to)` - Handle state transitions
 - `ApplyStatePhysics()` - Apply physics modifications for current state
+- `ExitSpecialState()` - Exit any special movement state
+- `CalculateStateModifiers()` - Calculate modifiers based on current state
+- `HandleLanding(float impactVelocity)` - Handle landing physics and effects
+- `ApplyMovementPenalty(float duration, float factor)` - Apply temporary movement penalty
 
 ## 4. Process Flows
 
 ### 4.1 Player Movement Flow
 1. Input received from player controller
-2. `PlayerMovementController.ProcessMovementInput()` receives input
-3. If grounded, `ApplyGroundMovement()` is called
-4. If in air, `ApplyAirMovement()` is called with reduced control
-5. `GroundCheck()` updates grounded state
-6. `ApplyGravity()` applies appropriate gravity based on state
-7. State machine updates current movement state
-8. Physics simulation applied through Rigidbody
-9. Animation system updated with current velocity and state
+2. Input Handler processes and buffers input
+3. Player Movement Controller receives processed input
+4. Ground check performed to determine player state
+5. If grounded, ground movement applied, else air movement applied
+6. Special states like aiming or dodging are given priority
+7. Movement vector calculated based on input and current state
+8. Physics simulation applies resulting forces
+9. Collisions are resolved
+10. Animation state updated based on movement
+11. Camera position and effects updated
 
-### 4.2 Jump and Dodge Flow
-1. Jump button pressed
-2. System checks if player can jump (grounded or within coyote time)
-3. If yes, `Jump()` method applies vertical force
-4. State changes to jumping
-5. For dodge, system checks if dodge is available and not on cooldown
-6. `PerformDodge()` called with direction parameter
-7. Player movement temporarily overridden with dodge vector
-8. Invulnerability briefly applied
-9. Cooldown timer started
-10. Animation triggers for dodge action
+### 4.2 Jump Flow
+1. Jump input detected by Input Handler
+2. Player Movement Controller checks if jump is possible:
+   - Player is grounded or within coyote time
+   - Jump is not on cooldown
+3. If jump is valid, vertical force is applied
+4. Player state changes to jumping
+5. Jump animation is triggered
+6. Air control parameters are applied
+7. Gravity is constantly applied, with increased fall multiplier on descent
+8. Ground check runs continuously to detect landing
+9. On landing, ground state is restored and landing effects triggered
 
-### 4.3 Ball Throw Flow
-1. Player enters aim state via `EnterAimState()`
-2. Movement limited, possibly hovering in air
-3. Player aims using look controls
-4. On throw button press, ball charge begins
-5. Charge level increases over time
-6. On button release, `BallPhysicsController.Throw()` called with parameters
-7. Ball transitions to thrown state
-8. Physics applies velocity in throw direction
-9. Trail renderer activated
-10. Collision detection enabled
+### 4.3 Dodge Flow
+1. Dodge input detected by Input Handler
+2. Dodge direction determined from movement input
+3. Dodge System checks if dodge is available:
+   - Not on cooldown
+   - Player is in valid state
+4. If dodge is valid, Dodge System initiates dodge sequence:
+   - Original movement temporarily overridden
+   - Dodge direction vector calculated
+   - Dodge force applied
+   - Brief invulnerability window applied
+   - Dodge animation triggered
+5. After dodge duration, regular movement restored
+6. Cooldown timer started
+7. Player state returned to normal
 
-### 4.4 Ball Hit and Catch Flow
-1. Ball collides with player
-2. `BallPhysicsController.OnCollision()` detects player hit
-3. System checks if player is on same team as last thrower
-4. If opponent hit, player loses life and ball bounces
-5. Ball bounces in random direction at reduced speed
-6. Catch window timer starts for teammate catch opportunity
-7. If teammate catches within window via `OnCollision()`, original thrower loses life
-8. Catch event triggers life restoration for previously hit teammate if applicable
-
-### 4.5 Showdown QTE Flow
-1. Conditions met for showdown (direct aim at player for certain time)
-2. `ShowdownSystem.InitiateShowdown()` called with both players
-3. Camera transitions to showdown view
-4. Time slows down
-5. UI prompts appear for both players
-6. Attacker and defender input windows activate
-7. Inputs processed through respective methods
-8. Outcome determined by `EvaluateShowdownResult()`
-9. Result animation plays
-10. Normal gameplay resumes via `EndShowdown()`
+### 4.4 Aim State Flow
+1. Aim input detected by Input Handler
+2. Aim State Controller checks if aiming is possible:
+   - Player has a ball
+   - Not in incompatible state
+3. If aiming is valid, enter aim state:
+   - Movement speed reduced
+   - If in air, gravity reduced and hover effect applied
+   - Camera FOV slightly adjusted
+   - Aim animation/stance activated
+4. During aim state:
+   - Look input controls aim direction
+   - Movement still possible but limited
+   - Charge indicator increases if throw input held
+5. On throw input release:
+   - Exit aim state
+   - Return to normal movement parameters
+   - Camera returns to normal
+6. On aim cancel:
+   - Exit aim state without throwing
+   - Return to normal movement parameters
 
 ## 5. Performance Considerations
 
 ### 5.1 Physics Optimization
-- Use simplified collision meshes for players and environment
-- Implement physics LOD based on distance
-- Disable simulation for objects far from action
-- Use physics layers to limit unnecessary collision checks
-- Implement sub-stepping for fast-moving objects
+- Use simplified collision meshes for player character
+- Implement physics layers to limit unnecessary collision checks
 - Optimize raycasts with layermasks
+- Use sphere casts for ground detection instead of multiple raycasts
+- Cache physics results where appropriate
+- Consider using capsule colliders for better performance
+- Use continuous collision detection only when necessary (high-speed movement)
 
 ### 5.2 CPU Optimization
 - Batch physics queries where possible
-- Use multithreading for trajectory prediction
-- Implement spatial partitioning for collision detection
-- Limit physics calculations on non-essential objects
+- Limit physics calculations on non-essential components
 - Cache frequently used physics data
 - Use fixed time step carefully to balance performance and accuracy
+- Consider different update rates for various systems (input = every frame, physics = fixed update)
+- Profile and optimize common movement scenarios
+- Use object pooling for effects that occur frequently (footsteps, landing effects)
 
-### 5.3 Networked Physics
+### 5.3 Networked Player Movement
 - Implement client-side prediction for responsive feel
-- Server authority for critical physics interactions
+- Server authority for final position determination
 - Interpolation for smooth movement between updates
-- Jitter buffer for physics state synchronization
-- Bandwidth-efficient physics state serialization
-- Prioritize synchronization of near/relevant objects
+- Jitter buffer for movement state synchronization
+- Prioritize important state changes (dodge, aim, jump)
+- Use delta compression for movement updates
+- Consider dead reckoning for prediction during packet loss
 
 ## 6. External Dependencies and Relationships
 
 ### 6.1 Game Systems Integration
-- `PlayerController` - Takes input and communicates with Movement Controller
-- `GameStateManager` - Manages overall game state affecting physics (time slow power-up)
-- `AudioManager` - Receives collision/movement events for sound triggers
-- `PowerUpManager` - Applies physics modifications for power-ups
-- `UIManager` - Receives physics state for UI updates
-- `ReplaySystem` - Records physics state for replay functionality
+- `PlayerController` - Main player controller that uses Movement System
+- `GameStateManager` - Manages overall game state affecting movement
+- `AudioManager` - Receives movement events for sound triggers (footsteps, landing)
+- `VisualEffectsManager` - Receives movement events for visual effects
+- `PowerUpManager` - Applies movement modifications for power-ups
+- `AnimationController` - Receives movement state to drive animations
+- `CameraSystem` - Integrates with first-person camera for movement effects
+- `UIManager` - Receives movement state for UI feedback (dodge cooldown, etc.)
 
 ### 6.2 Animation System Integration
-- Animation state machine driven by physics state
-- Root motion feeding back to physics system
-- Procedural animation adjustments based on surface angle
-- IK systems for foot placement and ball holding
+- Animation state machine driven by movement state
+- Root motion feeding back to physics system when appropriate
+- Procedural animation adjustments based on movement speed and direction
+- IK systems for foot placement on uneven terrain
 - Blend spaces for smooth transitions between movement states
-- Animation events triggering physics effects
+- Animation events triggering movement effects (footstep sounds, particles)
+- Pose matching for seamless transitions between states
 
 ## 7. Future Enhancements (Non-Core)
-- Advanced cloth physics for character outfits
-- Destructible environment elements
-- Weather effects influencing physics (wind, etc.)
-- Advanced ragdoll on elimination
-- Physics-based character customization (hats, accessories that react to movement)
-- Replays with physics debug visualization
-- Custom gravity zones as map features
+- Advanced movement abilities (wall running, sliding, mantling)
+- Environmental interaction (swinging, climbing, vaulting)
+- Procedural animation for more realistic movement
+- Contextual movement based on environment
+- Character-specific movement styles and abilities
+- User-configurable movement parameters
+- Accessibility options for movement control
+- Advanced camera effects based on movement (motion blur, FOV changes)
+- Physics-based character customization that affects movement
