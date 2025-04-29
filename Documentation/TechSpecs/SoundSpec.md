@@ -1,7 +1,3 @@
-# Audio Technical Specification for Chaos DodgeBall
-
-## 1. Overview
-The audio system for Chaos DodgeBall will deliver a dynamic and immersive sound experience to enhance the fast-paced gameplay. This specification outlines the core audio components, their relationships, and implementation details to create a cohesive audio environment that supports the game's neon arena aesthetic and competitive gameplay.
 
 ## 2. Core Audio Components
 
