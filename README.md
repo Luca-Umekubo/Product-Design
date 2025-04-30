@@ -33,7 +33,7 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 - if a player on your team gets hit by a ball or blocks an incoming ball with their own, it will fly in a random direction and slow down, you can catch it with the standard skill to keep the hit player in and the thrown player to lose a life. catching a ball also gives one life back to an out player (first player to get out) or the lowest health player on the team.
 - teams/players also cannot horde balls, and they will go to the other team if held too long. (if more than 80% of the balls are on one side for 10 seconds it will spawn but in the middle of the other side of the arena nearest the enemy team)
 - dodgeballs also have a bit of knockback, so they can push an enemy off the stage to immediately eliminate both their lives
- - modifiers --> at the start of each non-competitive round, a random modifier will be applied. Modifiers will enable at a random time in the round, for a set amount of time based on the modifier.
+- modifiers --> at the start of each non-competitive round, a random modifier will be applied. Modifiers will enable at a random time in the round, for a set amount of time based on the modifier.
 
 ## LINES 38-66 ARE BRODY'S EDITS THAT DIDN'T GET ADDED THE FIRST TIME
 
@@ -71,36 +71,36 @@ Imagine a party pvp minigame meets a first person shooter meets dodgeball. this 
 - Underneath the timer is the amount of lives that you have (2 hearts minecraft style and if you lose one then that heart becomes blacked out)
 - On the top left hand side there is an opaque board with all your teammates profile pictures and the amount of lives they have left next to them.
 - At very bottom of screen is your ultimate ability charge bar.
-- timer should last for 3-5 minutes dependent on play testing; start with 4 minutes 
-
+- timer should last for 3-5 minutes dependent on play testing; start with 4 minutes
 
 ## Power system
 
 - players can choose between three characters, each with a unique power and the same ultimate throw that charges up .
-    - ultimate throw: ultimate ability that charges up over a while and can be activated like smash bros or overwatch, giving their next throw even faster speed (visualized by on fire ball and 2x the speed (test)) and more time in the aim state (1.5x to start by test this). this throw also has much more knockback and can knock players off the stage more easily.
-    - this knockback is relevant when the user catches or knocks the ball. If the ball hits the user, the user is eliminated. However, if the opposite-sided user catches or knocks the ball, they will also be knocked back, meaning they might get knocked off the map. This should move the user back by the height of 2 players for a catch and by the height of 1 player if the user knocks it. 
-    - character 1: architect
-        - can summon temporary walls to hide behind for a few seconds with a long cooldown
-        - twice the height of the user and 3x the width of the user
-        - lasts for 5 seconds
-    - character 2: trickster
-        - can go invisible and create a decoy in their place that goes into the aim animation.
-        - invisible for 10 seconds
-    - character 3: aggressor
-        - ability to set ball on fire, leaving a temporary trail of flames on the ground wherever the ball is thrown that doesnt do damage but players cannot cross and will be knocked back from it, creating a way for the aggressor to crowd/herd the enemy team. fire ball also does more knockback with an explosion doing splash knockback.
-        - the trail of flames lasts for 15 seconds(test this)
-        - however, the user gets this ability for 35 seconds(test)
-        - The knockback effect is the same as ultimate throw.
-        - because this shouldn't look like ultimate throw, the flame on the ball is much smaller, and is only really visualized when it hits the ground ( could also make this ice to make it more visible and obvious)
-        - If the explosion hits a player with a splash knockback, this knockback does no damage and should only move the player back by 1 player height length
-    - character 4: speedster
-        - has the ability to slow down time for any balls headed towards them. The downside of this is that it also slows down the player so that if anyone else throws a ball at them, they are very slow to dodge.
-        - Cooldown afterward lasts for 45 seconds. 
-        - they can slow down time for 5 seconds.
-        - once used, cooldown starts again.
-      - can set a spin to any ball they throw by adjusting a point placed on a ball picture (similar to 8 ball mobile game)
+  - ultimate throw: ultimate ability that charges up over a while and can be activated like smash bros or overwatch, giving their next throw even faster speed (visualized by on fire ball and 2x the speed (test)) and more time in the aim state (1.5x to start by test this). this throw also has much more knockback and can knock players off the stage more easily.
+  - this knockback is relevant when the user catches or knocks the ball. If the ball hits the user, the user is eliminated. However, if the opposite-sided user catches or knocks the ball, they will also be knocked back, meaning they might get knocked off the map. This should move the user back by the height of 2 players for a catch and by the height of 1 player if the user knocks it.
+  - character 1: architect
+    - can summon temporary walls to hide behind for a few seconds with a long cooldown
+    - twice the height of the user and 3x the width of the user
+    - lasts for 5 seconds
+  - character 2: trickster
+    - can go invisible and create a decoy in their place that goes into the aim animation.
+    - invisible for 10 seconds
+  - character 3: aggressor
+    - ability to set ball on fire, leaving a temporary trail of flames on the ground wherever the ball is thrown that doesnt do damage but players cannot cross and will be knocked back from it, creating a way for the aggressor to crowd/herd the enemy team. fire ball also does more knockback with an explosion doing splash knockback.
+    - the trail of flames lasts for 15 seconds(test this)
+    - however, the user gets this ability for 35 seconds(test)
+    - The knockback effect is the same as ultimate throw.
+    - because this shouldn't look like ultimate throw, the flame on the ball is much smaller, and is only really visualized when it hits the ground ( could also make this ice to make it more visible and obvious)
+    - If the explosion hits a player with a splash knockback, this knockback does no damage and should only move the player back by 1 player height length
+  - character 4: speedster
+    - has the ability to slow down time for any balls headed towards them. The downside of this is that it also slows down the player so that if anyone else throws a ball at them, they are very slow to dodge.
+    - Cooldown afterward lasts for 45 seconds.
+    - they can slow down time for 5 seconds.
+    - once used, cooldown starts again.
+    - can set a spin to any ball they throw by adjusting a point placed on a ball picture (similar to 8 ball mobile game)
 
 ## powerups
+
 Powerups appear as floating items that are randomly spawned around the map, making sure to be evenly placed on either side(one on your side one on the other side)
 
 - time slow:
@@ -109,16 +109,17 @@ Powerups appear as floating items that are randomly spawned around the map, maki
 - hunt:
   - when collected, each player on that team gets a player on the other team to "hunt" for a certain amount of time. if they hit their target, their targets lives go to zero. Their targets will be shown on their screen and above their heads so the opposing team can see who is hunting who. This powerup lasts for 10 seconds.
 - golden ball:
-  - when collected, a for 5 seconds, the balls turn golden and immediatley do full health damage instead of one life 
+  - when collected, a for 5 seconds, the balls turn golden and immediatley do full health damage instead of one life
 - ballstorm:
   - when collected, a rain of dodgeballs spawns on your side of the arena, which can be picked up by your team and will not damage you when it falls from the sky, all created balls despawn after 15 seconds
 - firechain:
-    - any time you hit an opponent on the other with a ball, it causes a mini-explosion that can damage anyone in a small radius around the hit player for a certain amt of time (undeceided, was originally 30s, but I think thats too long).
+  - any time you hit an opponent on the other with a ball, it causes a mini-explosion that can damage anyone in a small radius around the hit player for a certain amt of time (undeceided, was originally 30s, but I think thats too long).
 - glock:
-    - one person just gets a gun (up to interpretation)
-- hugh:                                 ^^^^^^^^^^^^^^^^
-    - all textures become hugh's face (ask tyler hugh and luca ig)
+  - one person just gets a gun (up to interpretation)
+- hugh: ^^^^^^^^^^^^^^^^
+  - all textures become hugh's face (ask tyler hugh and luca ig)
 - push out --> lets users push the center line closer to the opponents, allowing them to get closer to their opposition
+
 ## arena events
 
 - at the start of the round, players should be able to vote for modifiers/environmental events to spice up the games
@@ -133,8 +134,8 @@ Powerups appear as floating items that are randomly spawned around the map, maki
 - battle royale: everyone for themselves, larger arena, some obstacles (based on theme of arena)
 - boss battles: everyone is on the same team fighting an AI dodgeball monster. This monster will have a certain amt of health and each dodgeball hit will contribute to taking it down. there will be critical points on the monster that do more damage than others. for example, a headshot does more damage than a leg shot.
 - capture the flag: to win, a team must bring a flag on the opposing side back towards their own side for a certain amount of time without getting out. getting out respawns you to your side
- - ranked mode --> allow players to compete with one another in a more competitive environment. No random events, players are put on a random map. Possibility of adding elo and matchmaking, assigning players of similar elo (skill level) together if the game has enough players to always allow for a player to queue within their group (a range of elos in which all players of those skill levels are matched together).
- 
+- ranked mode --> allow players to compete with one another in a more competitive environment. No random events, players are put on a random map. Possibility of adding elo and matchmaking, assigning players of similar elo (skill level) together if the game has enough players to always allow for a player to queue within their group (a range of elos in which all players of those skill levels are matched together).
+
 ## cosmetics (MERGE TYLER'S EDITS INTO THIS AND STUFF ABOVE)
 
 - perhaps these can be bought with currency from winning games, or they are just given randomly after a game is won
@@ -148,7 +149,7 @@ Powerups appear as floating items that are randomly spawned around the map, maki
 
 ## maps
 
- - Add TBD map designs 
+- Add TBD map designs
 
 ## Concept images:
 
@@ -167,7 +168,7 @@ Powerups appear as floating items that are randomly spawned around the map, maki
 
 ## Extra Ideas:
 
--Graveyard Zone: when a player dies, they respawn on a thin straight platform behind their teammates where the catching ability has no cooldown. The platform should stretch the entire back side of both ends and should be wide enough for 4 steps. If they can catch a ball that is flying off the map, they respawn back into the game. The graveyard zone should be surrounded by invisible walls so the dead player cannot fall off or couldn't influence the game with abilities but, dodgeballs should pass though the barrier to be caught. Apart from physically restraining the player, the gameplay in the graveyard zone should be identical to standard play (abilities, movement, ect. are all used normally). 
+-Graveyard Zone: when a player dies, they respawn on a thin straight platform behind their teammates where the catching ability has no cooldown. The platform should stretch the entire back side of both ends and should be wide enough for 4 steps. If they can catch a ball that is flying off the map, they respawn back into the game. The graveyard zone should be surrounded by invisible walls so the dead player cannot fall off or couldn't influence the game with abilities but, dodgeballs should pass though the barrier to be caught. Apart from physically restraining the player, the gameplay in the graveyard zone should be identical to standard play (abilities, movement, ect. are all used normally).
 -Balls will fall off the map and respawn in the middle once they hit a zone below the map
 -Players ragdoll when they get hit and have an animation upon death that can be changed by the dead player with skins(fireworks, skull, ghost, ect.)
 -Stage Progression. During overtime, the platform starts crumbling and shrinking, making it harder to dodge balls and making players more wary of their own steps. The dimentions of the stage shrink 5% every 30 seconds with a minimum size of 10% of original dimentions.
@@ -176,7 +177,6 @@ Powerups appear as floating items that are randomly spawned around the map, maki
 
 -Curveball techniques: The spin/curve of the ball can be changed before the ball is thrown using joystick/arrow keys can create curving spins for more unique shots. The player can press a button to enable spin editing and it will be visualized by moving a dot on a dodgeball in the bottom right corner. The dot at the bottom will be backspin, left will be left-spin, ect. The dot will be able to move in 2 dimensions so angular spin is possible (45 degrees, 128 degrees, ect.) The ball will curve in the air based on the spin, leading to enable hitting people around corners and more difficult catches. The spin will not be reflected in the crosshair so the player must approximately adjust based on the spin they set
 
-
--Cosmetics: 
-  Ball trails, default goes from yellow to red based on the speed of the ball, fire and ice skins can be purchased. They linger for a bit then go away.
-  Death animations, default is blank but players can add fireworks that explode upon death, a ghost that comes out of their corpse
+-Cosmetics:
+Ball trails, default goes from yellow to red based on the speed of the ball, fire and ice skins can be purchased. They linger for a bit then go away.
+Death animations, default is blank but players can add fireworks that explode upon death, a ghost that comes out of their corpse
