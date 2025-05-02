@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://cadug43f7cqll"]
+
+[ext_resource type="Script" uid="uid://b4q1drybqlu1k" path="res://Main.gd" id="1_glv2v"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_glv2v"]
+albedo_color = Color(0.607843, 0.607843, 0.607843, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_uu6xs"]
+size = Vector2(100, 100)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_r0du0"]
+size = Vector3(100, 0.1, 100)
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_glv2v")
+
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+material_override = SubResource("StandardMaterial3D_glv2v")
+mesh = SubResource("PlaneMesh_uu6xs")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("BoxShape3D_r0du0")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 10, 0)
