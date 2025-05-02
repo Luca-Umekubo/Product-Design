@@ -1,0 +1,49 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36" version="26.2.15">
+  <diagram name="Page-1" id="Yqycs1vm7nkzT3WofqUx">
+    <mxGraphModel dx="946" dy="620" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="light-dark(#FFFFFF,#FFFFFF)" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="k8T_X6Ge6mdfXk9YGqb8-1" value="Catching/Knocking" style="swimlane;whiteSpace=wrap;html=1;strokeColor=light-dark(#000000,#000000);strokeWidth=4;align=center;" vertex="1" parent="1">
+          <mxGeometry x="20" y="30" width="730" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="k8T_X6Ge6mdfXk9YGqb8-5" value="Variables" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;strokeColor=light-dark(#000000,#000000);strokeWidth=4;" vertex="1" parent="k8T_X6Ge6mdfXk9YGqb8-1">
+          <mxGeometry x="30" y="40" width="190" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="k8T_X6Ge6mdfXk9YGqb8-6" value="var has_ball: bool" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontColor=light-dark(#000000,#000000);fontSize=12;" vertex="1" parent="k8T_X6Ge6mdfXk9YGqb8-5">
+          <mxGeometry y="30" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="k8T_X6Ge6mdfXk9YGqb8-7" value="var ball_speed: float" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontColor=light-dark(#000000,#000000);fontSize=12;" vertex="1" parent="k8T_X6Ge6mdfXk9YGqb8-5">
+          <mxGeometry y="60" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="k8T_X6Ge6mdfXk9YGqb8-8" value="var target_location: Vector2" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontColor=light-dark(#000000,#000000);fontSize=12;" vertex="1" parent="k8T_X6Ge6mdfXk9YGqb8-5">
+          <mxGeometry y="90" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="k8T_X6Ge6mdfXk9YGqb8-10" value="var is_reachable: bool" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontColor=light-dark(#000000,#000000);fontSize=12;" vertex="1" parent="k8T_X6Ge6mdfXk9YGqb8-5">
+          <mxGeometry y="120" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="k8T_X6Ge6mdfXk9YGqb8-11" value="var target_radius: float" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontColor=light-dark(#000000,#000000);fontSize=12;" vertex="1" parent="k8T_X6Ge6mdfXk9YGqb8-5">
+          <mxGeometry y="150" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="k8T_X6Ge6mdfXk9YGqb8-12" value="Methods" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;strokeColor=light-dark(#000000,#000000);strokeWidth=4;" vertex="1" parent="k8T_X6Ge6mdfXk9YGqb8-1">
+          <mxGeometry x="250" y="40" width="450" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="k8T_X6Ge6mdfXk9YGqb8-13" value="activate_target (ball_node: Node, hit_location: Vector2, is_catch: bool)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontColor=light-dark(#000000,#000000);" vertex="1" parent="k8T_X6Ge6mdfXk9YGqb8-12">
+          <mxGeometry y="30" width="450" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="k8T_X6Ge6mdfXk9YGqb8-14" value="display_target (pos: Vector2, radius: float)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontColor=light-dark(#000000,#000000);" vertex="1" parent="k8T_X6Ge6mdfXk9YGqb8-12">
+          <mxGeometry y="60" width="450" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="k8T_X6Ge6mdfXk9YGqb8-15" value="hide_target ()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontColor=light-dark(#000000,#000000);" vertex="1" parent="k8T_X6Ge6mdfXk9YGqb8-12">
+          <mxGeometry y="90" width="450" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="k8T_X6Ge6mdfXk9YGqb8-16" value="try_click (pos: Vector2)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontColor=light-dark(#000000,#000000);" vertex="1" parent="k8T_X6Ge6mdfXk9YGqb8-12">
+          <mxGeometry y="120" width="450" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="k8T_X6Ge6mdfXk9YGqb8-17" value="resolve_catch (ball: Node)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontColor=light-dark(#000000,#000000);" vertex="1" parent="k8T_X6Ge6mdfXk9YGqb8-12">
+          <mxGeometry y="150" width="450" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
