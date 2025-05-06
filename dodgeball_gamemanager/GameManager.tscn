@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://bxv5udjed8rh2"]
+
+[node name="Node" type="Node"]
+
+[node name="MENU" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="LOBBY" type="Node3D" parent="."]
+
+[node name="PLAYING" type="Node3D" parent="."]
