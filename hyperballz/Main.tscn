@@ -13,6 +13,7 @@ size = Vector3(100, 0.1, 100)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_glv2v")
+is_server = false
 
 [node name="Ground" type="StaticBody3D" parent="."]
 
@@ -25,3 +26,24 @@ shape = SubResource("BoxShape3D_r0du0")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Ground"]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 10, 0)
+
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://cufvm5bbgncxd")
+spawn_path = NodePath("..")
+spawn_limit = 5
+
+[node name="BallSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://cftgq7vqla7b0")
+spawn_path = NodePath("..")
+spawn_limit = 20
+
+[node name="SpawnPoints" type="Node3D" parent="."]
+
+[node name="SpawnPoint1" type="Node3D" parent="SpawnPoints" groups=["spawn_points"]]
+transform = Transform3D(0.999848, 0, 0.0174524, 0, 1, 0, -0.0174524, 0, 0.999848, 0, 1, 0)
+
+[node name="SpawnPoint2" type="Node3D" parent="SpawnPoints" groups=["spawn_points"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, 0)
+
+[node name="SpawnPoint3" type="Node3D" parent="SpawnPoints" groups=["spawn_points"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, 0)

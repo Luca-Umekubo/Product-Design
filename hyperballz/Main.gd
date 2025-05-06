@@ -1,16 +1,14 @@
 extends Node3D
 
-const Player = preload("res://Player.tscn")
-const Ball = preload("res://Ball.tscn")
-
 @export var is_server: bool = true
 @export var server_ip: String = "127.0.0.1"
 
-var ball_counter: int = 0
-var balls: Dictionary = {} # Tracks balls {ball_id: {node, position, velocity}}
-var spawn_points: Array = [] # Array to hold spawn point nodes
+@onready var player_spawner: MultiplayerSpawner = $PlayerSpawner
+@onready var ball_spawner: MultiplayerSpawner = $BallSpawner
+@onready var spawn_points: Node = $SpawnPoints
 
 func _ready():
+	# Set up multiplayer peer
 	var peer = ENetMultiplayerPeer.new()
 	if is_server:
 		peer.create_server(4242, 32)
@@ -18,86 +16,42 @@ func _ready():
 		peer.create_client(server_ip, 4242)
 	multiplayer.multiplayer_peer = peer
 
-	var id = multiplayer.get_unique_id()
-	spawn_player(id)
+	# Connect peer signals
+	multiplayer.peer_connected.connect(_on_peer_connected)
+	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 
-	multiplayer.peer_connected.connect(_player_connected)
-	if is_server:
-		# Sync balls every 0.05 seconds (20 Hz)
-		var timer = Timer.new()
-		timer.wait_time = 0.05
-		timer.autostart = true
-		timer.timeout.connect(_sync_balls)
-		add_child(timer)
-	
-	# Retrieve spawn points from the scene
-	spawn_points = get_tree().get_nodes_in_group("spawn_points")
+	# Spawn local player
+	if multiplayer.is_server() or not is_server:
+		_spawn_player(multiplayer.get_unique_id())
 
-func spawn_player(id):
-	var player = Player.instantiate()
+func _spawn_player(id: int):
+	# Instance player
+	var player = player_spawner.spawn([id]) # Pass ID to spawner
 	player.name = str(id)
 	player.set_multiplayer_authority(id)
-	add_child(player)
-	# Set player position to a random spawn point
-	if spawn_points.size() > 0:
-		var spawn_point = spawn_points[randi() % spawn_points.size()]
+	
+	# Set spawn position
+	var points = spawn_points.get_children()
+	if points.size() > 0:
+		var spawn_point = points[randi() % points.size()]
 		player.global_position = spawn_point.global_position
 	else:
-		print("Warning: No spawn points defined in the scene!")
+		print("Warning: No spawn points defined!")
 
-func _player_connected(id):
-	spawn_player(id)
-
-@rpc("any_peer", "call_local")
-func request_spawn_ball(position, velocity):
+func _on_peer_connected(id: int):
 	if is_server:
-		ball_counter += 1
-		var ball_id = ball_counter
-		var ball = Ball.instantiate()
-		ball.name = "Ball_" + str(ball_id)
+		_spawn_player(id)
+
+func _on_peer_disconnected(id: int):
+	if is_server:
+		var player = get_node_or_null(str(id))
+		if player:
+			player.queue_free()
+
+@rpc("any_peer", "call_local", "reliable")
+func request_spawn_ball(position: Vector3, velocity: Vector3):
+	if is_server:
+		var ball = ball_spawner.spawn([]) # Spawn ball
 		ball.global_position = position
 		ball.linear_velocity = velocity
 		ball.set_multiplayer_authority(1) # Server controls ball
-		add_child(ball)
-		balls[ball_id] = {"node": ball, "position": position, "velocity": velocity}
-		rpc("spawn_ball_client", ball_id, position, velocity)
-
-@rpc("any_peer", "call_local")
-func spawn_ball_client(ball_id, position, velocity):
-	if not is_server: # Clients only render, don't simulate physics
-		var ball = Ball.instantiate()
-		ball.name = "Ball_" + str(ball_id)
-		ball.global_position = position
-		ball.linear_velocity = velocity
-		ball.freeze = true # Disable physics on clients
-		add_child(ball)
-		balls[ball_id] = {"node": ball, "position": position, "velocity": velocity}
-
-@rpc("reliable")
-func sync_ball_state(ball_id, position, velocity):
-	if not is_server and balls.has(ball_id):
-		var ball = balls[ball_id]["node"]
-		ball.global_position = position
-		ball.linear_velocity = velocity
-
-func _sync_balls():
-	if is_server:
-		for ball_id in balls.keys():
-			var ball = balls[ball_id]["node"]
-			if is_instance_valid(ball):
-				var position = ball.global_position
-				var velocity = ball.linear_velocity
-				balls[ball_id]["position"] = position
-				balls[ball_id]["velocity"] = velocity
-				rpc("sync_ball_state", ball_id, position, velocity)
-			else:
-				balls.erase(ball_id)
-				rpc("remove_ball", ball_id)
-
-@rpc("reliable")
-func remove_ball(ball_id):
-	if balls.has(ball_id):
-		var ball = balls[ball_id]["node"]
-		if is_instance_valid(ball):
-			ball.queue_free()
-		balls.erase(ball_id)

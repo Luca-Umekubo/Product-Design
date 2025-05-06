@@ -14,3 +14,7 @@ config/name="HyperBallz"
 run/main_scene="uid://cadug43f7cqll"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
+
+[global_group]
+
+spawn_points=""
