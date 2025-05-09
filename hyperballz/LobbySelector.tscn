@@ -16,6 +16,7 @@ offset_bottom = 40.0
 
 [node name="IPLineEdit" type="LineEdit" parent="VBoxContainer"]
 layout_mode = 2
+text = "127.0.0.1"
 placeholder_text = "Enter Ip"
 
 [node name="PortLineEdit" type="LineEdit" parent="VBoxContainer"]
