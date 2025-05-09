@@ -52,4 +52,3 @@ spawn_path = NodePath("..")
 [node name="BallSpawner" type="MultiplayerSpawner" parent="Balls"]
 _spawnable_scenes = PackedStringArray("uid://cftgq7vqla7b0")
 spawn_path = NodePath("..")
-spawn_limit = 100
