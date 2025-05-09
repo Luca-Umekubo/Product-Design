@@ -12,12 +12,18 @@ var is_dancing = false
 var is_moving_backward = false
 var is_throwing = false
 
+# Networked animation state
+var current_animation: String = "Idle" : set = _set_current_animation
+var is_animation_backward: bool = false
+var animation_speed: float = 1.0
+
 func _ready():
 	add_to_group("players")
 	if is_multiplayer_authority():
 		camera.current = true
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-		animation_player.play("Idle")
+	# Initialize animation for all clients
+	_set_current_animation("Idle")
 
 func _input(event):
 	if is_multiplayer_authority() and event is InputEventMouseMotion:
@@ -43,7 +49,7 @@ func _physics_process(delta):
 		# Handle dancing
 		if Input.is_action_just_pressed("dance") and not is_jumping:
 			is_dancing = true
-			animation_player.play("Dance")
+			update_animation.rpc("Dance", false, 1.0)
 
 		# Cancel dancing if moving
 		if is_dancing and input_dir != Vector3.ZERO:
@@ -69,85 +75,94 @@ func _physics_process(delta):
 		if Input.is_action_just_pressed("jump") and is_on_floor() and not is_dancing:
 			velocity.y = jump_strength
 			is_jumping = true
-			animation_player.play("Jump_Start")
+			update_animation.rpc("Jump_Start", false, 1.0)
 
 		# Apply movement
 		move_and_slide()
 
-		# Animation logic (skip movement animations if throwing)
+		# Animation logic (authoritative client only)
 		if is_throwing:
 			pass  # Let the throw animation sequence handle itself
 		elif is_dancing:
-			if animation_player.current_animation != "Dance":
-				animation_player.play("Dance")
+			if current_animation != "Dance":
+				update_animation.rpc("Dance", false, 1.0)
 		elif is_jumping:
-			if animation_player.current_animation == "Jump_Start" and not animation_player.is_playing():
-				animation_player.play("Jump")
-			elif is_on_floor() and animation_player.current_animation != "Jump_Land":
-				animation_player.play("Jump_Land")
-			# Keep playing Jump while in the air
+			if current_animation == "Jump_Start" and not animation_player.is_playing():
+				update_animation.rpc("Jump", false, 1.0)
+			elif is_on_floor() and current_animation != "Jump_Land":
+				update_animation.rpc("Jump_Land", false, 1.0)
 		else:
 			# Determine if moving backward
 			var moving_backward = input_dir.z > 0
-			# Only update direction if it changes
 			if moving_backward != is_moving_backward:
 				is_moving_backward = moving_backward
-				if animation_player.current_animation in ["Walk", "Sprint"]:
-					if is_moving_backward:
-						animation_player.play_backwards(animation_player.current_animation)
-					else:
-						animation_player.play(animation_player.current_animation)
 
 			# Handle movement animations
 			if input_dir != Vector3.ZERO:
 				if Input.is_action_pressed("sprint"):
-					if animation_player.current_animation != "Sprint":
-						animation_player.play("Sprint")
-						if is_moving_backward:
-							animation_player.play_backwards("Sprint")
+					if current_animation != "Sprint" or is_animation_backward != is_moving_backward:
+						update_animation.rpc("Sprint", is_moving_backward, 1.0)
 				else:
-					if animation_player.current_animation != "Walk":
-						animation_player.play("Walk")
-						if is_moving_backward:
-							animation_player.play_backwards("Walk")
+					if current_animation != "Walk" or is_animation_backward != is_moving_backward:
+						update_animation.rpc("Walk", is_moving_backward, 1.0)
 			else:
-				if animation_player.current_animation != "Idle":
-					animation_player.play("Idle")
+				if current_animation != "Idle":
+					update_animation.rpc("Idle", false, 1.0)
 
-		# Handle throwing animation sequence
-		if Input.is_action_just_pressed("throw") and not is_throwing:
-			start_throw_animation()
+	# Handle throwing animation sequence
+	if Input.is_action_just_pressed("throw") and not is_throwing:
+		start_throw_animation()
+
+# RPC to update animation state across all clients
+@rpc("any_peer", "call_local", "reliable")
+func update_animation(anim_name: String, backward: bool, speed: float):
+	current_animation = anim_name
+	is_animation_backward = backward
+	animation_speed = speed
+	_apply_animation()
+
+# Apply animation state locally
+func _apply_animation():
+	if animation_player.current_animation != current_animation:
+		animation_player.play(current_animation, -1, animation_speed)
+	if is_animation_backward:
+		animation_player.play_backwards(current_animation)
+	else:
+		animation_player.play(current_animation, -1, animation_speed)
+
+# Setter for current_animation to ensure it’s applied
+func _set_current_animation(value: String):
+	current_animation = value
+	if is_inside_tree():
+		_apply_animation()
 
 func start_throw_animation():
 	if is_multiplayer_authority() and not is_jumping and not is_dancing:
 		is_throwing = true
 		# Play Enter animation at double speed
-		animation_player.play("Spell_Simple_Enter", -1, 2.0)
+		update_animation.rpc("Spell_Simple_Enter", false, 2.0)
 		await animation_player.animation_finished
 		# Play Shoot animation at double speed and trigger throw
-		animation_player.play("Spell_Simple_Shoot", -1, 2.0)
-		throw_ball()
+		update_animation.rpc("Spell_Simple_Shoot", false, 2.0)
+		if multiplayer.is_server():
+			throw_ball()
 		await animation_player.animation_finished
 		# Play Exit animation at double speed
-		animation_player.play("Spell_Simple_Exit", -1, 2.0)
+		update_animation.rpc("Spell_Simple_Exit", false, 2.0)
 		await animation_player.animation_finished
-		# Return to previous animation (e.g., Idle or Walk)
-		if animation_player.current_animation == "Spell_Simple_Exit":
+		# Return to previous animation
+		if is_multiplayer_authority():
 			var input_dir = Vector3.ZERO
 			input_dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
 			input_dir.z = Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
 			input_dir = input_dir.normalized()
 			if input_dir != Vector3.ZERO:
 				if Input.is_action_pressed("sprint"):
-					animation_player.play("Sprint")
-					if input_dir.z > 0:
-						animation_player.play_backwards("Sprint")
+					update_animation.rpc("Sprint", input_dir.z > 0, 1.0)
 				else:
-					animation_player.play("Walk")
-					if input_dir.z > 0:
-						animation_player.play_backwards("Walk")
+					update_animation.rpc("Walk", input_dir.z > 0, 1.0)
 			else:
-				animation_player.play("Idle")
+				update_animation.rpc("Idle", false, 1.0)
 		is_throwing = false
 
 func throw_ball():
@@ -174,3 +189,4 @@ func respawn():
 		if spawn_points.size() > 0:
 			var spawn_point = spawn_points[randi() % spawn_points.size()]
 			position = spawn_point.global_position
+			update_animation.rpc("Idle", false, 1.0)
