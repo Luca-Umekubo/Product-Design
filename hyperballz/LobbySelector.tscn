@@ -21,7 +21,7 @@ placeholder_text = "Enter Ip"
 
 [node name="PortLineEdit" type="LineEdit" parent="VBoxContainer"]
 layout_mode = 2
-text = "1234"
+text = "4242"
 placeholder_text = "Enter Port"
 
 [node name="Join" type="Button" parent="VBoxContainer"]
