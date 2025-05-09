@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://8rxutvr03lit"]
+
+[ext_resource type="Script" uid="uid://cjys7pw86u3uc" path="res://lobby_selector.gd" id="1_llmbd"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_llmbd")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="IPLineEdit" type="LineEdit" parent="VBoxContainer"]
+layout_mode = 2
+text = "127.0.0.1"
+placeholder_text = "Enter Ip"
+
+[node name="PortLineEdit" type="LineEdit" parent="VBoxContainer"]
+layout_mode = 2
+text = "4242"
+placeholder_text = "Enter Port"
+
+[node name="Join" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Join"
+
+[connection signal="pressed" from="VBoxContainer/Join" to="." method="_on_join_button_pressed"]

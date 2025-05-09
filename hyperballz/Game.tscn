@@ -1,0 +1,54 @@
+[gd_scene load_steps=5 format=3 uid="uid://c45q1llhtbclb"]
+
+[ext_resource type="Script" uid="uid://eyu1l6dfoc61" path="res://game.gd" id="1_wbfu4"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6ubv3"]
+albedo_color = Color(0.6, 0.6, 0.6, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_6ubv3"]
+material = SubResource("StandardMaterial3D_6ubv3")
+size = Vector2(100, 100)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wbfu4"]
+size = Vector3(100, 0.1, 100)
+
+[node name="Game" type="Node3D"]
+script = ExtResource("1_wbfu4")
+
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("PlaneMesh_6ubv3")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("BoxShape3D_wbfu4")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1.19249e-08, 1, 0, -1, 1.19249e-08, 0, 10, 0)
+
+[node name="SpawnPoints" type="Node3D" parent="."]
+
+[node name="Spawn1" type="Marker3D" parent="SpawnPoints" groups=["spawn_points"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 5)
+
+[node name="Spawn2" type="Marker3D" parent="SpawnPoints" groups=["spawn_points"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -5)
+
+[node name="Spawn3" type="Marker3D" parent="SpawnPoints" groups=["spawn_points"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, -5)
+
+[node name="Spawn4" type="Marker3D" parent="SpawnPoints" groups=["spawn_points"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, 5)
+
+[node name="Players" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="Players"]
+_spawnable_scenes = PackedStringArray("uid://cufvm5bbgncxd")
+spawn_path = NodePath("..")
+
+[node name="Balls" type="Node3D" parent="."]
+
+[node name="BallSpawner" type="MultiplayerSpawner" parent="Balls"]
+_spawnable_scenes = PackedStringArray("uid://cftgq7vqla7b0")
+spawn_path = NodePath("..")

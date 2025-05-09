@@ -1,0 +1,28 @@
+[gd_scene load_steps=6 format=3 uid="uid://cftgq7vqla7b0"]
+
+[ext_resource type="Script" uid="uid://cxyw1gmne2ya8" path="res://ball.gd" id="1_gk6bx"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pa54t"]
+albedo_color = Color(1, 0.145098, 0.211765, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_pa54t"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_gk6bx"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_gk6bx"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[node name="Ball" type="RigidBody3D"]
+script = ExtResource("1_gk6bx")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_pa54t")
+mesh = SubResource("SphereMesh_pa54t")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_gk6bx")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_gk6bx")
