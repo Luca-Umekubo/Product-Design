@@ -12,32 +12,39 @@ func _ready():
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _input(event):
-	if is_multiplayer_authority() and event is InputEventMouseMotion:
+	if is_multiplayer_authority() and event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		rotate_y(-event.relative.x * mouse_sensitivity)
 		camera.rotate_x(-event.relative.y * mouse_sensitivity)
 		camera.rotation.x = clamp(camera.rotation.x, -PI/2, PI/2)
 
 func _physics_process(delta):
 	if is_multiplayer_authority():
-		var input_vector = Vector2(
-			Input.get_action_strength("move_right") - Input.get_action_strength("move_left"),
-			Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward") 
-		).normalized()
-
-		# Calculate movement direction based on input and orientation
-		var move_direction = Vector3(input_vector.x, 0, input_vector.y) * speed
-		move_direction = global_transform.basis * move_direction
-		
-		# Update velocity components directly
-		velocity.x = move_direction.x
-		velocity.z = move_direction.z
+		# Always apply gravity
 		velocity.y += gravity * delta
+		
+		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+			var input_vector = Vector2(
+				Input.get_action_strength("move_right") - Input.get_action_strength("move_left"),
+				Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
+			).normalized()
+
+			# Calculate movement direction based on input and orientation
+			var move_direction = Vector3(input_vector.x, 0, input_vector.y) * speed
+			move_direction = global_transform.basis * move_direction
+			
+			# Update horizontal velocity
+			velocity.x = move_direction.x
+			velocity.z = move_direction.z
+			
+			if Input.is_action_just_pressed("throw"):
+				throw_ball.rpc()
+		else:
+			# When mouse is not captured, stop horizontal movement
+			velocity.x = 0
+			velocity.z = 0
 		
 		# Apply movement
 		move_and_slide()
-
-		if Input.is_action_just_pressed("throw"):
-			throw_ball.rpc()
 
 @rpc("any_peer", "call_local")
 func throw_ball():
