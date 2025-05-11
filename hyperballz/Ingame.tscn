@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://c45q1llhtbclb"]
 
-[ext_resource type="Script" uid="uid://eyu1l6dfoc61" path="res://pregame.gd" id="1_wbfu4"]
+[ext_resource type="Script" uid="uid://d3hcwrt74j2l6" path="res://ingame.gd" id="1_xc1it"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6ubv3"]
-albedo_color = Color(0.6, 0.6, 0.6, 1)
+albedo_color = Color(1, 0.342403, 0.284525, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_6ubv3"]
 material = SubResource("StandardMaterial3D_6ubv3")
@@ -13,7 +13,7 @@ size = Vector2(100, 100)
 size = Vector3(100, 0.1, 100)
 
 [node name="Game" type="Node3D"]
-script = ExtResource("1_wbfu4")
+script = ExtResource("1_xc1it")
 
 [node name="Ground" type="StaticBody3D" parent="."]
 
