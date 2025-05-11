@@ -1,4 +1,6 @@
-# ingame.gd
+# WIP -- ingame.gd & Ingame.tscn are test files and are meant 
+# to be replaced when the new map is created
+
 extends Node3D
 
 @onready var multiplayer_spawner = $Players/MultiplayerSpawner
