@@ -61,6 +61,7 @@ layout_mode = 2
 size_flags_horizontal = 4
 text = "Exit Program"
 
+[connection signal="join_pressed" from="." to="." method="_on_join_pressed"]
 [connection signal="pressed" from="GridContainer/Join" to="." method="_on_join_pressed"]
 [connection signal="pressed" from="GridContainer/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="GridContainer/Test" to="." method="_on_test_pressed"]
