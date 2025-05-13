@@ -1,3 +1,5 @@
+; Ball.tscn
+
 [gd_scene load_steps=6 format=3 uid="uid://cftgq7vqla7b0"]
 
 [ext_resource type="Script" uid="uid://cxyw1gmne2ya8" path="res://ball.gd" id="1_gk6bx"]

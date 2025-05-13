@@ -1,3 +1,5 @@
+;HomeScreen.tscn
+
 [gd_scene load_steps=2 format=3 uid="uid://debqydgnr51wt"]
 
 [ext_resource type="Script" uid="uid://clor0xnhydlf4" path="res://home_screen.gd" id="1_bu243"]

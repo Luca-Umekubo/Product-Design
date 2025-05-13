@@ -1,3 +1,5 @@
+
+
 extends CharacterBody3D
 
 @onready var camera = $Camera3D
@@ -57,11 +59,3 @@ func throw_ball():
 		"velocity": spawn_velocity
 	}
 	get_tree().get_root().get_node("Game/Balls/BallSpawner").spawn(ball_data)
-
-@rpc("authority")
-func respawn():
-	if is_multiplayer_authority():
-		var spawn_points = get_tree().get_nodes_in_group("spawn_points")
-		if spawn_points.size() > 0:
-			var spawn_point = spawn_points[randi() % spawn_points.size()]
-			position = spawn_point.global_position

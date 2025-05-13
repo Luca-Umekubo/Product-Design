@@ -1,3 +1,4 @@
+#pregame.gd
 extends Node3D
 
 @onready var multiplayer_spawner = $Players/MultiplayerSpawner
@@ -50,9 +51,11 @@ func _input(event):
 
 func _on_start_button_pressed():
 	if multiplayer.is_server():
+		# Convert PackedInt32Array to Array and combine with host's peer ID
+		Network.player_peers = [multiplayer.get_unique_id()] + Array(multiplayer.get_peers())
 		start_game.rpc()
 
-#WIP -- change the game to the correct file
+#WIP -- replace with correct map
 @rpc("authority", "call_local")
 func start_game():
 	get_tree().change_scene_to_file("res://Ingame.tscn")

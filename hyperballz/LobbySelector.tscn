@@ -1,3 +1,5 @@
+; LobbySelector.tscn
+
 [gd_scene load_steps=2 format=3 uid="uid://8rxutvr03lit"]
 
 [ext_resource type="Script" uid="uid://cjys7pw86u3uc" path="res://lobby_selector.gd" id="1_llmbd"]

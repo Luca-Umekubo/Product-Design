@@ -1,3 +1,5 @@
+; Ingame.tscn
+
 [gd_scene load_steps=5 format=3 uid="uid://c45q1llhtbclb"]
 
 [ext_resource type="Script" uid="uid://d3hcwrt74j2l6" path="res://ingame.gd" id="1_xc1it"]
@@ -52,3 +54,7 @@ spawn_path = NodePath("..")
 [node name="BallSpawner" type="MultiplayerSpawner" parent="Balls"]
 _spawnable_scenes = PackedStringArray("uid://cftgq7vqla7b0")
 spawn_path = NodePath("..")
+
+[node name="Spectators" type="Node3D" parent="."]
+
+[node name="SpectatorSpawner" type="MultiplayerSpawner" parent="Spectators"]

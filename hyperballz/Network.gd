@@ -1,6 +1,9 @@
+#Network.gd
+
 extends Node
 
 var peer = ENetMultiplayerPeer.new()
+var player_peers = []
 
 func start_server(port: int, max_clients: int):
 	peer.create_server(port, max_clients)
