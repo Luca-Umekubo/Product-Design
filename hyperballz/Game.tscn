@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://c45q1llhtbclb"]
+[gd_scene load_steps=6 format=3 uid="uid://c45q1llhtbclb"]
 
 [ext_resource type="Script" uid="uid://eyu1l6dfoc61" path="res://game.gd" id="1_wbfu4"]
+[ext_resource type="PackedScene" uid="uid://11mdl1be4krc" path="res://GameUI.tscn" id="2_xkndl"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6ubv3"]
 albedo_color = Color(0.6, 0.6, 0.6, 1)
@@ -52,3 +53,9 @@ spawn_path = NodePath("..")
 [node name="BallSpawner" type="MultiplayerSpawner" parent="Balls"]
 _spawnable_scenes = PackedStringArray("uid://cftgq7vqla7b0")
 spawn_path = NodePath("..")
+
+[node name="GameTimer" type="Timer" parent="."]
+
+[node name="GameUI" type="Node" parent="."]
+
+[node name="Control" parent="GameUI" instance=ExtResource("2_xkndl")]
