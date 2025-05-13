@@ -18,16 +18,16 @@ size = Vector2(50, 100)
 size = Vector3(0.2, 0.1, 100)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_83vuo"]
-size = Vector3(100, 2, 0.5)
+size = Vector3(100, 20, 0.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_14njy"]
-size = Vector3(100, 2, 0.5)
+size = Vector3(100, 20, 0.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_revce"]
-size = Vector3(0.5, 2, 100)
+size = Vector3(0.5, 20, 100)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mbpwk"]
-size = Vector3(0.5, 2, 100)
+size = Vector3(0.5, 20, 100)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_83vuo"]
 size = Vector2(100, 100)
