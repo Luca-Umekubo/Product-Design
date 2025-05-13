@@ -5,29 +5,29 @@ albedo_color = Color(0.752941, 0.223529, 0.168627, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_14njy"]
 material = SubResource("StandardMaterial3D_83vuo")
-size = Vector2(10, 20)
+size = Vector2(50, 100)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_14njy"]
 albedo_color = Color(0.160784, 0.501961, 0.72549, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_mbpwk"]
 material = SubResource("StandardMaterial3D_14njy")
-size = Vector2(10, 20)
+size = Vector2(50, 100)
 
 [sub_resource type="BoxMesh" id="BoxMesh_vxv5f"]
 size = Vector3(0.2, 0.1, 20)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_83vuo"]
-size = Vector3(20, 2, 0.5)
+size = Vector3(100, 2, 0.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_14njy"]
-size = Vector3(20, 2, 0.5)
+size = Vector3(100, 2, 0.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_revce"]
-size = Vector3(0.5, 2, 20)
+size = Vector3(0.5, 2, 100)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mbpwk"]
-size = Vector3(0.5, 2, 20)
+size = Vector3(0.5, 2, 100)
 
 [node name="Court3D" type="Node3D"]
 
@@ -36,7 +36,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 0)
 mesh = SubResource("PlaneMesh_14njy")
 
 [node name="FloorRight" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 0)
 mesh = SubResource("PlaneMesh_mbpwk")
 
 [node name="Border" type="MeshInstance3D" parent="."]
@@ -47,24 +47,22 @@ mesh = SubResource("BoxMesh_vxv5f")
 transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 0, 0)
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 15, 20)
+transform = Transform3D(1, 0, 0, 0, 0.819152, 0.573576, 0, -0.573576, 0.819152, 20, 30, 65)
 
 [node name="BorderWalls" type="StaticBody3D" parent="."]
 
 [node name="North" type="CollisionShape3D" parent="BorderWalls"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 50)
 shape = SubResource("BoxShape3D_83vuo")
 
 [node name="South" type="CollisionShape3D" parent="BorderWalls"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -50)
 shape = SubResource("BoxShape3D_14njy")
 
 [node name="East" type="CollisionShape3D" parent="BorderWalls"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0, 0)
 shape = SubResource("BoxShape3D_revce")
 
 [node name="West" type="CollisionShape3D" parent="BorderWalls"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 0, 0)
 shape = SubResource("BoxShape3D_mbpwk")
-
-[node name="DirectionalLight3D2" type="DirectionalLight3D" parent="."]
