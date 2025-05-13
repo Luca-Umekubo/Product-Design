@@ -11,17 +11,26 @@ func _ready():
 	# Ensure spawners are server-authoritative
 	multiplayer_spawner.set_multiplayer_authority(1)
 	ball_spawner.set_multiplayer_authority(1)
+	
 	if multiplayer.is_server():
-		team_assignments[multiplayer.get_unique_id()] = 0
-		var host_data = {"peer_id": multiplayer.get_unique_id(), "team": 0}
-		print("InGame: Spawning host with data: ", host_data)
-		multiplayer_spawner.spawn(host_data)
+		# Spawn all connected peers, including the host
+		var peer_ids = multiplayer.get_peers()
+		peer_ids.append(multiplayer.get_unique_id())  # Include the server itself
+		for i in peer_ids.size():
+			var peer_id = peer_ids[i]
+			# Assign teams (e.g., host to Team A, others to Team B)
+			var team = 0 if peer_id == multiplayer.get_unique_id() else 1
+			team_assignments[peer_id] = team
+			var player_data = {"peer_id": peer_id, "team": team}
+			print("InGame: Spawning player with data: ", player_data)
+			multiplayer_spawner.spawn(player_data)
 
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 
 func _on_peer_connected(id):
 	if multiplayer.is_server():
+		# Handle peers that connect after the game has started
 		await get_tree().create_timer(0.5).timeout
 		team_assignments[id] = 1
 		var client_data = {"peer_id": id, "team": 1}
