@@ -49,7 +49,7 @@ func _input(event):
 		camera.rotation.x = clamp(camera.rotation.x, -PI/2, PI/2)
 
 func _physics_process(delta):
-    if is_multiplayer_authority(): 
+	if is_multiplayer_authority(): 
 		# Handle gravity
 		if not is_on_floor():
 			velocity.y += gravity * delta
