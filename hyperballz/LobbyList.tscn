@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cvwm5wlc4vybs"]
 
-[ext_resource type="Script" uid="uid://bk5k35m6wrcxv" path="res://scenes/LobbyList.gd" id="1_cd737"]
+[ext_resource type="Script" uid="uid://bk5k35m6wrcxv" path="res://LobbyList.gd" id="1_cd737"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -45,3 +45,5 @@ text = "Lobby List"
 custom_minimum_size = Vector2(400, 200)
 layout_mode = 2
 text = "Use Code"
+
+[connection signal="pressed" from="GridContainer/Lobby List" to="." method="_on_lobby_list_pressed"]
