@@ -1,6 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://c45q1llhtbclb"]
+[gd_scene load_steps=8 format=3 uid="uid://c45q1llhtbclb"]
 
 [ext_resource type="Script" uid="uid://eyu1l6dfoc61" path="res://game.gd" id="1_wbfu4"]
+[ext_resource type="PackedScene" uid="uid://bq1anego8lif4" path="res://TimerUI.tscn" id="2_xkndl"]
+[ext_resource type="Script" uid="uid://dgoppc7o7oget" path="res://timer_sync.gd" id="3_u44n3"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6ubv3"]
 albedo_color = Color(0.6, 0.6, 0.6, 1)
@@ -11,6 +13,11 @@ size = Vector2(100, 100)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wbfu4"]
 size = Vector3(100, 0.1, 100)
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_u44n3"]
+properties/0/path = NodePath(".:time_left")
+properties/0/spawn = true
+properties/0/replication_mode = 1
 
 [node name="Game" type="Node3D"]
 script = ExtResource("1_wbfu4")
@@ -52,3 +59,32 @@ spawn_path = NodePath("..")
 [node name="BallSpawner" type="MultiplayerSpawner" parent="Balls"]
 _spawnable_scenes = PackedStringArray("uid://cftgq7vqla7b0")
 spawn_path = NodePath("..")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="StartButton" type="Button" parent="CanvasLayer"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -48.0
+offset_top = -31.0
+offset_right = 48.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Start Game"
+
+[connection signal="pressed" from="CanvasLayer/StartButton" to="." method="_on_start_button_pressed"]
+
+[node name="GameTimer" type="Timer" parent="."]
+
+[node name="GameUI" type="Node" parent="."]
+
+[node name="Control" parent="GameUI" instance=ExtResource("2_xkndl")]
+
+[node name="TimerSync" type="Node" parent="."]
+script = ExtResource("3_u44n3")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="TimerSync"]
+replication_config = SubResource("SceneReplicationConfig_u44n3")

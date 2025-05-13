@@ -5,4 +5,4 @@ func _on_host_pressed():
 	get_tree().change_scene_to_file("res://Game.tscn")
 
 func _on_join_pressed():
-	get_tree().change_scene_to_file("res://LobbySelector.tscn")
+	get_tree().change_scene_to_file("res://LobbyList.tscn")
