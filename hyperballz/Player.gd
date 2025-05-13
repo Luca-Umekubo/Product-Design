@@ -4,6 +4,8 @@ extends CharacterBody3D
 @onready var camera = $Camera3D
 var speed = 5.0
 var sprint_speed = 8.0
+var roll_speed = 10.0  # Speed during roll
+var roll_duration = 0.5  # Will be set dynamically to animation length
 var mouse_sensitivity = 0.005
 var gravity = -9.8
 var jump_strength = 4.5
@@ -11,6 +13,9 @@ var is_jumping = false
 var is_dancing = false
 var is_moving_backward = false
 var is_throwing = false
+var is_rolling = false
+var roll_timer = 0.0
+var roll_direction = Vector3.ZERO
 
 # Networked animation state
 var current_animation: String = "Idle" : set = _set_current_animation
@@ -24,6 +29,9 @@ func _ready():
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	# Initialize animation for all clients
 	_set_current_animation("Idle")
+	# Set roll_duration to the length of the Roll animation
+	if animation_player.has_animation("Roll"):
+		roll_duration = animation_player.get_animation("Roll").length
 
 func _input(event):
 	if is_multiplayer_authority() and event is InputEventMouseMotion:
@@ -47,7 +55,7 @@ func _physics_process(delta):
 		input_dir = input_dir.normalized()
 
 		# Handle dancing
-		if Input.is_action_just_pressed("dance") and not is_jumping:
+		if Input.is_action_just_pressed("dance") and not is_jumping and not is_rolling:
 			is_dancing = true
 			update_animation.rpc("Dance", false, 1.0)
 
@@ -55,12 +63,37 @@ func _physics_process(delta):
 		if is_dancing and input_dir != Vector3.ZERO:
 			is_dancing = false
 
+		# Handle rolling
+		if Input.is_action_just_pressed("roll_input") and is_on_floor() and not is_jumping and not is_dancing and not is_throwing:
+			start_roll(input_dir)
+
+		# Update roll timer
+		if is_rolling:
+			roll_timer -= delta
+			# Only end rolling when both timer expires and animation finishes
+			if roll_timer <= 0 and not animation_player.is_playing() and current_animation == "Roll":
+				is_rolling = false
+				# Return to previous animation state after roll
+				var current_input_dir = Vector3.ZERO
+				current_input_dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+				current_input_dir.z = Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
+				current_input_dir = current_input_dir.normalized()
+				if current_input_dir != Vector3.ZERO:
+					if Input.is_action_pressed("sprint"):
+						update_animation.rpc("Sprint", current_input_dir.z > 0, 1.0)
+					else:
+						update_animation.rpc("Walk", current_input_dir.z > 0, 1.0)
+				else:
+					update_animation.rpc("Idle", false, 1.0)
+
 		# Calculate movement direction and speed
 		var current_speed = speed
-		if Input.is_action_pressed("sprint") and input_dir != Vector3.ZERO and not is_jumping and not is_dancing:
+		if Input.is_action_pressed("sprint") and input_dir != Vector3.ZERO and not is_jumping and not is_dancing and not is_rolling:
 			current_speed = sprint_speed
 
 		var move_direction = input_dir * current_speed
+		if is_rolling:
+			move_direction = roll_direction * roll_speed
 		move_direction = move_direction.rotated(Vector3.UP, rotation.y)
 
 		# Update velocity (no movement if dancing)
@@ -72,7 +105,7 @@ func _physics_process(delta):
 			velocity.z = 0
 
 		# Handle jumping
-		if Input.is_action_just_pressed("jump") and is_on_floor() and not is_dancing:
+		if Input.is_action_just_pressed("jump") and is_on_floor() and not is_dancing and not is_rolling:
 			velocity.y = jump_strength
 			is_jumping = true
 			update_animation.rpc("Jump_Start", false, 1.0)
@@ -83,6 +116,9 @@ func _physics_process(delta):
 		# Animation logic (authoritative client only)
 		if is_throwing:
 			pass  # Let the throw animation sequence handle itself
+		elif is_rolling:
+			if current_animation != "Roll":
+				update_animation.rpc("Roll", false, 1.0)
 		elif is_dancing:
 			if current_animation != "Dance":
 				update_animation.rpc("Dance", false, 1.0)
@@ -110,7 +146,7 @@ func _physics_process(delta):
 					update_animation.rpc("Idle", false, 1.0)
 
 	# Handle throwing animation sequence
-	if Input.is_action_just_pressed("throw") and not is_throwing:
+	if Input.is_action_just_pressed("throw") and not is_throwing and not is_rolling:
 		start_throw_animation()
 
 # RPC to update animation state across all clients
@@ -136,16 +172,25 @@ func _set_current_animation(value: String):
 	if is_inside_tree():
 		_apply_animation()
 
+func start_roll(input_dir: Vector3):
+	if is_multiplayer_authority():
+		is_rolling = true
+		roll_timer = roll_duration
+		# Use input direction or forward if no input
+		roll_direction = input_dir if input_dir != Vector3.ZERO else -transform.basis.z
+		roll_direction = roll_direction.normalized()
+		update_animation.rpc("Roll", false, 1.0)
+
 func start_throw_animation():
-	if is_multiplayer_authority() and not is_jumping and not is_dancing:
+	if is_multiplayer_authority() and not is_jumping and not is_dancing and not is_rolling:
 		is_throwing = true
 		# Play Enter animation at double speed
 		update_animation.rpc("Spell_Simple_Enter", false, 2.0)
 		await animation_player.animation_finished
 		# Play Shoot animation at double speed and trigger throw
 		update_animation.rpc("Spell_Simple_Shoot", false, 2.0)
-		if multiplayer.is_server():
-			throw_ball()
+		# Request the server to spawn the ball
+		spawn_ball.rpc_id(1) # Call the server (peer ID 1 is the server in Godot multiplayer)
 		await animation_player.animation_finished
 		# Play Exit animation at double speed
 		update_animation.rpc("Spell_Simple_Exit", false, 2.0)
@@ -165,10 +210,10 @@ func start_throw_animation():
 				update_animation.rpc("Idle", false, 1.0)
 		is_throwing = false
 
-func throw_ball():
+@rpc("any_peer", "call_local", "reliable")
+func spawn_ball():
 	if not multiplayer.is_server():
-		print("Not server, skipping ball spawn")
-		return
+		return  # Only the server spawns the ball
 	var ball_spawner = get_tree().get_root().get_node("Game/Balls/BallSpawner")
 	if ball_spawner:
 		var spawn_position = $Camera3D/BallSpawnPoint.global_position
