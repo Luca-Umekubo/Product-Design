@@ -13,6 +13,9 @@ func update_timer_display(time_left: float):
 	timer_label.text = "%d:%02d" % [minutes, seconds]
 
 func _process(_delta):
-	if get_tree().get_root().has_node("Game"):
-		var time_left = get_tree().get_root().get_node("Game/GameTimer").time_left
-		update_timer_display(time_left)
+	var timer_sync = get_node("../../TimerSync")
+	if timer_sync:
+		var time_left = timer_sync.time_left
+		var minutes = int(time_left / 60)
+		var seconds = int(time_left) % 60
+		timer_label.text = "%d:%02d" % [minutes, seconds]

@@ -3,6 +3,9 @@ extends Node3D
 @onready var multiplayer_spawner = $Players/MultiplayerSpawner
 @onready var ball_spawner = $Balls/BallSpawner
 @onready var game_timer = $GameTimer
+@onready var timer_sync = $TimerSync
+var sync_interval = 0.5  # Update every 0.5 seconds
+var time_since_last_sync = 0.0
 var player_lives = {}  # Tracks lives for each player (peer_id: lives)
 
 var game_active = false
@@ -90,3 +93,10 @@ func player_hit(player_id: String):
 					player_node.set_spectator_mode.rpc()
 				else:
 					player_node.respawn.rpc()
+
+func _process(delta):
+	if multiplayer.is_server() and game_active:
+		time_since_last_sync += delta
+		if time_since_last_sync >= sync_interval:
+			timer_sync.time_left = game_timer.time_left
+			time_since_last_sync = 0.0
