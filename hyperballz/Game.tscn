@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://c45q1llhtbclb"]
+[gd_scene load_steps=5 format=3 uid="uid://5ochtelyyscd"]
 
 [ext_resource type="Script" uid="uid://eyu1l6dfoc61" path="res://game.gd" id="1_wbfu4"]
 
@@ -52,3 +52,20 @@ spawn_path = NodePath("..")
 [node name="BallSpawner" type="MultiplayerSpawner" parent="Balls"]
 _spawnable_scenes = PackedStringArray("uid://cftgq7vqla7b0")
 spawn_path = NodePath("..")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="StartButton" type="Button" parent="CanvasLayer"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -48.0
+offset_top = -31.0
+offset_right = 48.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Start Game"
+
+[connection signal="pressed" from="CanvasLayer/StartButton" to="." method="_on_start_button_pressed"]
