@@ -1,22 +1,12 @@
-[gd_scene load_steps=3 format=3 uid="uid://c45q1llhtbclb"]
+[gd_scene load_steps=6 format=3 uid="uid://c45q1llhtbclb"]
 
 [ext_resource type="Script" uid="uid://eyu1l6dfoc61" path="res://game.gd" id="1_wbfu4"]
-[ext_resource type="PackedScene" uid="uid://bq1anego8lif4" path="res://TimerUI.tscn" id="2_xkndl"]
-[ext_resource type="Script" uid="uid://dgoppc7o7oget" path="res://timer_sync.gd" id="3_u44n3"]
 [ext_resource type="PackedScene" uid="uid://q8lqy6o47g3d" path="res://court_3d.tscn" id="2_xkndl"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6ubv3"]
-albedo_color = Color(0.6, 0.6, 0.6, 1)
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_6ubv3"]
-material = SubResource("StandardMaterial3D_6ubv3")
-size = Vector2(100, 100)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_wbfu4"]
-size = Vector3(100, 0.1, 100)
+[ext_resource type="PackedScene" uid="uid://bq1anego8lif4" path="res://TimerUI.tscn" id="3_u44n3"]
+[ext_resource type="Script" uid="uid://dgoppc7o7oget" path="res://timer_sync.gd" id="4_sb48q"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_u44n3"]
-properties/0/path = NodePath(".:time_left")
+properties/0/path = NodePath("TimerSync:time_left")
 properties/0/spawn = true
 properties/0/replication_mode = 1
 
@@ -51,3 +41,15 @@ _spawnable_scenes = PackedStringArray("uid://cftgq7vqla7b0")
 spawn_path = NodePath("..")
 
 [node name="Court3D" parent="." instance=ExtResource("2_xkndl")]
+
+[node name="GameUI" type="Node" parent="."]
+
+[node name="Control" parent="GameUI" instance=ExtResource("3_u44n3")]
+
+[node name="TimerSync" type="Node" parent="."]
+script = ExtResource("4_sb48q")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="TimerSync"]
+replication_config = SubResource("SceneReplicationConfig_u44n3")
+
+[node name="GameTimer" type="Timer" parent="."]

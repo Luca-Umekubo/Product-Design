@@ -2,7 +2,6 @@ extends Node3D
 
 @onready var multiplayer_spawner = $Players/MultiplayerSpawner
 @onready var ball_spawner = $Balls/BallSpawner
-@onready var start_button = $CanvasLayer/StartButton
 @onready var game_timer = $GameTimer
 @onready var timer_sync = $TimerSync
 var sync_interval = 0.5  # Update every 0.5 seconds
@@ -14,7 +13,6 @@ var game_active = false
 func _ready():
 	multiplayer_spawner.spawn_function = _spawn_player
 	ball_spawner.spawn_function = _spawn_ball
-	start_button.visible = multiplayer.is_server()
 	if multiplayer.is_server():
 		# Initialize lives for the host
 		player_lives[multiplayer.get_unique_id()] = 2
@@ -25,8 +23,6 @@ func _ready():
 		game_timer.timeout.connect(_on_game_timer_timeout)
 		# Start the timer for testing
 		start_game_timer()
-		if not start_button.pressed.is_connected(_on_start_button_pressed):
-			start_button.pressed.connect(_on_start_button_pressed)
 		# Spawn host
 		var host_data = {"peer_id": multiplayer.get_unique_id()}
 		print("Game: Spawning host with data: ", host_data)

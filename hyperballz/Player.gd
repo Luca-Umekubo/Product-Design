@@ -17,6 +17,7 @@ var is_rolling = false
 var roll_timer = 0.0
 var roll_direction = Vector3.ZERO
 var lives = 2  # Player starts with 2 lives
+var is_spectator = false
 
 # Optional reference to a hit material for visual feedback
 var hit_material = null
@@ -31,7 +32,6 @@ func _ready():
 	if is_multiplayer_authority():
 		camera.make_current()
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-		is_mouse_captured = true
 		print("Player ", name, " authority: ", get_multiplayer_authority(), " camera active: ", camera.is_current())
 	else:
 		camera.current = false
@@ -55,10 +55,8 @@ func _input(event):
 		camera.rotation.x = clamp(camera.rotation.x, -PI/2, PI/2)
 	
 	# Prevent throwing balls in spectator mode
-	if is_spectator:
-		return
 	if event.is_action_pressed("throw"):
-		throw_ball.rpc()
+		spawn_ball().rpc()
 
 func _physics_process(delta):
 	if is_multiplayer_authority(): 
