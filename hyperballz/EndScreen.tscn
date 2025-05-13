@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c1hefu2hu2scu"]
 
-[ext_resource type="Script" uid="uid://djfp6v5a27ll5" path="res://scenes/EndScreen.gd" id="1_qfurf"]
+[ext_resource type="Script" uid="uid://djfp6v5a27ll5" path="res://EndScreen.gd" id="1_qfurf"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -45,3 +45,6 @@ text = "Leave Game"
 custom_minimum_size = Vector2(400, 200)
 layout_mode = 2
 text = "Play Again"
+
+[connection signal="pressed" from="GridContainer/Leave Game" to="." method="_on_leave_game_pressed"]
+[connection signal="pressed" from="GridContainer/Play Again" to="." method="_on_play_again_pressed"]

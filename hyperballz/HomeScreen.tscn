@@ -1,10 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://g3pvsbw6kejk"]
+[gd_scene load_steps=3 format=3 uid="uid://be58hb6slwrqa"]
 
 [ext_resource type="Script" uid="uid://clor0xnhydlf4" path="res://home_screen.gd" id="1_wmn14"]
 
 [sub_resource type="Theme" id="Theme_xvoux"]
 
-[node name="Control" type="Control"]
+[node name="Control3" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
