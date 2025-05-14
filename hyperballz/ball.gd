@@ -60,22 +60,32 @@ func _on_body_entered(body):
 		return
 		
 	if body.is_in_group("players"):
-		if linear_velocity.length() > 5.0:
-			# Notify server of hit instead of calling player RPC
-			get_tree().get_root().get_node("Game").player_hit(body.name)
-			
-			var bounce_direction = (global_position - body.global_position).normalized()
-			linear_velocity = bounce_direction * linear_velocity.length() * 0.7
-			linear_velocity.y += 2.0
-			
-			last_hit_player = body
-			
-			set_deferred("monitoring", false)
-			var timer = get_tree().create_timer(0.5)
-			timer.timeout.connect(func(): 
-				set_deferred("monitoring", true)
-				last_hit_player = null
-			)
+		var current_scene = get_tree().current_scene
+		if current_scene.name == "Lobby": # Adjust "Lobby" to match your scene name
+			if body.has_method("respawn"):
+				body.respawn.rpc()
+			else:
+				body.global_position = Vector3.ZERO # Adjust to your spawn point
+				body.linear_velocity = Vector3.ZERO
+			global_position = Vector3.ZERO # Adjust to dodgeball spawn point
+			linear_velocity = Vector3.ZERO
 		else:
-			var push_direction = (global_position - body.global_position).normalized()
-			apply_central_impulse(push_direction * 3.0)
+			if linear_velocity.length() > 5.0:
+				# Notify server of hit instead of calling player RPC
+				get_tree().get_root().get_node("Game").player_hit(body.name)
+				
+				var bounce_direction = (global_position - body.global_position).normalized()
+				linear_velocity = bounce_direction * linear_velocity.length() * 0.7
+				linear_velocity.y += 2.0
+				
+				last_hit_player = body
+				
+				set_deferred("monitoring", false)
+				var timer = get_tree().create_timer(0.5)
+				timer.timeout.connect(func(): 
+					set_deferred("monitoring", true)
+					last_hit_player = null
+				)
+			else:
+				var push_direction = (global_position - body.global_position).normalized()
+				apply_central_impulse(push_direction * 3.0)

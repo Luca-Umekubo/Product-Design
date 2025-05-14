@@ -1,6 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://e6t3um708wwn"]
+[gd_scene load_steps=5 format=3 uid="uid://cm4sm4atahvkc"]
 
-[ext_resource type="Script" uid="uid://bw0m3s0cluriw" path="res://in_game.gd" id="1_7pk7b"]
+[ext_resource type="Script" uid="uid://bw0m3s0cluriw" path="res://lobby.gd" id="1_gv8if"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6ubv3"]
 albedo_color = Color(0.6, 0.6, 0.6, 1)
@@ -12,8 +12,8 @@ size = Vector2(40, 80)
 [sub_resource type="BoxShape3D" id="BoxShape3D_wbfu4"]
 size = Vector3(40, 0.1, 80)
 
-[node name="InGame" type="Node3D"]
-script = ExtResource("1_7pk7b")
+[node name="Lobby" type="Node3D"]
+script = ExtResource("1_gv8if")
 
 [node name="Ground" type="StaticBody3D" parent="."]
 
@@ -52,3 +52,17 @@ spawn_path = NodePath("..")
 [node name="BallSpawner" type="MultiplayerSpawner" parent="Balls"]
 _spawnable_scenes = PackedStringArray("uid://cftgq7vqla7b0")
 spawn_path = NodePath("..")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Button" type="Button" parent="Control"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Start Game"
+
+[connection signal="pressed" from="Control/Button" to="." method="_on_start_button_pressed"]
