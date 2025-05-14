@@ -5,6 +5,7 @@ var respawn_timer = 0.0
 var max_respawn_time = 15.0
 var spawn_immunity_time = 0.2
 var last_hit_player = null
+var owner_id = -1  # Track the peer ID of the player who threw the ball
 
 func _ready():
 	body_entered.connect(_on_body_entered)
@@ -60,6 +61,10 @@ func _on_body_entered(body):
 		return
 		
 	if body.is_in_group("players"):
+		# Ignore collision if the body is the ball's owner
+		if body.name == str(owner_id):
+			return
+			
 		var current_scene = get_tree().current_scene
 		if current_scene.name == "Lobby": # Adjust "Lobby" to match your scene name
 			if body.has_method("respawn"):

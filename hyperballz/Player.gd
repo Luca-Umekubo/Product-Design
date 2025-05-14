@@ -279,7 +279,8 @@ func spawn_ball():
 	var spawn_velocity = spawn_direction * 10
 	var ball_data = {
 		"position": spawn_position,
-		"velocity": spawn_velocity
+		"velocity": spawn_velocity,
+		"owner_id": get_multiplayer_authority()  # Add the peer ID of the throwing player
 	}
 	var root = get_tree().get_root()
 	var ball_spawner_path = "Game/Balls/BallSpawner" if root.has_node("Game") else "Lobby/Balls/BallSpawner"

@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://c45q1llhtbclb"]
 
 [ext_resource type="Script" uid="uid://eyu1l6dfoc61" path="res://game.gd" id="1_wbfu4"]
-[ext_resource type="PackedScene" uid="uid://q8lqy6o47g3d" path="res://court_3d.tscn" id="2_xkndl"]
+[ext_resource type="PackedScene" path="res://court_3d.tscn" id="2_xkndl"]
 [ext_resource type="PackedScene" uid="uid://bq1anego8lif4" path="res://TimerUI.tscn" id="3_u44n3"]
 [ext_resource type="Script" uid="uid://dgoppc7o7oget" path="res://timer_sync.gd" id="4_sb48q"]
 

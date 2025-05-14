@@ -100,7 +100,9 @@ func _spawn_ball(data):
 	var ball = preload("res://Ball.tscn").instantiate()
 	ball.position = data["position"]
 	ball.linear_velocity = data["velocity"]
-	print("Game: Spawning ball at ", data["position"])
+	if data.has("owner_id"):
+		ball.owner_id = data["owner_id"]  # Set the ball's owner_id
+	print("Game: Spawning ball at ", data["position"], " with owner_id ", ball.owner_id)
 	return ball
 
 func player_hit(player_id: String):
