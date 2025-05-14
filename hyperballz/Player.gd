@@ -285,11 +285,15 @@ func spawn_ball(multiplier: float = 1.0):
 func update_lives(new_lives):
 	# Update lives locally; actual tracking is done on server
 	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
-		if hit_material != null and new_lives > 0:
-			$MeshInstance3D.material_override = hit_material
-			var timer = get_tree().create_timer(0.3)
-			timer.timeout.connect(func(): $MeshInstance3D.material_override = null)
-		print("Player ", name, " lives: ", new_lives)
+		lives -= 1
+		update_lives.rpc(lives)
+		if lives <= 0:
+			respawn()
+		else:
+			if hit_material != null:
+				$MeshInstance3D.material_override = hit_material
+				var timer = get_tree().create_timer(0.3)
+				timer.timeout.connect(func(): $MeshInstance3D.material_override = null)
 
 @rpc("call_local")
 func set_spectator_mode():
