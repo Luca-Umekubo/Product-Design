@@ -293,7 +293,8 @@ func set_spectator_mode():
 		collision_layer = 0
 		collision_mask = 0
 		# Hide player model
-		$MeshInstance3D.visible = false
+		var mannequin = get_node("AnimationLibrary_Godot_Standard/Rig/Skeleton3D/Mannequin")
+		mannequin.visible = false
 		# Ensure camera remains active
 		camera.current = true
 		print("Player ", name, " entered spectator mode")
@@ -309,6 +310,7 @@ func respawn():
 		# Reset collision and visibility
 		collision_layer = 1  # Restore default player layer
 		collision_mask = 2 | 3  # Collide with balls and environment
-		$MeshInstance3D.visible = true
+		var mannequin = get_node("AnimationLibrary_Godot_Standard/Rig/Skeleton3D/Mannequin")
+		mannequin.visible = true
 		is_spectator = false
 		print("Player ", name, " respawned")
