@@ -308,10 +308,6 @@ func set_spectator_mode():
 		# Ensure camera remains active
 		camera.current = true
 		print("Player ", name, " entered spectator mode")
-@rpc("authority", "call_local")
-func update_lives(new_lives):
-	lives = new_lives
-	print("Player ", name, " lives: ", lives)
 
 @rpc("call_local")
 func respawn():
