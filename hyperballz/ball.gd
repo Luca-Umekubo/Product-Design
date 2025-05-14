@@ -5,6 +5,14 @@ var respawn_timer = 0.0
 var max_respawn_time = 15.0
 var spawn_immunity_time = 0.2
 var last_hit_player = null
+var team = -1  # -1 means neutral, 0 or 1 for team-specific balls
+
+# Team colors (should match player team colors)
+var team_colors = {
+	-1: Color(1.0, 1.0, 1.0),  # White for neutral
+	0: Color(0.2, 0.5, 1.0),   # Blue for team 0
+	1: Color(1.0, 0.2, 0.2)    # Red for team 1
+}
 
 func _ready():
 	body_entered.connect(_on_body_entered)
@@ -30,6 +38,19 @@ func _ready():
 	set_deferred("monitoring", false)
 	var timer = get_tree().create_timer(spawn_immunity_time)
 	timer.timeout.connect(func(): set_deferred("monitoring", true))
+	
+	# Apply team-specific color if needed
+	if team >= 0:
+		apply_team_color()
+
+# Apply color based on team
+func apply_team_color():
+	if team in team_colors:
+		var ball_mesh = get_node_or_null("MeshInstance3D")
+		if ball_mesh:
+			var material = StandardMaterial3D.new()
+			material.albedo_color = team_colors[team]
+			ball_mesh.material_override = material
 
 func _physics_process(delta):
 	if is_active and linear_velocity.length() < 0.1:
@@ -70,7 +91,18 @@ func _on_body_entered(body):
 			global_position = Vector3.ZERO # Adjust to dodgeball spawn point
 			linear_velocity = Vector3.ZERO
 		else:
-			if linear_velocity.length() > 5.0:
+			# Check if the ball is hitting a player from the same team
+			var player_team = -1
+			if "team" in body:
+				player_team = body.team
+			
+			# Team mechanics - don't damage teammates if the ball has a team
+			if team >= 0 and team == player_team:
+				# Slight bounce off teammates
+				var bounce_direction = (global_position - body.global_position).normalized()
+				linear_velocity = bounce_direction * linear_velocity.length() * 0.5
+				linear_velocity.y += 1.0
+			elif linear_velocity.length() > 5.0:
 				# Notify server of hit instead of calling player RPC
 				get_tree().get_root().get_node("Game").player_hit(body.name)
 				
@@ -89,3 +121,8 @@ func _on_body_entered(body):
 			else:
 				var push_direction = (global_position - body.global_position).normalized()
 				apply_central_impulse(push_direction * 3.0)
+
+# Used when the ball is spawned with team data
+func set_team(team_id):
+	team = team_id
+	apply_team_color()

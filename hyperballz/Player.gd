@@ -18,9 +18,17 @@ var roll_timer = 0.0
 var roll_direction = Vector3.ZERO
 var lives = 2  # Player starts with 2 lives
 var is_spectator = false
+var team = 0  # Default team is 0
+
+# Team colors (can be customized)
+var team_colors = {
+	0: Color(0.2, 0.5, 1.0),  # Blue for team 0
+	1: Color(1.0, 0.2, 0.2)   # Red for team 1
+}
 
 # Optional reference to a hit material for visual feedback
 var hit_material = null
+var team_material = null
 
 # Networked animation state
 var current_animation: String = "Idle" : set = _set_current_animation
@@ -29,27 +37,70 @@ var animation_speed: float = 1.0
 
 func _ready():
 	add_to_group("players")
-	if is_multiplayer_authority():
+	
+	if get_multiplayer_authority() == multiplayer.get_unique_id():
 		camera.make_current()
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		print("Player ", name, " authority: ", get_multiplayer_authority(), " camera active: ", camera.is_current())
 	else:
 		camera.current = false
 		print("Player ", name, " non-authoritative, camera disabled")
+	
+	# Load materials
 	if ResourceLoader.exists("res://hit_material.tres"):
 		hit_material = load("res://hit_material.tres")
 	
-	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
+	if get_multiplayer_authority() == multiplayer.get_unique_id() and multiplayer.has_multiplayer_peer():
 		camera.current = true
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		
+		# Request team information from the server
+		request_team_info.rpc_id(1, multiplayer.get_unique_id())
+	
 	# Initialize animation for all clients
 	_set_current_animation("Idle")
+	
 	# Set roll_duration to the length of the Roll animation
 	if animation_player.has_animation("Roll"):
 		roll_duration = animation_player.get_animation("Roll").length
 
+# Request team info from the server
+@rpc("any_peer")
+func request_team_info(peer_id):
+	if multiplayer.is_server():
+		var game = get_tree().get_root().get_node_or_null("Game")
+		if game and game.team_assignments.has(peer_id):
+			var assigned_team = game.team_assignments[peer_id]
+			set_team.rpc_id(peer_id, assigned_team)
+
+# Set the team for this player (called by server)
+@rpc("authority", "call_local")
+func set_team(team_id):
+	team = team_id
+	print("Player ", name, " is on team ", team)
+	
+	# Apply team visual indicator
+	apply_team_visuals()
+
+# Apply team-specific visual indicators
+func apply_team_visuals():
+	var mannequin = get_node("AnimationLibrary_Godot_Standard/Rig/Skeleton3D/Mannequin")
+	if mannequin:
+		# Create a new material if needed
+		if not team_material:
+			# Clone the existing material if possible
+			if mannequin.get_surface_override_material(0):
+				team_material = mannequin.get_surface_override_material(0).duplicate()
+			else:
+				team_material = StandardMaterial3D.new()
+		
+		# Set the team color
+		if team_colors.has(team):
+			team_material.albedo_color = team_colors[team]
+			mannequin.set_surface_override_material(0, team_material)
+
 func _input(event):
-	if is_multiplayer_authority():
+	if get_multiplayer_authority() == multiplayer.get_unique_id():
 		# Toggle mouse mode and movement on Escape key press
 		if event is InputEventKey and event.is_action_pressed("ui_cancel"):
 			if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
@@ -72,7 +123,7 @@ func _input(event):
 		start_throw_animation()
 
 func _physics_process(delta):
-	if is_multiplayer_authority(): 
+	if get_multiplayer_authority() == multiplayer.get_unique_id(): 
 		# Handle gravity
 		if not is_on_floor():
 			velocity.y += gravity * delta
@@ -212,14 +263,14 @@ func _apply_animation():
 	else:
 		animation_player.play(current_animation, -1, animation_speed)
 
-# Setter for current_animation to ensure it’s applied
+# Setter for current_animation to ensure it's applied
 func _set_current_animation(value: String):
 	current_animation = value
 	if is_inside_tree():
 		_apply_animation()
 
 func start_roll(input_dir: Vector3):
-	if is_multiplayer_authority():
+	if get_multiplayer_authority() == multiplayer.get_unique_id():
 		is_rolling = true
 		roll_timer = roll_duration
 		# Use input direction or forward if no input
@@ -228,7 +279,7 @@ func start_roll(input_dir: Vector3):
 		update_animation.rpc("Roll", false, 1.0)
 
 func start_throw_animation():
-	if is_multiplayer_authority() and not is_jumping and not is_dancing and not is_rolling:
+	if get_multiplayer_authority() == multiplayer.get_unique_id() and not is_jumping and not is_dancing and not is_rolling:
 		is_throwing = true
 		# Play Enter animation at double speed
 		update_animation.rpc("Spell_Simple_Enter", false, 2.0)
@@ -242,7 +293,7 @@ func start_throw_animation():
 		update_animation.rpc("Spell_Simple_Exit", false, 2.0)
 		await animation_player.animation_finished
 		# Return to previous animation
-		if is_multiplayer_authority():
+		if get_multiplayer_authority() == multiplayer.get_unique_id():
 			var input_dir = Vector3.ZERO
 			input_dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
 			input_dir.z = Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
@@ -279,7 +330,8 @@ func spawn_ball():
 	var spawn_velocity = spawn_direction * 10
 	var ball_data = {
 		"position": spawn_position,
-		"velocity": spawn_velocity
+		"velocity": spawn_velocity,
+		"team": team  # Include the team info for potential team-based ball mechanics
 	}
 	var root = get_tree().get_root()
 	var ball_spawner_path = "Game/Balls/BallSpawner" if root.has_node("Game") else "Lobby/Balls/BallSpawner"
@@ -291,7 +343,7 @@ func spawn_ball():
 @rpc("call_local")
 func update_lives(new_lives):
 	# Update lives locally; actual tracking is done on server
-	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
+	if multiplayer.has_multiplayer_peer() and get_multiplayer_authority() == multiplayer.get_unique_id():
 		if hit_material != null and new_lives > 0:
 			$MeshInstance3D.material_override = hit_material
 			var timer = get_tree().create_timer(0.3)
@@ -300,7 +352,7 @@ func update_lives(new_lives):
 
 @rpc("call_local")
 func set_spectator_mode():
-	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
+	if multiplayer.has_multiplayer_peer() and get_multiplayer_authority() == multiplayer.get_unique_id():
 		is_spectator = true
 		# Disable collisions
 		collision_layer = 0
@@ -314,16 +366,23 @@ func set_spectator_mode():
 
 @rpc("call_local")
 func respawn():
-	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
-		var spawn_points = get_tree().get_nodes_in_group("spawn_points")
+	if multiplayer.has_multiplayer_peer() and get_multiplayer_authority() == multiplayer.get_unique_id():
+		var team_spawn_points = get_tree().get_nodes_in_group("team" + str(team) + "_spawn")
+		var spawn_points = team_spawn_points
+		
+		# Fall back to generic spawn points if team-specific ones aren't found
+		if spawn_points.size() == 0:
+			spawn_points = get_tree().get_nodes_in_group("spawn_points")
+			
 		if spawn_points.size() > 0:
 			var spawn_point = spawn_points[randi() % spawn_points.size()]
 			position = spawn_point.global_position
 			update_animation.rpc("Idle", false, 1.0)
+		
 		# Reset collision and visibility
 		collision_layer = 1  # Restore default player layer
 		collision_mask = 2 | 3  # Collide with balls and environment
 		var mannequin = get_node("AnimationLibrary_Godot_Standard/Rig/Skeleton3D/Mannequin")
 		mannequin.visible = true
 		is_spectator = false
-		print("Player ", name, " respawned")
+		print("Player ", name, " respawned at team ", team, " spawn point")
