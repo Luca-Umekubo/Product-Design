@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://dgoppc7o7oget" path="res://timer_sync.gd" id="4_sb48q"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_u44n3"]
-properties/0/path = NodePath("TimerSync:time_left")
+properties/0/path = NodePath(".:time_left")
 properties/0/spawn = true
 properties/0/replication_mode = 1
 
