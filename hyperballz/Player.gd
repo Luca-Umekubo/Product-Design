@@ -55,8 +55,8 @@ func _input(event):
 		camera.rotation.x = clamp(camera.rotation.x, -PI/2, PI/2)
 	
 	# Prevent throwing balls in spectator mode
-	if event.is_action_pressed("throw"):
-		spawn_ball().rpc()
+	if event.is_action_pressed("throw") and not is_spectator and not is_throwing and not is_rolling:
+		start_throw_animation()
 
 func _physics_process(delta):
 	if is_multiplayer_authority(): 
@@ -182,10 +182,6 @@ func _physics_process(delta):
 				if current_animation != "Idle":
 					update_animation.rpc("Idle", false, 1.0)
 
-	# Handle throwing animation sequence
-	if Input.is_action_just_pressed("throw") and not is_throwing and not is_rolling:
-		start_throw_animation()
-
 # RPC to update animation state across all clients
 @rpc("any_peer", "call_local", "reliable")
 func update_animation(anim_name: String, backward: bool, speed: float):
@@ -274,7 +270,10 @@ func spawn_ball():
 	}
 	var root = get_tree().get_root()
 	var ball_spawner_path = "Game/Balls/BallSpawner" if root.has_node("Game") else "InGame/Balls/BallSpawner"
-	root.get_node(ball_spawner_path).spawn(ball_data)
+	if root.has_node(ball_spawner_path):
+		root.get_node(ball_spawner_path).spawn(ball_data)
+	else:
+		push_error("BallSpawner not found at path: " + ball_spawner_path)
 
 @rpc("call_local")
 func update_lives(new_lives):
