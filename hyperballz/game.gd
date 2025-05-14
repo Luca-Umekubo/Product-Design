@@ -13,24 +13,28 @@ var game_active = false
 func _ready():
 	multiplayer_spawner.spawn_function = _spawn_player
 	ball_spawner.spawn_function = _spawn_ball
+	multiplayer_spawner.set_multiplayer_authority(1)
+	ball_spawner.set_multiplayer_authority(1)
+	
 	if multiplayer.is_server():
-		# Initialize lives for the host
-		player_lives[multiplayer.get_unique_id()] = 2
-		multiplayer_spawner.spawn({"peer_id": multiplayer.get_unique_id()})
-		# Set up timer
+		var peer_ids = multiplayer.get_peers()
+		peer_ids.append(multiplayer.get_unique_id())  # Include the server itself
+		for peer_id in peer_ids:
+			var team = 0 if peer_id == multiplayer.get_unique_id() else 1
+			#team_assignments[peer_id] = team
+			player_lives[peer_id] = 2
+			var player_data = {"peer_id": peer_id, "team": team}
+			print("InGame: Spawning player with data: ", player_data)
+			multiplayer_spawner.spawn(player_data)
+		
 		game_timer.wait_time = 300.0
 		game_timer.one_shot = true
 		game_timer.timeout.connect(_on_game_timer_timeout)
-		# Start the timer for testing
 		start_game_timer()
-		# Spawn host
-		var host_data = {"peer_id": multiplayer.get_unique_id()}
-		print("Game: Spawning host with data: ", host_data)
-		multiplayer_spawner.spawn(host_data)
-
+	
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
-
+	
 func start_game_timer():
 	if multiplayer.is_server() and not game_active:
 		game_active = true
@@ -118,12 +122,3 @@ func _process(delta):
 		if time_since_last_sync >= sync_interval:
 			timer_sync.time_left = game_timer.time_left
 			time_since_last_sync = 0.0
-
-func _on_start_button_pressed():
-	if multiplayer.is_server():
-		print("Game: Start button pressed, changing to InGame")
-		change_to_ingame_scene.rpc()
-
-@rpc("authority", "call_local")
-func change_to_ingame_scene():
-	get_tree().change_scene_to_file("res://InGame.tscn")

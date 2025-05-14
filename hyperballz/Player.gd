@@ -49,10 +49,23 @@ func _ready():
 		roll_duration = animation_player.get_animation("Roll").length
 
 func _input(event):
-	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority() and event is InputEventMouseMotion:
-		rotate_y(-event.relative.x * mouse_sensitivity)
-		camera.rotate_x(-event.relative.y * mouse_sensitivity)
-		camera.rotation.x = clamp(camera.rotation.x, -PI/2, PI/2)
+	if is_multiplayer_authority():
+		# Toggle mouse mode and movement on Escape key press
+		if event is InputEventKey and event.is_action_pressed("ui_cancel"):
+			if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+				# Disable movement (e.g., by setting a flag or disabling input processing)
+				set_physics_process(false)
+			else:
+				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+				# Enable movement
+				set_physics_process(true)
+		
+		# Handle mouse movement for camera when mouse is captured
+		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and multiplayer.has_multiplayer_peer() and event is InputEventMouseMotion:
+			rotate_y(-event.relative.x * mouse_sensitivity)
+			camera.rotate_x(-event.relative.y * mouse_sensitivity)
+			camera.rotation.x = clamp(camera.rotation.x, -PI/2, PI/2)
 	
 	# Prevent throwing balls in spectator mode
 	if event.is_action_pressed("throw") and not is_spectator and not is_throwing and not is_rolling:
@@ -269,7 +282,7 @@ func spawn_ball():
 		"velocity": spawn_velocity
 	}
 	var root = get_tree().get_root()
-	var ball_spawner_path = "Game/Balls/BallSpawner" if root.has_node("Game") else "InGame/Balls/BallSpawner"
+	var ball_spawner_path = "Game/Balls/BallSpawner" if root.has_node("Game") else "Lobby/Balls/BallSpawner"
 	if root.has_node(ball_spawner_path):
 		root.get_node(ball_spawner_path).spawn(ball_data)
 	else:
