@@ -200,7 +200,7 @@ func start_roll(input_dir: Vector3):
 		update_animation.rpc("Roll", false, 1.0)
 
 func start_throw_animation(multiplier: float = 1.0):
-	if is_multiplayer_authority() and not is_jumping and not is_dancing and not is_rolling:
+	if is_multiplayer_authority() and not is_dancing and not is_rolling:
 		is_throwing = true
 		update_animation.rpc("Spell_Simple_Enter", false, 2.0)
 		await animation_player.animation_finished
@@ -210,17 +210,20 @@ func start_throw_animation(multiplier: float = 1.0):
 		update_animation.rpc("Spell_Simple_Exit", false, 2.0)
 		await animation_player.animation_finished
 		if is_multiplayer_authority():
-			var input_dir = Vector3.ZERO
-			input_dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
-			input_dir.z = Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
-			input_dir = input_dir.normalized()
-			if input_dir != Vector3.ZERO:
-				if Input.is_action_pressed("sprint"):
-					update_animation.rpc("Sprint", input_dir.z > 0, 1.0)
-				else:
-					update_animation.rpc("Walk", input_dir.z > 0, 1.0)
+			if is_jumping:
+				update_animation.rpc("Jump", false, 1.0)  # Return to jump animation if still in air
 			else:
-				update_animation.rpc("Idle", false, 1.0)
+				var input_dir = Vector3.ZERO
+				input_dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+				input_dir.z = Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
+				input_dir = input_dir.normalized()
+				if input_dir != Vector3.ZERO:
+					if Input.is_action_pressed("sprint"):
+						update_animation.rpc("Sprint", input_dir.z > 0, 1.0)
+					else:
+						update_animation.rpc("Walk", input_dir.z > 0, 1.0)
+				else:
+					update_animation.rpc("Idle", false, 1.0)
 		is_throwing = false
 
 @rpc("any_peer", "call_local", "reliable")
