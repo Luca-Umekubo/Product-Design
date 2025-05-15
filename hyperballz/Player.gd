@@ -4,6 +4,7 @@ extends CharacterBody3D
 @onready var camera = $Camera3D
 var speed = 5.0
 var sprint_speed = 8.0
+var crouch_speed = 3.0  # Slower speed while crouching
 var roll_speed = 10.0  # Speed during roll
 var roll_duration = 0.5  # Will be set dynamically to animation length
 var mouse_sensitivity = 0.005
@@ -14,6 +15,7 @@ var is_dancing = false
 var is_moving_backward = false
 var is_throwing = false
 var is_rolling = false
+var is_crouching = false  # New crouching state
 var roll_timer = 0.0
 var roll_direction = Vector3.ZERO
 var lives = 2  # Player starts with 2 lives
@@ -55,7 +57,7 @@ func _input(event):
 		if event is InputEventKey and event.is_action_pressed("ui_cancel"):
 			if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-				# Disable movement (e.g., by setting a flag or disabling input processing)
+				# Disable movement
 				set_physics_process(false)
 			else:
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -63,14 +65,18 @@ func _input(event):
 				set_physics_process(true)
 		
 		# Handle mouse movement for camera when mouse is captured
-		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and multiplayer.has_multiplayer_peer() and event is InputEventMouseMotion:
+		if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and multiplayer.has_multiplayer_peer():
 			rotate_y(-event.relative.x * mouse_sensitivity)
 			camera.rotate_x(-event.relative.y * mouse_sensitivity)
 			camera.rotation.x = clamp(camera.rotation.x, -PI/2, PI/2)
-	
-	# Prevent throwing balls in spectator mode
-	if event.is_action_pressed("throw") and not is_spectator and not is_throwing and not is_rolling:
-		start_throw_animation()
+		
+		# Toggle crouching (corrected to use Input.is_action_just_pressed)
+		if is_multiplayer_authority() and Input.is_action_just_pressed("Crouch") and is_on_floor() and not is_jumping and not is_dancing and not is_rolling:
+			is_crouching = !is_crouching
+
+		# Prevent throwing balls in spectator mode
+		if event.is_action_pressed("throw") and not is_spectator and not is_throwing and not is_rolling:
+			start_throw_animation()
 
 func _physics_process(delta):
 	if is_multiplayer_authority(): 
@@ -94,6 +100,7 @@ func _physics_process(delta):
 		# Handle dancing
 		if Input.is_action_just_pressed("dance") and not is_jumping and not is_rolling:
 			is_dancing = true
+			is_crouching = false  # Disable crouching while dancing
 			update_animation.rpc("Dance", false, 1.0)
 
 		# Cancel dancing if moving
@@ -102,6 +109,7 @@ func _physics_process(delta):
 
 		# Handle rolling
 		if Input.is_action_just_pressed("roll_input") and is_on_floor() and not is_jumping and not is_dancing and not is_throwing:
+			is_crouching = false  # Disable crouching while rolling
 			start_roll(input_dir)
 
 		# Update roll timer
@@ -116,16 +124,23 @@ func _physics_process(delta):
 				current_input_dir.z = Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
 				current_input_dir = current_input_dir.normalized()
 				if current_input_dir != Vector3.ZERO:
-					if Input.is_action_pressed("sprint"):
+					if is_crouching:
+						update_animation.rpc("Crouch_Fwd", current_input_dir.z > 0, 1.0)
+					elif Input.is_action_pressed("sprint"):
 						update_animation.rpc("Sprint", current_input_dir.z > 0, 1.0)
 					else:
 						update_animation.rpc("Walk", current_input_dir.z > 0, 1.0)
 				else:
-					update_animation.rpc("Idle", false, 1.0)
+					if is_crouching:
+						update_animation.rpc("Crouch_Idle", false, 1.0)
+					else:
+						update_animation.rpc("Idle", false, 1.0)
 
 		# Calculate movement direction and speed
 		var current_speed = speed
-		if Input.is_action_pressed("sprint") and input_dir != Vector3.ZERO and not is_jumping and not is_dancing and not is_rolling:
+		if is_crouching and input_dir != Vector3.ZERO and not is_jumping and not is_dancing and not is_rolling:
+			current_speed = crouch_speed
+		elif Input.is_action_pressed("sprint") and input_dir != Vector3.ZERO and not is_jumping and not is_dancing and not is_rolling:
 			current_speed = sprint_speed
 
 		var move_direction = input_dir * current_speed
@@ -145,6 +160,7 @@ func _physics_process(delta):
 		if Input.is_action_just_pressed("jump") and is_on_floor() and not is_dancing and not is_rolling:
 			velocity.y = jump_strength
 			is_jumping = true
+			is_crouching = false  # Disable crouching while jumping
 			update_animation.rpc("Jump_Start", false, 1.0)
 
 		# Apply movement
@@ -185,23 +201,31 @@ func _physics_process(delta):
 				is_moving_backward = moving_backward
 
 			# Handle movement animations
-			if input_dir != Vector3.ZERO:
-				if Input.is_action_pressed("sprint"):
-					if current_animation != "Sprint" or is_animation_backward != is_moving_backward:
-						update_animation.rpc("Sprint", is_moving_backward, 1.0)
+			if is_crouching:
+				if input_dir != Vector3.ZERO:
+					if current_animation != "Crouch_Fwd" or is_animation_backward != is_moving_backward:
+						update_animation.rpc("Crouch_Fwd", is_moving_backward, 1.0)
 				else:
-					if current_animation != "Walk" or is_animation_backward != is_moving_backward:
-						update_animation.rpc("Walk", is_moving_backward, 1.0)
+					if current_animation != "Crouch_Idle":
+						update_animation.rpc("Crouch_Idle", false, 1.0)
 			else:
-				if current_animation != "Idle":
-					update_animation.rpc("Idle", false, 1.0)
+				if input_dir != Vector3.ZERO:
+					if Input.is_action_pressed("sprint"):
+						if current_animation != "Sprint" or is_animation_backward != is_moving_backward:
+							update_animation.rpc("Sprint", is_moving_backward, 1.0)
+					else:
+						if current_animation != "Walk" or is_animation_backward != is_moving_backward:
+							update_animation.rpc("Walk", is_moving_backward, 1.0)
+				else:
+					if current_animation != "Idle":
+						update_animation.rpc("Idle", false, 1.0)
 
 # RPC to update animation state across all clients
 @rpc("any_peer", "call_local", "reliable")
-func update_animation(anim_name: String, backward: bool, speed: float):
+func update_animation(anim_name: String, backward: bool, anim_speed: float):
 	current_animation = anim_name
 	is_animation_backward = backward
-	animation_speed = speed
+	animation_speed = anim_speed
 	_apply_animation()
 
 # Apply animation state locally
@@ -249,12 +273,17 @@ func start_throw_animation():
 			input_dir.z = Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
 			input_dir = input_dir.normalized()
 			if input_dir != Vector3.ZERO:
-				if Input.is_action_pressed("sprint"):
+				if is_crouching:
+					update_animation.rpc("Crouch_Fwd", input_dir.z > 0, 1.0)
+				elif Input.is_action_pressed("sprint"):
 					update_animation.rpc("Sprint", input_dir.z > 0, 1.0)
 				else:
 					update_animation.rpc("Walk", input_dir.z > 0, 1.0)
 			else:
-				update_animation.rpc("Idle", false, 1.0)
+				if is_crouching:
+					update_animation.rpc("Crouch_Idle", false, 1.0)
+				else:
+					update_animation.rpc("Idle", false, 1.0)
 		is_throwing = false
 
 @rpc("any_peer", "call_local", "reliable")
@@ -331,4 +360,5 @@ func respawn():
 		var mannequin = get_node("AnimationLibrary_Godot_Standard/Rig/Skeleton3D/Mannequin")
 		mannequin.visible = true
 		is_spectator = false
+		is_crouching = false  # Reset crouching on respawn
 		print("Player ", name, " respawned")
