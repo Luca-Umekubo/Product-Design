@@ -8,11 +8,8 @@ Required from Player:
 Required from Ball:
     Synced variables
 
-Implementation:
+Todo:
+    Implement server browser code to find local servers
+        Future: implement cross network hosting
 
-    Multiplayer spawner in the game manager
-
-    Join & Host buttons in the UI
-        Triggers an on_host_pressed function that creates a server or opens the server browser
-
-    Need to make server browser
+    Implement spectator mode for players that have joined the server after the game started

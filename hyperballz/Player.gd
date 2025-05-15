@@ -16,7 +16,8 @@ var is_throwing = false
 var is_rolling = false
 var roll_timer = 0.0
 var roll_direction = Vector3.ZERO
-var lives = 2
+var lives = 2  # Player starts with 2 lives
+var is_spectator = false
 
 # Throw charging variables
 var is_charging_throw = false
@@ -32,6 +33,13 @@ var animation_speed: float = 1.0
 
 func _ready():
 	add_to_group("players")
+	if is_multiplayer_authority():
+		camera.make_current()
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		print("Player ", name, " authority: ", get_multiplayer_authority(), " camera active: ", camera.is_current())
+	else:
+		camera.current = false
+		print("Player ", name, " non-authoritative, camera disabled")
 	if ResourceLoader.exists("res://hit_material.tres"):
 		hit_material = load("res://hit_material.tres")
 	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
@@ -42,10 +50,27 @@ func _ready():
 		roll_duration = animation_player.get_animation("Roll").length
 
 func _input(event):
-	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority() and event is InputEventMouseMotion:
-		rotate_y(-event.relative.x * mouse_sensitivity)
-		camera.rotate_x(-event.relative.y * mouse_sensitivity)
-		camera.rotation.x = clamp(camera.rotation.x, -PI/2, PI/2)
+	if is_multiplayer_authority():
+		# Toggle mouse mode and movement on Escape key press
+		if event is InputEventKey and event.is_action_pressed("ui_cancel"):
+			if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+				# Disable movement (e.g., by setting a flag or disabling input processing)
+				set_physics_process(false)
+			else:
+				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+				# Enable movement
+				set_physics_process(true)
+		
+		# Handle mouse movement for camera when mouse is captured
+		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and multiplayer.has_multiplayer_peer() and event is InputEventMouseMotion:
+			rotate_y(-event.relative.x * mouse_sensitivity)
+			camera.rotate_x(-event.relative.y * mouse_sensitivity)
+			camera.rotation.x = clamp(camera.rotation.x, -PI/2, PI/2)
+	
+	# Prevent throwing balls in spectator mode
+	if event.is_action_pressed("throw") and not is_spectator and not is_throwing and not is_rolling:
+		start_throw_animation()
 
 func _physics_process(delta):
 	if is_multiplayer_authority(): 
@@ -171,6 +196,7 @@ func _physics_process(delta):
 				if current_animation != "Idle":
 					update_animation.rpc("Idle", false, 1.0)
 
+# RPC to update animation state across all clients
 @rpc("any_peer", "call_local", "reliable")
 func update_animation(anim_name: String, backward: bool, speed: float):
 	current_animation = anim_name
@@ -230,9 +256,11 @@ func start_throw_animation(multiplier: float = 1.0):
 func spawn_ball(multiplier: float = 1.0):
 	if not multiplayer.is_server():
 		return
+		
 	var spawn_direction = -$Camera3D.global_transform.basis.z.normalized()
 	var spawn_distance = 1.5
 	var spawn_position = $Camera3D/BallSpawnPoint.global_position + (spawn_direction * spawn_distance)
+	
 	var space_state = get_world_3d().direct_space_state
 	var query = PhysicsRayQueryParameters3D.create(
 		$Camera3D.global_position,
@@ -240,6 +268,7 @@ func spawn_ball(multiplier: float = 1.0):
 	)
 	query.exclude = [self]
 	var result = space_state.intersect_ray(query)
+	
 	if result:
 		spawn_position = result.position - (spawn_direction * 0.3)
 	var base_speed = 10.0
@@ -248,10 +277,16 @@ func spawn_ball(multiplier: float = 1.0):
 		"position": spawn_position,
 		"velocity": spawn_velocity
 	}
-	get_tree().get_root().get_node("Game/Balls/BallSpawner").spawn(ball_data)
+	var root = get_tree().get_root()
+	var ball_spawner_path = "Game/Balls/BallSpawner" if root.has_node("Game") else "Lobby/Balls/BallSpawner"
+	if root.has_node(ball_spawner_path):
+		root.get_node(ball_spawner_path).spawn(ball_data)
+	else:
+		push_error("BallSpawner not found at path: " + ball_spawner_path)
 
-@rpc("authority")
-func hit_by_ball():
+@rpc("call_local")
+func update_lives(new_lives):
+	# Update lives locally; actual tracking is done on server
 	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
 		lives -= 1
 		update_lives.rpc(lives)
@@ -263,12 +298,21 @@ func hit_by_ball():
 				var timer = get_tree().create_timer(0.3)
 				timer.timeout.connect(func(): $MeshInstance3D.material_override = null)
 
-@rpc("authority", "call_local")
-func update_lives(new_lives):
-	lives = new_lives
-	print("Player ", name, " lives: ", lives)
+@rpc("call_local")
+func set_spectator_mode():
+	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
+		is_spectator = true
+		# Disable collisions
+		collision_layer = 0
+		collision_mask = 0
+		# Hide player model
+		var mannequin = get_node("AnimationLibrary_Godot_Standard/Rig/Skeleton3D/Mannequin")
+		mannequin.visible = false
+		# Ensure camera remains active
+		camera.current = true
+		print("Player ", name, " entered spectator mode")
 
-@rpc("authority")
+@rpc("call_local")
 func respawn():
 	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
 		lives = 2
@@ -278,3 +322,10 @@ func respawn():
 			var spawn_point = spawn_points[randi() % spawn_points.size()]
 			position = spawn_point.global_position
 			update_animation.rpc("Idle", false, 1.0)
+		# Reset collision and visibility
+		collision_layer = 1  # Restore default player layer
+		collision_mask = 2 | 3  # Collide with balls and environment
+		var mannequin = get_node("AnimationLibrary_Godot_Standard/Rig/Skeleton3D/Mannequin")
+		mannequin.visible = true
+		is_spectator = false
+		print("Player ", name, " respawned")
