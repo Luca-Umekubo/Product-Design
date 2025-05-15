@@ -18,6 +18,7 @@ var roll_timer = 0.0
 var roll_direction = Vector3.ZERO
 var lives = 2  # Player starts with 2 lives
 var is_spectator = false
+var team: int
 
 # Optional reference to a hit material for visual feedback
 var hit_material = null
@@ -284,10 +285,11 @@ func spawn_ball():
 	var root = get_tree().get_root()
 	var ball_spawner_path = "Game/Balls/BallSpawner" if root.has_node("Game") else "Lobby/Balls/BallSpawner"
 	if root.has_node(ball_spawner_path):
-		root.get_node(ball_spawner_path).spawn(ball_data)
+		var ball = root.get_node(ball_spawner_path).spawn(ball_data)
+		ball.last_hit_player = self  # Set the player who threw the ball
 	else:
 		push_error("BallSpawner not found at path: " + ball_spawner_path)
-
+		
 @rpc("call_local")
 func update_lives(new_lives):
 	# Update lives locally; actual tracking is done on server
@@ -315,13 +317,16 @@ func set_spectator_mode():
 @rpc("call_local")
 func respawn():
 	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
-		var spawn_points = get_tree().get_nodes_in_group("spawn_points")
+		var spawn_group = "TeamASpawnPoints" if team == 0 else "TeamBSpawnPoints"
+		var spawn_points = get_tree().get_nodes_in_group(spawn_group)
 		if spawn_points.size() > 0:
 			var spawn_point = spawn_points[randi() % spawn_points.size()]
 			position = spawn_point.global_position
 			update_animation.rpc("Idle", false, 1.0)
+		else:
+			print("Warning: No spawn points found for team ", team)
 		# Reset collision and visibility
-		collision_layer = 1  # Restore default player layer
+		collision_layer = 1  # Default player layer
 		collision_mask = 2 | 3  # Collide with balls and environment
 		var mannequin = get_node("AnimationLibrary_Godot_Standard/Rig/Skeleton3D/Mannequin")
 		mannequin.visible = true

@@ -59,19 +59,18 @@ func _on_body_entered(body):
 	if not multiplayer.is_server():
 		return
 		
-	if body.is_in_group("players"):
+	if body.is_in_group("players") and last_hit_player != null and body.team != last_hit_player.team:
 		var current_scene = get_tree().current_scene
-		if current_scene.name == "Lobby": # Adjust "Lobby" to match your scene name
+		if current_scene.name == "Lobby":
 			if body.has_method("respawn"):
 				body.respawn.rpc()
 			else:
-				body.global_position = Vector3.ZERO # Adjust to your spawn point
+				body.global_position = Vector3.ZERO
 				body.linear_velocity = Vector3.ZERO
-			global_position = Vector3.ZERO # Adjust to dodgeball spawn point
+			global_position = Vector3.ZERO
 			linear_velocity = Vector3.ZERO
 		else:
 			if linear_velocity.length() > 5.0:
-				# Notify server of hit instead of calling player RPC
 				get_tree().get_root().get_node("Game").player_hit(body.name)
 				
 				var bounce_direction = (global_position - body.global_position).normalized()
