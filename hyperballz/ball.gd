@@ -51,6 +51,7 @@ func apply_team_color():
 			var material = StandardMaterial3D.new()
 			material.albedo_color = team_colors[team]
 			ball_mesh.material_override = material
+			print("Applied team color ", team_colors[team], " to ball for team ", team)
 
 func _physics_process(delta):
 	if is_active and linear_velocity.length() < 0.1:
@@ -83,17 +84,34 @@ func _on_body_entered(body):
 	if body.is_in_group("players"):
 		var current_scene = get_tree().current_scene
 		if current_scene.name == "Lobby": # Adjust "Lobby" to match your scene name
+			print("Ball hit player in lobby: ", body.name)
+			
+			# Convert body name to player ID
+			var hit_player_id = int(body.name)
+			print("CRITICAL: Player hit - ID: ", hit_player_id)
+			
+			# Direct RPC to the correct player (target by ID)
 			if body.has_method("respawn"):
-				body.respawn.rpc()
+				# Use rpc_id to explicitly target the respawn call to this specific player
+				if hit_player_id > 0:
+					# Call respawn directly on the player node targeting their peer ID
+					body.rpc_id(hit_player_id, "respawn")
+					print("CRITICAL: Sent respawn RPC to player ID: ", hit_player_id)
+				else:
+					print("ERROR: Invalid player ID: ", hit_player_id)
 			else:
-				body.global_position = Vector3.ZERO # Adjust to your spawn point
-				body.linear_velocity = Vector3.ZERO
-			global_position = Vector3.ZERO # Adjust to dodgeball spawn point
+				print("ERROR: Player body doesn't have respawn method!")
+				body.global_position = Vector3.ZERO # Fallback
+				
+			global_position = Vector3.ZERO # Reset ball position
 			linear_velocity = Vector3.ZERO
 		else:
+			# Debug output
+			print("Ball hit player: ", body.name, " - Ball team: ", team, " - Player team: ", body.get("team", -1))
+			
 			# Check if the ball is hitting a player from the same team
 			var player_team = -1
-			if "team" in body:
+			if body.has("team"):
 				player_team = body.team
 			
 			# Team mechanics - don't damage teammates if the ball has a team
@@ -102,9 +120,18 @@ func _on_body_entered(body):
 				var bounce_direction = (global_position - body.global_position).normalized()
 				linear_velocity = bounce_direction * linear_velocity.length() * 0.5
 				linear_velocity.y += 1.0
+				print("Teammate hit, bouncing off")
 			elif linear_velocity.length() > 5.0:
 				# Notify server of hit instead of calling player RPC
-				get_tree().get_root().get_node("Game").player_hit(body.name)
+				print("Valid hit on opponent, triggering hit effect")
+				
+				# Make sure we're directly notifying the Game node
+				var game_node = get_tree().get_root().get_node_or_null("Game")
+				if game_node and game_node.has_method("player_hit"):
+					game_node.player_hit(body.name)
+					print("Successfully called player_hit on Game node")
+				else:
+					print("Failed to find Game node or player_hit method")
 				
 				var bounce_direction = (global_position - body.global_position).normalized()
 				linear_velocity = bounce_direction * linear_velocity.length() * 0.7
@@ -121,6 +148,7 @@ func _on_body_entered(body):
 			else:
 				var push_direction = (global_position - body.global_position).normalized()
 				apply_central_impulse(push_direction * 3.0)
+				print("Ball too slow for hit, just pushed")
 
 # Used when the ball is spawned with team data
 func set_team(team_id):

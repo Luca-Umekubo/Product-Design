@@ -312,6 +312,8 @@ func spawn_ball():
 	if not multiplayer.is_server():
 		return
 		
+	print("Server: Spawning ball for player ", name, " with team ", team)
+	
 	var spawn_direction = -$Camera3D.global_transform.basis.z.normalized()
 	var spawn_distance = 1.5
 	var spawn_position = $Camera3D/BallSpawnPoint.global_position + (spawn_direction * spawn_distance)
@@ -333,9 +335,13 @@ func spawn_ball():
 		"velocity": spawn_velocity,
 		"team": team  # Include the team info for potential team-based ball mechanics
 	}
+	
+	print("Ball data: ", ball_data)
+	
 	var root = get_tree().get_root()
 	var ball_spawner_path = "Game/Balls/BallSpawner" if root.has_node("Game") else "Lobby/Balls/BallSpawner"
 	if root.has_node(ball_spawner_path):
+		print("Found ball spawner at: ", ball_spawner_path)
 		root.get_node(ball_spawner_path).spawn(ball_data)
 	else:
 		push_error("BallSpawner not found at path: " + ball_spawner_path)
@@ -364,25 +370,42 @@ func set_spectator_mode():
 		camera.current = true
 		print("Player ", name, " entered spectator mode")
 
-@rpc("call_local")
+@rpc("any_peer", "call_local")
 func respawn():
-	if multiplayer.has_multiplayer_peer() and get_multiplayer_authority() == multiplayer.get_unique_id():
-		var team_spawn_points = get_tree().get_nodes_in_group("team" + str(team) + "_spawn")
-		var spawn_points = team_spawn_points
+	print("Player " + name + ": respawn RPC received - from peer: " + str(multiplayer.get_remote_sender_id()))
+	
+	if multiplayer.has_multiplayer_peer():
+		# Check if we're the player who should be respawning
+		var my_id = multiplayer.get_unique_id()
+		var player_id = int(name)
 		
-		# Fall back to generic spawn points if team-specific ones aren't found
-		if spawn_points.size() == 0:
-			spawn_points = get_tree().get_nodes_in_group("spawn_points")
+		# Only execute the respawn if this is OUR player
+		if my_id == player_id:
+			print("CRITICAL: Respawning my player (ID: " + str(my_id) + ")")
 			
-		if spawn_points.size() > 0:
-			var spawn_point = spawn_points[randi() % spawn_points.size()]
-			position = spawn_point.global_position
-			update_animation.rpc("Idle", false, 1.0)
-		
-		# Reset collision and visibility
-		collision_layer = 1  # Restore default player layer
-		collision_mask = 2 | 3  # Collide with balls and environment
-		var mannequin = get_node("AnimationLibrary_Godot_Standard/Rig/Skeleton3D/Mannequin")
-		mannequin.visible = true
-		is_spectator = false
-		print("Player ", name, " respawned at team ", team, " spawn point")
+			var team_spawn_points = get_tree().get_nodes_in_group("team" + str(team) + "_spawn")
+			var spawn_points = team_spawn_points
+			
+			# Fall back to generic spawn points if team-specific ones aren't found
+			if spawn_points.size() == 0:
+				spawn_points = get_tree().get_nodes_in_group("spawn_points")
+				
+			if spawn_points.size() > 0:
+				var spawn_point = spawn_points[randi() % spawn_points.size()]
+				position = spawn_point.global_position
+				update_animation.rpc("Idle", false, 1.0)
+				print("SUCCESS: Player ", name, " respawned at team ", team, " spawn point")
+			else:
+				# Emergency fallback if no spawn points exist
+				position = Vector3.ZERO
+				print("WARNING: No spawn points found, respawned player at origin")
+			
+			# Reset collision and visibility
+			collision_layer = 1  # Restore default player layer
+			collision_mask = 2 | 3  # Collide with balls and environment
+			var mannequin = get_node_or_null("AnimationLibrary_Godot_Standard/Rig/Skeleton3D/Mannequin")
+			if mannequin:
+				mannequin.visible = true
+			is_spectator = false
+		else:
+			print("Not executing respawn - this is player " + str(player_id) + " but I am peer " + str(my_id))
