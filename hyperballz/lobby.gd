@@ -5,6 +5,7 @@ extends Node3D
 @onready var start_button = $Control/Button
 
 var team_assignments = {}  # peer_id -> team (0 for Team A, 1 for Team B)
+var peers_ready = {}      # Track peers that are ready to change scenes
 
 func _ready():
 	multiplayer_spawner.spawn_function = _spawn_player
@@ -53,6 +54,7 @@ func _on_peer_disconnected(id):
 	if $Players.has_node(str(id)):
 		$Players.get_node(str(id)).queue_free()
 	team_assignments.erase(id)
+	peers_ready.erase(id)
 	print("Lobby: Peer disconnected: ", id)
 
 func _spawn_player(data):
@@ -75,14 +77,81 @@ func _spawn_ball(data):
 	var ball = preload("res://Ball.tscn").instantiate()
 	ball.position = data["position"]
 	ball.linear_velocity = data["velocity"]
+	
+	# Apply team color if team is specified
+	if data.has("team") and data.team != null:
+		# This will be called after _ready, so we need to defer it
+		ball.call_deferred("apply_team_color", data.team)
+	
 	print("Lobby: Spawning ball at ", data["position"])
 	return ball
 
 func _on_start_button_pressed():
 	if multiplayer.is_server():
-		print("Game: Start button pressed, changing to Game")
+		print("Game: Start button pressed, preparing transition")
+		# First, inform all clients to prepare for scene change
+		prepare_for_scene_change.rpc()
+
+@rpc("authority", "call_local")
+func prepare_for_scene_change():
+	# Clients should acknowledge they're ready
+	if not multiplayer.is_server():
+		# Client cleanup steps before scene change
+		for child in $Players.get_children():
+			if child.has_method("set_physics_process"):
+				child.set_physics_process(false)
+				
+		for ball in get_tree().get_nodes_in_group("balls"):
+			if is_instance_valid(ball):
+				ball.queue_free()
+				
+		# Let the server know this client is ready
+		client_ready_for_scene_change.rpc_id(1)
+	else:
+		# Server also processes locally
+		peers_ready[multiplayer.get_unique_id()] = true
+		check_all_peers_ready()
+
+@rpc("any_peer")
+func client_ready_for_scene_change():
+	if not multiplayer.is_server():
+		return
+		
+	var sender_id = multiplayer.get_remote_sender_id()
+	peers_ready[sender_id] = true
+	check_all_peers_ready()
+
+func check_all_peers_ready():
+	if not multiplayer.is_server():
+		return
+		
+	# Check if all peers are ready
+	var all_peers = multiplayer.get_peers()
+	all_peers.append(multiplayer.get_unique_id())
+	
+	var all_ready = true
+	for peer_id in all_peers:
+		if not peers_ready.has(peer_id) or not peers_ready[peer_id]:
+			all_ready = false
+			break
+	
+	if all_ready:
+		print("All peers ready, changing scene...")
+		# Clean up all players and balls server-side first
+		for child in $Players.get_children():
+			child.queue_free()
+			
+		for ball in get_tree().get_nodes_in_group("balls"):
+			if is_instance_valid(ball):
+				ball.queue_free()
+		
+		# Wait a frame for cleanup to process
+		await get_tree().process_frame
+		
+		# Now change the scene
 		change_to_ingame_scene.rpc()
 
 @rpc("authority", "call_local")
 func change_to_ingame_scene():
+	# This will be called on all peers after cleanup
 	get_tree().change_scene_to_file("res://Game.tscn")

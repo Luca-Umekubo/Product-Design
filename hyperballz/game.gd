@@ -8,6 +8,7 @@ var sync_interval = 0.5  # Update every 0.5 seconds
 var time_since_last_sync = 0.0
 var player_lives = {}  # Tracks lives for each player (peer_id: lives)
 var team_assignments = {}  # Tracks team for each player (peer_id: team)
+var peers_ready = {} # Track peers that are ready to change scenes
 
 var game_active = false
 
@@ -84,6 +85,65 @@ func update_timer_display(time_left):
 func _on_game_timer_timeout():
 	if multiplayer.is_server():
 		game_active = false
+		prepare_for_scene_change.rpc()
+
+@rpc("authority", "call_local")
+func prepare_for_scene_change():
+	# Clients should acknowledge they're ready
+	if not multiplayer.is_server():
+		# Client cleanup steps before scene change
+		for child in $Players.get_children():
+			if child.has_method("set_physics_process"):
+				child.set_physics_process(false)
+				
+		for ball in get_tree().get_nodes_in_group("balls"):
+			if is_instance_valid(ball):
+				ball.queue_free()
+				
+		# Let the server know this client is ready
+		client_ready_for_scene_change.rpc_id(1)
+	else:
+		# Server also processes locally
+		peers_ready[multiplayer.get_unique_id()] = true
+		check_all_peers_ready()
+
+@rpc("any_peer")
+func client_ready_for_scene_change():
+	if not multiplayer.is_server():
+		return
+		
+	var sender_id = multiplayer.get_remote_sender_id()
+	peers_ready[sender_id] = true
+	check_all_peers_ready()
+
+func check_all_peers_ready():
+	if not multiplayer.is_server():
+		return
+		
+	# Check if all peers are ready
+	var all_peers = multiplayer.get_peers()
+	all_peers.append(multiplayer.get_unique_id())
+	
+	var all_ready = true
+	for peer_id in all_peers:
+		if not peers_ready.has(peer_id) or not peers_ready[peer_id]:
+			all_ready = false
+			break
+	
+	if all_ready:
+		print("All peers ready, changing scene...")
+		# Clean up all players and balls server-side first
+		for child in $Players.get_children():
+			child.queue_free()
+			
+		for ball in get_tree().get_nodes_in_group("balls"):
+			if is_instance_valid(ball):
+				ball.queue_free()
+		
+		# Wait a frame for cleanup to process
+		await get_tree().process_frame
+		
+		# Now change the scene
 		end_game.rpc()
 
 @rpc("authority", "call_local")
@@ -117,6 +177,7 @@ func _on_peer_disconnected(id):
 			$Players.get_node(str(id)).queue_free()
 		player_lives.erase(id)
 		team_assignments.erase(id)
+		peers_ready.erase(id)
 
 func _spawn_player(data):
 	var peer_id = data["peer_id"]
@@ -134,6 +195,12 @@ func _spawn_ball(data):
 	var ball = preload("res://Ball.tscn").instantiate()
 	ball.position = data["position"]
 	ball.linear_velocity = data["velocity"]
+	
+	# Apply team color if team is specified
+	if data.has("team") and data.team != null:
+		# This will be called after _ready, so we need to defer it
+		ball.call_deferred("apply_team_color", data.team)
+		
 	print("Game: Spawning ball at ", data["position"])
 	return ball
 
