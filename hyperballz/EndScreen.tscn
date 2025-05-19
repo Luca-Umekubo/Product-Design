@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://c1hefu2hu2scu"]
+[gd_scene load_steps=2 format=3 uid="uid://bnya6ue6w1b1h"]
 
-[ext_resource type="Script" uid="uid://djfp6v5a27ll5" path="res://EndScreen.gd" id="1_qfurf"]
+[ext_resource type="Script" path="res://EndScreen.gd" id="1_qfurf"]
 
 [node name="Control" type="Control"]
 layout_mode = 3

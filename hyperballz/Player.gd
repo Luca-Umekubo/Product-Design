@@ -4,10 +4,10 @@ extends CharacterBody3D
 @onready var camera = $Camera3D
 var speed = 5.0
 var sprint_speed = 8.0
-var roll_speed = 10.0  # Speed during roll
-var roll_duration = 0.5  # Will be set dynamically to animation length
+var roll_speed = 10.0
+var roll_duration = 0.5
 var mouse_sensitivity = 0.005
-var gravity = -9.8
+var gravity = -9.8  # Base gravity value
 var jump_strength = 4.5
 var is_jumping = false
 var is_dancing = false
@@ -42,11 +42,13 @@ func _ready():
 	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
 		camera.current = true
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	# Initialize animation for all clients
 	_set_current_animation("Idle")
-	# Set roll_duration to the length of the Roll animation
 	if animation_player.has_animation("Roll"):
 		roll_duration = animation_player.get_animation("Roll").length
+	
+	# Set initial gravity and connect to gravity multiplier changes
+	gravity = GameState.gravity_multiplier * -9.8
+	GameState.gravity_multiplier_changed.connect(_on_gravity_multiplier_changed)
 
 func _input(event):
 	if is_multiplayer_authority():
@@ -194,6 +196,10 @@ func _physics_process(delta):
 			else:
 				if current_animation != "Idle":
 					update_animation.rpc("Idle", false, 1.0)
+
+# Callback for when gravity multiplier changes
+func _on_gravity_multiplier_changed(new_value: float):
+	gravity = new_value * -9.8
 
 # RPC to update animation state across all clients
 @rpc("any_peer", "call_local", "reliable")

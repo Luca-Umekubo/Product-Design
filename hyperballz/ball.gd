@@ -30,6 +30,14 @@ func _ready():
 	set_deferred("monitoring", false)
 	var timer = get_tree().create_timer(spawn_immunity_time)
 	timer.timeout.connect(func(): set_deferred("monitoring", true))
+	
+	# Set initial gravity_scale and connect to gravity multiplier changes
+	gravity_scale = GameState.gravity_multiplier
+	GameState.gravity_multiplier_changed.connect(_on_gravity_multiplier_changed)
+
+# Callback for when gravity multiplier changes
+func _on_gravity_multiplier_changed(new_value: float):
+	gravity_scale = new_value
 
 func _physics_process(delta):
 	if is_active and linear_velocity.length() < 0.1:
