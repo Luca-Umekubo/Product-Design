@@ -122,3 +122,9 @@ func _process(delta):
 		if time_since_last_sync >= sync_interval:
 			timer_sync.time_left = game_timer.time_left
 			time_since_last_sync = 0.0
+
+func _input(event):
+	# Check if the event is a key press and the key is "Esc"
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+		# Change to the EscapeMenu scene
+		get_tree().change_scene_to_file("res://EscapeMenu.tscn")

@@ -27,10 +27,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
+offset_left = -437.5
+offset_top = -133.0
+offset_right = 437.5
+offset_bottom = 217.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/h_separation = 25
@@ -81,5 +81,19 @@ text = "Charge"
 custom_minimum_size = Vector2(200, 100)
 layout_mode = 2
 text = "Return"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -486.0
+offset_top = 60.0
+offset_right = 486.0
+offset_bottom = 150.0
+grow_horizontal = 2
+theme_override_font_sizes/bold_italics_font_size = 1
+theme_override_font_sizes/normal_font_size = 30
+text = "To edit a keybind, press the button that matches the bind you are trying to change, then click the key you want to change it to"
 
 [connection signal="pressed" from="GridContainer/Return" to="." method="_on_return_pressed"]
