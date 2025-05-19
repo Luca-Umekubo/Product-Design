@@ -2,6 +2,7 @@ extends CharacterBody3D
 
 @onready var animation_player = $AnimationLibrary_Godot_Standard/AnimationPlayer
 @onready var camera = $Camera3D
+@onready var mannequin = $AnimationLibrary_Godot_Standard/Rig/Skeleton3D/Mannequin
 var speed = 5.0
 var sprint_speed = 8.0
 var crouch_speed = 3.0  # Slower speed while crouching
@@ -20,7 +21,7 @@ var roll_timer = 0.0
 var roll_direction = Vector3.ZERO
 var lives = 2  # Player starts with 2 lives
 var is_spectator = false
-var team: int
+var team: int = 0 : set = set_team
 
 # Throw charging variables
 var is_charging_throw = false
@@ -28,6 +29,7 @@ var throw_start_time = 0.0
 var throw_multiplier = 1.0
 
 var hit_material = null
+var team_material = null
 
 # Networked animation state
 var current_animation: String = "Idle" : set = _set_current_animation
@@ -51,6 +53,24 @@ func _ready():
 	_set_current_animation("Idle")
 	if animation_player.has_animation("Roll"):
 		roll_duration = animation_player.get_animation("Roll").length
+	
+	# Apply team colors
+	apply_team_color()
+
+func set_team(new_team: int):
+	team = new_team
+	# Apply the team color if the node is ready
+	if is_inside_tree():
+		apply_team_color()
+
+func apply_team_color():
+	# Create a new material based on the team
+	team_material = preload("res://team_colors.gd").create_team_material(team)
+	
+	# Apply the material to the mannequin
+	if mannequin:
+		mannequin.set_surface_override_material(0, team_material)
+		print("Applied team color for player ", name, " team: ", team)
 
 func _input(event):
 	if is_multiplayer_authority():
@@ -306,7 +326,8 @@ func spawn_ball(multiplier: float = 1.0):
 	var spawn_velocity = spawn_direction * base_speed * multiplier
 	var ball_data = {
 		"position": spawn_position,
-		"velocity": spawn_velocity
+		"velocity": spawn_velocity,
+		"team": team  # Pass the team information to the ball
 	}
 	var root = get_tree().get_root()
 	var ball_spawner_path = "Game/Balls/BallSpawner" if root.has_node("Game") else "Lobby/Balls/BallSpawner"
