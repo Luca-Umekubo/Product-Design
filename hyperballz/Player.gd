@@ -71,13 +71,9 @@ func _input(event):
 			camera.rotate_x(-event.relative.y * mouse_sensitivity)
 			camera.rotation.x = clamp(camera.rotation.x, -PI/2, PI/2)
 		
-		# Toggle crouching (corrected to use Input.is_action_just_pressed)
-		if is_multiplayer_authority() and Input.is_action_just_pressed("Crouch") and is_on_floor() and not is_jumping and not is_dancing and not is_rolling:
+		# Toggle crouching
+		if Input.is_action_just_pressed("Crouch") and is_on_floor() and not is_jumping and not is_dancing and not is_rolling:
 			is_crouching = !is_crouching
-
-		# Prevent throwing balls in spectator mode
-		if event.is_action_pressed("throw") and not is_spectator and not is_throwing and not is_rolling:
-			start_throw_animation()
 
 func _physics_process(delta):
 	if is_multiplayer_authority(): 
@@ -99,10 +95,9 @@ func _physics_process(delta):
 		input_dir = input_dir.normalized()
 
 		# Handle throw charging
-		if Input.is_action_just_pressed("throw") and not is_throwing and not is_rolling:
+		if Input.is_action_just_pressed("throw") and not is_throwing and not is_rolling and not is_spectator:
 			is_charging_throw = true
 			throw_start_time = Time.get_ticks_msec() / 1000.0
-			update_animation.rpc("Spell_Simple_Enter", false, 2.0)
 
 		if is_charging_throw and Input.is_action_just_released("throw"):
 			is_charging_throw = false
@@ -112,10 +107,12 @@ func _physics_process(delta):
 
 		# Calculate movement speed
 		var current_speed = speed
-		if is_charging_throw:
-			current_speed *= 0.5  # Slow down while charging
+		if is_crouching and input_dir != Vector3.ZERO and not is_jumping and not is_dancing and not is_rolling:
+			current_speed = crouch_speed
 		elif Input.is_action_pressed("sprint") and input_dir != Vector3.ZERO and not is_jumping and not is_dancing and not is_rolling:
 			current_speed = sprint_speed
+		if is_charging_throw and is_on_floor():
+			current_speed *= 0.5  # Reduce speed by 50% while charging, only when on ground
 
 		# Handle dancing
 		if Input.is_action_just_pressed("dance") and not is_jumping and not is_rolling:
@@ -153,12 +150,6 @@ func _physics_process(delta):
 						update_animation.rpc("Idle", false, 1.0)
 
 		# Calculate movement direction and speed
-		var current_speed = speed
-		if is_crouching and input_dir != Vector3.ZERO and not is_jumping and not is_dancing and not is_rolling:
-			current_speed = crouch_speed
-		elif Input.is_action_pressed("sprint") and input_dir != Vector3.ZERO and not is_jumping and not is_dancing and not is_rolling:
-			current_speed = sprint_speed
-
 		var move_direction = input_dir * current_speed
 		if is_rolling:
 			move_direction = roll_direction * roll_speed
@@ -268,24 +259,25 @@ func start_throw_animation(multiplier: float = 1.0):
 		update_animation.rpc("Spell_Simple_Exit", false, 2.0)
 		await animation_player.animation_finished
 		if is_multiplayer_authority():
-			var input_dir = Vector3.ZERO
-			input_dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
-			input_dir.z = Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
-			input_dir = input_dir.normalized()
-			if input_dir != Vector3.ZERO:
-				if is_crouching:
-					update_animation.rpc("Crouch_Fwd", input_dir.z > 0, 1.0)
-				elif Input.is_action_pressed("sprint"):
-					update_animation.rpc("Sprint", input_dir.z > 0, 1.0)
-				else:
-					update_animation.rpc("Walk", input_dir.z > 0, 1.0)
 			if is_jumping:
-				update_animation.rpc("Jump", false, 1.0)  # Return to jump animation if still in air
+				update_animation.rpc("Jump", false, 1.0)
 			else:
-				if is_crouching:
-					update_animation.rpc("Crouch_Idle", false, 1.0)
+				var input_dir = Vector3.ZERO
+				input_dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+				input_dir.z = Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
+				input_dir = input_dir.normalized()
+				if input_dir != Vector3.ZERO:
+					if is_crouching:
+						update_animation.rpc("Crouch_Fwd", input_dir.z > 0, 1.0)
+					elif Input.is_action_pressed("sprint"):
+						update_animation.rpc("Sprint", input_dir.z > 0, 1.0)
+					else:
+						update_animation.rpc("Walk", input_dir.z > 0, 1.0)
 				else:
-					update_animation.rpc("Idle", false, 1.0)
+					if is_crouching:
+						update_animation.rpc("Crouch_Idle", false, 1.0)
+					else:
+						update_animation.rpc("Idle", false, 1.0)
 		is_throwing = false
 
 @rpc("any_peer", "call_local", "reliable")
@@ -323,7 +315,7 @@ func spawn_ball(multiplier: float = 1.0):
 		ball.last_hit_player = self  # Set the player who threw the ball
 	else:
 		push_error("BallSpawner not found at path: " + ball_spawner_path)
-		
+
 @rpc("call_local")
 func update_lives(new_lives):
 	# Update lives locally; actual tracking is done on server
@@ -356,11 +348,6 @@ func set_spectator_mode():
 				$MeshInstance3D.material_override = hit_material
 				var timer = get_tree().create_timer(0.3)
 				timer.timeout.connect(func(): $MeshInstance3D.material_override = null)
-
-@rpc("authority", "call_local")
-func update_lives(new_lives):
-	lives = new_lives
-	print("Player ", name, " lives: ", lives)
 
 @rpc("call_local")
 func respawn():
