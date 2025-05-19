@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://crkqlx5hw6o1c"]
+[gd_scene load_steps=2 format=3 uid="uid://crkqlx5hw6o1c"]
+
+[ext_resource type="Script" uid="uid://c3g62w0pns4da" path="res://Keybinds.gd" id="1_wpmci"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -7,6 +9,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_wpmci")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 1
@@ -78,3 +81,5 @@ text = "Charge"
 custom_minimum_size = Vector2(200, 100)
 layout_mode = 2
 text = "Return"
+
+[connection signal="pressed" from="GridContainer/Return" to="." method="_on_return_pressed"]
