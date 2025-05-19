@@ -2,6 +2,11 @@ extends CharacterBody3D
 
 @onready var animation_player = $AnimationLibrary_Godot_Standard/AnimationPlayer
 @onready var camera = $Camera3D
+var dodge_speed = 8.0  # Reduced speed for a short, quick dodge
+var dodge_duration = 0.2  # Short duration for a quick dodge
+var is_dodging = false
+var dodge_timer = 0.0
+var dodge_direction = Vector3.ZERO
 var speed = 5.0
 var sprint_speed = 8.0
 var roll_speed = 10.0  # Speed during roll
@@ -68,9 +73,8 @@ func _input(event):
 			camera.rotation.x = clamp(camera.rotation.x, -PI/2, PI/2)
 	
 	# Prevent throwing balls in spectator mode
-	if event.is_action_pressed("throw") and not is_spectator and not is_throwing and not is_rolling:
-		start_throw_animation()
-
+	#if event.is_action_pressed("throw") and not is_spectator and not is_throwing and not is_rolling:
+		#start_throw_axnimation()
 func _physics_process(delta):
 	if is_multiplayer_authority(): 
 		# Handle gravity
@@ -122,23 +126,241 @@ func _physics_process(delta):
 				else:
 					update_animation.rpc("Idle", false, 1.0)
 
+		# Handle dodging
+		var input_dir_x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")  # Get horizontal input
+		if Input.is_action_just_pressed("dodge") and is_on_floor() and not is_jumping and not is_dancing and not is_rolling and not is_throwing:
+			# Only trigger dodge if a sideways movement key is held
+			if abs(input_dir_x) > 0.1:  # Ensure player is pressing 'a' or 'd'
+				start_dodge(input_dir_x)
+
+		# Update dodge timer
+		if is_dodging:
+			dodge_timer -= delta
+			velocity = dodge_direction * dodge_speed  # Apply dodge velocity directly
+			if dodge_timer <= 0:
+				is_dodging = false
+				dodge_direction = Vector3.ZERO  # Reset direction
+				velocity.x = 0  # Stop horizontal movement
+				velocity.z = 0  # Stop forward/back movement (if any)
+				# Return to previous animation state
+				var current_input_dir = Vector3.ZERO
+				current_input_dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+				current_input_dir.z = Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
+				current_input_dir = current_input_dir.normalized()
+				if current_input_dir != Vector3.ZERO:
+					if Input.is_action_pressed("sprint"):
+						update_animation.rpc("Sprint", current_input_dir.z > 0, 1.0)
+					else:
+						update_animation.rpc("Walk", current_input_dir.z > 0, 1.0)
+				else:
+					update_animation.rpc("Idle", false, 1.0)
+
 		# Calculate movement direction and speed
 		var current_speed = speed
-		if Input.is_action_pressed("sprint") and input_dir != Vector3.ZERO and not is_jumping and not is_dancing and not is_rolling:
-			current_speed = sprint_speed
+		var move_direction = Vector3.ZERO
 
-		var move_direction = input_dir * current_speed
+		# Handle normal movement
+		if not is_dodging and not is_rolling:
+			if Input.is_action_pressed("sprint") and input_dir != Vector3.ZERO and not is_jumping and not is_dancing:
+				current_speed = sprint_speed
+			move_direction = input_dir * current_speed
+			move_direction = move_direction.rotated(Vector3.UP, rotation.y)
+
+		# Handle rolling movement
 		if is_rolling:
 			move_direction = roll_direction * roll_speed
-		move_direction = move_direction.rotated(Vector3.UP, rotation.y)
+			move_direction = move_direction.rotated(Vector3.UP, rotation.y)
 
-		# Update velocity (no movement if dancing)
+		# Apply movement to velocity
 		if not is_dancing:
 			velocity.x = move_direction.x
 			velocity.z = move_direction.z
 		else:
 			velocity.x = 0
 			velocity.z = 0
+
+		# Handle jumping
+		if Input.is_action_just_pressed("jump") and is_on_floor() and not is_dancing and not is_rolling:
+			velocity.y = jump_strength
+			is_jumping = true
+			update_animation.rpc("Jump_Start", false, 1.0)
+
+		# Apply movement
+		move_and_slide()
+		
+		# Handle pushing balls - Godot 4.4.1 syntax
+		for i in range(get_slide_collision_count()):
+			var collision = get_slide_collision(i)
+			if collision.get_collider() is RigidBody3D and collision.get_collider().is_in_group("balls"):
+				var push_strength = 2.5
+				# Only push if we're actually moving
+				if velocity.length() > 0.1:
+					collision.get_collider().apply_central_impulse(-collision.get_normal() * push_strength * velocity.length())
+				else:
+					# Even when not moving but trying to push
+					if input_vector.length() > 0.1:
+						var push_direction = global_transform.basis * Vector3(input_vector.x, 0, input_vector.y).normalized()
+						collision.get_collider().apply_central_impulse(push_direction * push_strength)
+
+		# Animation logic (authoritative client only)
+		if is_throwing:
+			pass  # Let the throw animation sequence handle itself
+		elif is_rolling:
+			if current_animation != "Roll":
+				update_animation.rpc("Roll", false, 1.0)
+		elif is_dancing:
+			if current_animation != "Dance":
+				update_animation.rpc("Dance", false, 1.0)
+		elif is_jumping:
+			if current_animation == "Jump_Start" and not animation_player.is_playing():
+				update_animation.rpc("Jump", false, 1.0)
+			elif is_on_floor() and current_animation != "Jump_Land":
+				update_animation.rpc("Jump_Land", false, 1.0)
+		else:
+			# Determine if moving backward
+			var moving_backward = input_dir.z > 0
+			if moving_backward != is_moving_backward:
+				is_moving_backward = moving_backward
+
+			# Handle movement animations
+			if input_dir != Vector3.ZERO:
+				if Input.is_action_pressed("sprint"):
+					if current_animation != "Sprint" or is_animation_backward != is_moving_backward:
+						update_animation.rpc("Sprint", is_moving_backward, 1.0)
+				else:
+					if current_animation != "Walk" or is_animation_backward != is_moving_backward:
+						update_animation.rpc("Walk", is_moving_backward, 1.0)
+			else:
+				if current_animation != "Idle":
+					update_animation.rpc("Idle", false, 1.0)
+	if is_multiplayer_authority(): 
+		# Handle gravity
+		if not is_on_floor():
+			velocity.y += gravity * delta
+		else:
+			velocity.y = 0
+			is_jumping = false
+		var input_vector = Vector2(
+			Input.get_action_strength("move_right") - Input.get_action_strength("move_left"),
+			Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward") 
+		).normalized()
+
+		# Get input direction
+		var input_dir = Vector3.ZERO
+		input_dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+		input_dir.z = Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
+		input_dir = input_dir.normalized()
+
+		# Handle dancing
+		if Input.is_action_just_pressed("dance") and not is_jumping and not is_rolling:
+			is_dancing = true
+			update_animation.rpc("Dance", false, 1.0)
+
+		# Cancel dancing if moving
+		if is_dancing and input_dir != Vector3.ZERO:
+			is_dancing = false
+
+		# Handle rolling
+		if Input.is_action_just_pressed("roll_input") and is_on_floor() and not is_jumping and not is_dancing and not is_throwing:
+			start_roll(input_dir)
+
+		# Update roll timer
+		if is_rolling:
+			roll_timer -= delta
+			# Only end rolling when both timer expires and animation finishes
+			if roll_timer <= 0 and not animation_player.is_playing() and current_animation == "Roll":
+				is_rolling = false
+				# Return to previous animation state after roll
+				var current_input_dir = Vector3.ZERO
+				current_input_dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+				current_input_dir.z = Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
+				current_input_dir = current_input_dir.normalized()
+				if current_input_dir != Vector3.ZERO:
+					if Input.is_action_pressed("sprint"):
+						update_animation.rpc("Sprint", current_input_dir.z > 0, 1.0)
+					else:
+						update_animation.rpc("Walk", current_input_dir.z > 0, 1.0)
+				else:
+					update_animation.rpc("Idle", false, 1.0)
+
+		# Handle dodging
+		var input_dir_x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")  # Get horizontal input
+		if Input.is_action_just_pressed("dodge") and is_on_floor() and not is_jumping and not is_dancing and not is_rolling and not is_throwing:
+			# Only trigger dodge if a sideways movement key is held
+			if abs(input_dir_x) > 0.1:  # Ensure player is pressing 'a' or 'd'
+				start_dodge(input_dir_x)
+
+		# Update dodge timer
+		if is_dodging:
+			dodge_timer -= delta
+			velocity = dodge_direction * dodge_speed  # Apply dodge velocity directly
+			if dodge_timer <= 0:
+				is_dodging = false
+				dodge_direction = Vector3.ZERO  # Reset direction
+				velocity.x = 0  # Stop horizontal movement
+				velocity.z = 0  # Stop forward/back movement (if any)
+				# Return to previous animation state
+				var current_input_dir = Vector3.ZERO
+				current_input_dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+				current_input_dir.z = Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
+				current_input_dir = current_input_dir.normalized()
+				if current_input_dir != Vector3.ZERO:
+					if Input.is_action_pressed("sprint"):
+						update_animation.rpc("Sprint", current_input_dir.z > 0, 1.0)
+					else:
+						update_animation.rpc("Walk", current_input_dir.z > 0, 1.0)
+				else:
+					update_animation.rpc("Idle", false, 1.0)
+		# Calculate movement direction and speed
+		var current_speed = speed
+		var move_direction = Vector3.ZERO
+
+		# Handle normal movement
+		if not is_dodging and not is_rolling:
+			if Input.is_action_pressed("sprint") and input_dir != Vector3.ZERO and not is_jumping and not is_dancing:
+				current_speed = sprint_speed
+			move_direction = input_dir * current_speed
+			move_direction = move_direction.rotated(Vector3.UP, rotation.y)
+
+		# Handle rolling movement
+		if is_rolling:
+			move_direction = roll_direction * roll_speed
+			move_direction = move_direction.rotated(Vector3.UP, rotation.y)
+
+		# Handle dodging movement
+		input_dir_x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+		if Input.is_action_just_pressed("dodge") and is_on_floor() and not is_jumping and not is_dancing and not is_rolling and not is_throwing:
+			# Only trigger dodge if a sideways movement key is held
+			if abs(input_dir_x) > 0.1:
+				start_dodge(input_dir_x)
+
+		if is_dodging:
+			dodge_timer -= delta
+			velocity = dodge_direction * dodge_speed  # Apply dodge velocity directly
+			if dodge_timer <= 0:
+				is_dodging = false
+				dodge_direction = Vector3.ZERO  # Reset direction
+				velocity = Vector3.ZERO  # Stop all movement
+				# Return to previous animation state
+				var current_input_dir = Vector3.ZERO
+				current_input_dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+				current_input_dir.z = Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
+				current_input_dir = current_input_dir.normalized()
+				if current_input_dir != Vector3.ZERO:
+					if Input.is_action_pressed("sprint"):
+						update_animation.rpc("Sprint", current_input_dir.z > 0, 1.0)
+					else:
+						update_animation.rpc("Walk", current_input_dir.z > 0, 1.0)
+				else:
+					update_animation.rpc("Idle", false, 1.0)
+		else:
+			# Apply normal or rolling movement to velocity
+			if not is_dancing:
+				velocity.x = move_direction.x
+				velocity.z = move_direction.z
+			else:
+				velocity.x = 0
+				velocity.z = 0
 
 		# Handle jumping
 		if Input.is_action_just_pressed("jump") and is_on_floor() and not is_dancing and not is_rolling:
@@ -226,6 +448,14 @@ func start_roll(input_dir: Vector3):
 		roll_direction = input_dir if input_dir != Vector3.ZERO else -transform.basis.z
 		roll_direction = roll_direction.normalized()
 		update_animation.rpc("Roll", false, 1.0)
+
+func start_dodge(input_dir_x: float):
+	if is_multiplayer_authority():
+		is_dodging = true
+		dodge_timer = dodge_duration
+		# Set dodge direction based on horizontal input (left or right)
+		dodge_direction = Vector3(sign(input_dir_x), 0, 0).normalized()  # Strictly left or right
+		update_animation.rpc("Dodge", false, 1.0)
 
 func start_throw_animation():
 	if is_multiplayer_authority() and not is_jumping and not is_dancing and not is_rolling:
