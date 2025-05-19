@@ -1,0 +1,80 @@
+[gd_scene format=3 uid="uid://crkqlx5hw6o1c"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.470275, 0.671373, 0.618211, 1)
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 25
+theme_override_constants/v_separation = 25
+columns = 4
+
+[node name="Forward" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+text = "Forward"
+
+[node name="Back" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+text = "Back"
+
+[node name="Left" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+text = "Left"
+
+[node name="Right" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+text = "Right"
+
+[node name="Jump" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+text = "Jump"
+
+[node name="Crouch" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+text = "Crouch"
+
+[node name="Quick Throw" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+text = "Quick Throw"
+
+[node name="Charge" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+text = "Charge"
+
+[node name="Return" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+text = "Return"
