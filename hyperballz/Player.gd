@@ -2,8 +2,8 @@ extends CharacterBody3D
 
 @onready var animation_player = $AnimationLibrary_Godot_Standard/AnimationPlayer
 @onready var camera = $Camera3D
-var dodge_speed = 8.0  # Reduced speed for a short, quick dodge
-var dodge_duration = 0.2  # Short duration for a quick dodge
+var dodge_speed = 12.0  # Reduced speed for a short, quick dodge
+var dodge_duration = 0.8  # Short duration for a quick dodge
 var is_dodging = false
 var dodge_timer = 0.0
 var dodge_direction = Vector3.ZERO
