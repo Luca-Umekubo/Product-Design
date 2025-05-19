@@ -10,13 +10,13 @@ var player_lives = {}  # Tracks lives for each player (peer_id: lives)
 
 # Array of initial ball positions
 var initial_ball_positions = [
-	Vector3(-9, 1, 0),
-	Vector3(-6, 1, 0),
-	Vector3(-3, 1, 0),
-	Vector3(0, 1, 0),
-	Vector3(3, 1, 0),
-	Vector3(6, 1, 0),
-	Vector3(9, 1, 0)
+	Vector3(20, 1, 18),
+	Vector3(20, 1, 12),
+	Vector3(20, 1, 6),
+	Vector3(20, 1, 0),
+	Vector3(20, 1, -6),
+	Vector3(20, 1, -12),
+	Vector3(20, 1, -18)
 ]
 
 var game_active = false
