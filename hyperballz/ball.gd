@@ -5,6 +5,8 @@ var spawn_immunity_time = 0.2
 var last_hit_player = null
 
 func _ready():
+	collision_layer = 2
+	collision_mask = 1 | 2 | 4
 	body_entered.connect(_on_body_entered)
 	
 	var physics_material = PhysicsMaterial.new()

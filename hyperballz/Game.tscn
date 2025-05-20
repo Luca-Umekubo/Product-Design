@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://c45q1llhtbclb"]
+[gd_scene load_steps=7 format=3 uid="uid://c45q1llhtbclb"]
 
 [ext_resource type="Script" uid="uid://eyu1l6dfoc61" path="res://game.gd" id="1_wbfu4"]
 [ext_resource type="PackedScene" uid="uid://q8lqy6o47g3d" path="res://court_3d.tscn" id="2_xkndl"]
@@ -10,6 +10,9 @@ properties/0/path = NodePath(".:time_left")
 properties/0/spawn = true
 properties/0/replication_mode = 1
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_sb48q"]
+size = Vector3(0.05, 5, 20)
+
 [node name="Game" type="Node3D"]
 script = ExtResource("1_wbfu4")
 
@@ -19,13 +22,13 @@ script = ExtResource("1_wbfu4")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 5)
 
 [node name="Spawn2" type="Marker3D" parent="SpawnPoints" groups=["spawn_points"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -5)
 
 [node name="Spawn3" type="Marker3D" parent="SpawnPoints" groups=["spawn_points"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, -5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 1, 5)
 
 [node name="Spawn4" type="Marker3D" parent="SpawnPoints" groups=["spawn_points"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, 5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 1, -5)
 
 [node name="Players" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
@@ -53,3 +56,10 @@ script = ExtResource("4_sb48q")
 replication_config = SubResource("SceneReplicationConfig_u44n3")
 
 [node name="GameTimer" type="Timer" parent="."]
+
+[node name="InvisibleWall" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 0)
+collision_layer = 8
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InvisibleWall"]
+shape = SubResource("BoxShape3D_sb48q")
