@@ -16,6 +16,7 @@ size = Vector3(40, 0.1, 80)
 script = ExtResource("1_gv8if")
 
 [node name="Ground" type="StaticBody3D" parent="."]
+collision_layer = 4
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
 mesh = SubResource("PlaneMesh_6ubv3")
