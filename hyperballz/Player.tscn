@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://cufvm5bbgncxd"]
+[gd_scene load_steps=6 format=3 uid="uid://cufvm5bbgncxd"]
 
 [ext_resource type="Script" uid="uid://b0y8ctejf4grr" path="res://Player.gd" id="1_xhfnw"]
 [ext_resource type="PackedScene" uid="uid://tfwgd40g32b2" path="res://Animation Library[Standard]/Godot/AnimationLibrary_Godot_Standard.glb" id="2_kpjcp"]
+[ext_resource type="Texture2D" uid="uid://hrkabctd65ao" path="res://heart.png" id="3_kne1u"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kpjcp"]
 
@@ -85,5 +86,34 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.385802, -2.06564)
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_xhfnw")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 40.0
+grow_vertical = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Heart1" type="TextureRect" parent="CanvasLayer/Control/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_kne1u")
+expand_mode = 1
+
+[node name="Heart2" type="TextureRect" parent="CanvasLayer/Control/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_kne1u")
+
+[node name="Heart3" type="TextureRect" parent="CanvasLayer/Control/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_kne1u")
 
 [editable path="AnimationLibrary_Godot_Standard"]

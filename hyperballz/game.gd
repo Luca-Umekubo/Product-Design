@@ -21,11 +21,14 @@ func _ready():
 		peer_ids.append(multiplayer.get_unique_id())  # Include the server itself
 		for peer_id in peer_ids:
 			var team = 0 if peer_id == multiplayer.get_unique_id() else 1
-			#team_assignments[peer_id] = team
 			player_lives[peer_id] = 2
 			var player_data = {"peer_id": peer_id, "team": team}
 			print("InGame: Spawning player with data: ", player_data)
 			multiplayer_spawner.spawn(player_data)
+			await get_tree().process_frame
+			var player_node = $Players.get_node_or_null(str(peer_id))
+			if player_node:
+				player_node.update_lives.rpc(player_lives[peer_id])
 		
 		game_timer.wait_time = 300.0
 		game_timer.one_shot = true
@@ -64,13 +67,15 @@ func end_game():
 
 func _on_peer_connected(id):
 	if multiplayer.is_server():
-		# Delay spawn to ensure peer is fully connected
 		await get_tree().create_timer(0.5).timeout
 		var client_data = {"peer_id": id}
 		print("Game: Spawning client with data: ", client_data)
 		multiplayer_spawner.spawn(client_data)
-		# Initialize lives for new player
 		player_lives[id] = 2
+		await get_tree().process_frame
+		var player_node = $Players.get_node_or_null(str(id))
+		if player_node:
+			player_node.update_lives.rpc(player_lives[id])
 	if multiplayer.is_server() and game_active:
 		update_timer_display.rpc_id(id, game_timer.time_left)
 

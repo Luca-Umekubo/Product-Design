@@ -47,6 +47,8 @@ func _ready():
 	# Set roll_duration to the length of the Roll animation
 	if animation_player.has_animation("Roll"):
 		roll_duration = animation_player.get_animation("Roll").length
+	if not is_multiplayer_authority():
+		$CanvasLayer.visible = false
 
 func _input(event):
 	if is_multiplayer_authority():
@@ -290,8 +292,9 @@ func spawn_ball():
 
 @rpc("call_local")
 func update_lives(new_lives):
-	# Update lives locally; actual tracking is done on server
 	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
+		lives = new_lives
+		update_hearts()
 		if hit_material != null and new_lives > 0:
 			$MeshInstance3D.material_override = hit_material
 			var timer = get_tree().create_timer(0.3)
@@ -327,3 +330,10 @@ func respawn():
 		mannequin.visible = true
 		is_spectator = false
 		print("Player ", name, " respawned")
+
+func update_hearts():
+	for i in range(3):
+		var heart = $CanvasLayer/Control/HBoxContainer.get_child(i)
+		heart.size = Vector2(16, 16)
+		heart.stretch_mode = TextureRect.STRETCH_SCALE
+		heart.visible = (i < lives)
