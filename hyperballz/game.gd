@@ -7,8 +7,8 @@ extends Node3D
 var sync_interval = 0.5  # Update every 0.5 seconds
 var time_since_last_sync = 0.0
 var player_lives = {}  # Tracks lives for each player (peer_id: lives)
-
 var game_active = false
+var gravity_halved = false  # Flag to ensure gravity is halved only once
 
 func _ready():
 	multiplayer_spawner.spawn_function = _spawn_player
@@ -37,32 +37,24 @@ func _ready():
 	
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
-	
+
 func start_game_timer():
 	if multiplayer.is_server() and not game_active:
 		game_active = true
 		game_timer.start()
-		# Notify all clients to start their timer display
 		update_timer_display.rpc(game_timer.wait_time)
 
-# RPC to update timer display on clients
 @rpc("authority", "call_local")
 func update_timer_display(time_left):
-	# Clients will update their UI with the time left
-	# This will be implemented in the UI script
 	pass
 
-# Called when the timer reaches zero
 func _on_game_timer_timeout():
 	if multiplayer.is_server():
 		game_active = false
-		# Notify all clients that the game has ended
 		end_game.rpc()
 
-# RPC to end the game
 @rpc("authority", "call_local")
 func end_game():
-	# Return to the home screen or show game over screen
 	get_tree().change_scene_to_file("res://HomeScreen.tscn")
 
 func _on_peer_connected(id):
@@ -81,7 +73,6 @@ func _on_peer_connected(id):
 
 func _on_peer_disconnected(id):
 	if multiplayer.is_server():
-		# Remove player and lives entry
 		if $Players.has_node(str(id)):
 			$Players.get_node(str(id)).queue_free()
 		player_lives.erase(id)
@@ -91,7 +82,6 @@ func _spawn_player(data):
 	var player = preload("res://Player.tscn").instantiate()
 	player.name = str(peer_id)
 	player.set_multiplayer_authority(peer_id)
-	# Random spawn point for Game.tscn
 	var spawn_points = get_tree().get_nodes_in_group("spawn_points")
 	if spawn_points.size() > 0:
 		var spawn_point = spawn_points[randi() % spawn_points.size()]
@@ -105,6 +95,7 @@ func _spawn_ball(data):
 	var ball = preload("res://Ball.tscn").instantiate()
 	ball.position = data["position"]
 	ball.linear_velocity = data["velocity"]
+	ball.gravity_scale = GameState.gravity_multiplier  # Set gravity_scale at spawn
 	if data.has("owner_id"):
 		ball.owner_id = data["owner_id"]  # Set the ball's owner_id
 	print("Game: Spawning ball at ", data["position"], " with owner_id ", ball.owner_id)
@@ -129,3 +120,11 @@ func _process(delta):
 		if time_since_last_sync >= sync_interval:
 			timer_sync.time_left = game_timer.time_left
 			time_since_last_sync = 0.0
+		# Check if 30 seconds remain and gravity hasn't been halved yet
+		if not gravity_halved and game_timer.time_left <= 30.0:
+			gravity_halved = true
+			set_gravity_multiplier.rpc(0.5)  # Notify all clients to halve gravity
+
+@rpc("authority", "call_local")
+func set_gravity_multiplier(multiplier: float):
+	GameState.gravity_multiplier = multiplier  # Update the global state
