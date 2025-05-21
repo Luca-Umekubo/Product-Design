@@ -421,4 +421,4 @@ func update_hearts():
 		var heart = $CanvasLayer/Control/HBoxContainer.get_child(i)
 		heart.size = Vector2(16, 16)
 		heart.stretch_mode = TextureRect.STRETCH_SCALE
-		heart.visible = (i < lives)
+		heart.visible = (i <= lives)
