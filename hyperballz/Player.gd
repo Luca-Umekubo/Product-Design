@@ -217,6 +217,9 @@ func _physics_process(delta):
 		elif is_rolling:
 			if current_animation != "Roll":
 				update_animation.rpc("Roll", false, 1.0)
+		elif is_dodging:
+			if current_animation != "Swim_Fwd":
+				update_animation.rpc("Swim_Fwd", false, 1.0)
 		elif is_dancing:
 			if current_animation != "Dance":
 				update_animation.rpc("Dance", false, 1.0)
@@ -281,7 +284,7 @@ func start_dodge(input_dir_x: float):
 		dodge_timer = dodge_duration
 		# Set dodge direction based on horizontal input (left or right), inverted
 		dodge_direction = Vector3(sign(input_dir_x), 0, 0)  # 1 for left, -1 for right
-		update_animation.rpc("Dodge", false, 1.0)
+		update_animation.rpc("Swim_Fwd", false, 1.0)
 		# Start the 10-second cooldown
 		dodge_cooldown = DODGE_COOLDOWN_DURATION
 
