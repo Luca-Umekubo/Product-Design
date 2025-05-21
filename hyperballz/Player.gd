@@ -2,11 +2,13 @@ extends CharacterBody3D
 
 @onready var animation_player = $AnimationLibrary_Godot_Standard/AnimationPlayer
 @onready var camera = $Camera3D
-var dodge_speed = 20.0	# Speed boost for the dodge
-var dodge_duration = 0.4# Duration of the dodge
+var dodge_speed = 25.0	# Speed boost for the dodge
+var dodge_duration = 0.4	# Duration of the dodge
 var is_dodging = false
 var dodge_timer = 0.0
 var dodge_direction = Vector3.ZERO
+var dodge_cooldown = 0.0	# Cooldown timer for dodge
+const DODGE_COOLDOWN_DURATION = 10.0	# 10-second cooldown
 var speed = 5.0
 var sprint_speed = 8.0
 var roll_speed = 10.0	# Speed during roll
@@ -125,11 +127,15 @@ func _physics_process(delta):
 				else:
 					update_animation.rpc("Idle", false, 1.0)
 
+		# Update dodge cooldown
+		if dodge_cooldown > 0:
+			dodge_cooldown -= delta
+
 		# Handle dodging
 		var input_dir_x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
 		if Input.is_action_just_pressed("dodge") and is_on_floor() and not is_jumping and not is_dancing and not is_rolling and not is_throwing:
-			# Only trigger dodge if a sideways movement key is held
-			if abs(input_dir_x) > 0.1:  # Ensure player is pressing 'a' or 'd'
+			# Only trigger dodge if a sideways movement key is held and cooldown is over
+			if abs(input_dir_x) > 0.1 and dodge_cooldown <= 0:
 				start_dodge(input_dir_x)
 
 		# Update dodge timer
@@ -169,7 +175,7 @@ func _physics_process(delta):
 			# Apply dodge boost if dodging
 			if is_dodging:
 				var dodge_boost = global_transform.basis * dodge_direction * dodge_speed
-				move_direction.x += dodge_boost.x  # Add dodge boost to x-axis
+				move_direction.x -= dodge_boost.x  # Subtract to invert direction
 
 			# Rotate movement direction based on player rotation
 			move_direction = move_direction.rotated(Vector3.UP, rotation.y)
@@ -273,9 +279,11 @@ func start_dodge(input_dir_x: float):
 	if is_multiplayer_authority():
 		is_dodging = true
 		dodge_timer = dodge_duration
-		# Set dodge direction based on horizontal input (left or right)
-		dodge_direction = Vector3(-sign(input_dir_x), 0, 0)  # -1 for left, 1 for right
+		# Set dodge direction based on horizontal input (left or right), inverted
+		dodge_direction = Vector3(sign(input_dir_x), 0, 0)  # 1 for left, -1 for right
 		update_animation.rpc("Dodge", false, 1.0)
+		# Start the 10-second cooldown
+		dodge_cooldown = DODGE_COOLDOWN_DURATION
 
 func start_throw_animation():
 	if is_multiplayer_authority() and not is_jumping and not is_dancing and not is_rolling:
