@@ -21,6 +21,7 @@ var roll_timer = 0.0
 var roll_direction = Vector3.ZERO
 var lives = 2
 var is_spectator = false
+var team: int
 
 # Optional reference to a hit material for visual feedback
 var hit_material = null

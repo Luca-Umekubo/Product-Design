@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://duwltcjpd17ex"]
+[gd_scene load_steps=2 format=3 uid="uid://b5esov2h41fc6"]
 
-[ext_resource type="Script" uid="uid://cppnip4j0a87c" path="res://EscapeMenu.gd" id="1_ddgu6"]
+[ext_resource type="Script" path="res://EscapeMenu.gd" id="1_ddgu6"]
 
-[node name="Control" type="Control"]
+[node name="Control2" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
