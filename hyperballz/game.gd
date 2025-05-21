@@ -215,6 +215,13 @@ func _spawn_ball(data):
 	print("Game: Spawning ball at ", data["position"])
 	return ball
 
+func get_team_lives(team: int) -> int:
+	var total_lives = 0
+	for peer_id in team_assignments:
+		if team_assignments[peer_id] == team:
+			total_lives += player_lives.get(peer_id, 0)
+	return total_lives
+
 func player_hit(player_id: String):
 	if multiplayer.is_server():
 		var id = int(player_id)
@@ -222,11 +229,16 @@ func player_hit(player_id: String):
 			player_lives[id] -= 1
 			var player_node = $Players.get_node_or_null(player_id)
 			if player_node:
+				print_debug(player_lives[id], "player lives")
 				player_node.update_lives.rpc(player_lives[id])
 				if player_lives[id] <= 0:
-					player_node.set_spectator_mode.rpc()
-				else:
-					player_node.respawn.rpc()
+					player_node.despawn.rpc()
+				#else:
+					#player_node.respawn.rpc()
+			var team = team_assignments[id]
+			if get_team_lives(team) <= 0:
+				game_active = false
+				prepare_for_scene_change.rpc()	
 
 func _process(delta):
 	if multiplayer.is_server() and game_active:
