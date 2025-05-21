@@ -211,11 +211,12 @@ func player_hit(player_id: String):
 			player_lives[id] -= 1
 			var player_node = $Players.get_node_or_null(player_id)
 			if player_node:
+				print_debug(player_lives[id], "player lives")
 				player_node.update_lives.rpc(player_lives[id])
 				if player_lives[id] <= 0:
-					player_node.set_spectator_mode.rpc()
-				else:
-					player_node.respawn.rpc()
+					player_node.despawn.rpc()
+				#else:
+					#player_node.respawn.rpc()
 
 func _process(delta):
 	if multiplayer.is_server() and game_active:

@@ -362,13 +362,13 @@ func set_spectator_mode():
 		print("Player ", name, " entered spectator mode")
 		lives -= 1
 		update_lives.rpc(lives)
-		if lives <= 0:
-			respawn()
-		else:
-			if hit_material != null:
-				$MeshInstance3D.material_override = hit_material
-				var timer = get_tree().create_timer(0.3)
-				timer.timeout.connect(func(): $MeshInstance3D.material_override = null)
+		#if lives <= 0:
+			#despawn()
+		#else:
+			#if hit_material != null:
+				#$MeshInstance3D.material_override = hit_material
+				#var timer = get_tree().create_timer(0.3)
+				#timer.timeout.connect(func(): $MeshInstance3D.material_override = null)
 
 @rpc("call_local", "any_peer")
 func respawn():
@@ -391,3 +391,12 @@ func respawn():
 		is_spectator = false
 		is_crouching = false  # Reset crouching on respawn
 		print("Player ", name, " respawned")
+		
+		
+@rpc("call_local", "any_peer")
+func despawn():
+		var mannequin = get_node("AnimationLibrary_Godot_Standard/Rig/Skeleton3D/Mannequin")
+		mannequin.visible = false
+		is_spectator = true
+		lives = 0
+		update_lives.rpc(lives)
