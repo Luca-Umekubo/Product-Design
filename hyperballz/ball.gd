@@ -1,12 +1,12 @@
 extends RigidBody3D
 
 var is_active = true
-var respawn_timer = 0.0
-var max_respawn_time = 15.0
 var spawn_immunity_time = 0.2
 var last_hit_player = null
 
 func _ready():
+	collision_layer = 2
+	collision_mask = 1 | 2 | 4
 	body_entered.connect(_on_body_entered)
 	
 	var physics_material = PhysicsMaterial.new()
@@ -32,13 +32,6 @@ func _ready():
 	timer.timeout.connect(func(): set_deferred("monitoring", true))
 
 func _physics_process(delta):
-	if is_active and linear_velocity.length() < 0.1:
-		respawn_timer += delta
-		if respawn_timer > max_respawn_time:
-			queue_free()
-	else:
-		respawn_timer = 0.0
-	
 	if linear_velocity.length() < 3.0 and linear_velocity.length() > 0.1:
 		linear_velocity = linear_velocity * 0.98
 	

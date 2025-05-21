@@ -1,5 +1,6 @@
 extends CharacterBody3D
 
+var has_ball: bool = false
 @onready var animation_player = $AnimationLibrary_Godot_Standard/AnimationPlayer
 @onready var camera = $Camera3D
 var speed = 5.0
@@ -18,19 +19,19 @@ var is_rolling = false
 var is_crouching = false  # New crouching state
 var roll_timer = 0.0
 var roll_direction = Vector3.ZERO
-var lives = 2  # Player starts with 2 lives
+var lives = 2
 var is_spectator = false
 var team: int
 
 # Optional reference to a hit material for visual feedback
 var hit_material = null
-
-# Networked animation state
-var current_animation: String = "Idle" : set = _set_current_animation
+var current_animation: String = "Idle"
 var is_animation_backward: bool = false
 var animation_speed: float = 1.0
 
 func _ready():
+	collision_layer = 1
+	collision_mask = 2 | 4 | 8
 	add_to_group("players")
 	if is_multiplayer_authority():
 		camera.make_current()
@@ -41,46 +42,40 @@ func _ready():
 		print("Player ", name, " non-authoritative, camera disabled")
 	if ResourceLoader.exists("res://hit_material.tres"):
 		hit_material = load("res://hit_material.tres")
-	
 	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
 		camera.current = true
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	# Initialize animation for all clients
 	_set_current_animation("Idle")
-	# Set roll_duration to the length of the Roll animation
 	if animation_player.has_animation("Roll"):
 		roll_duration = animation_player.get_animation("Roll").length
 
 func _input(event):
 	if is_multiplayer_authority():
-		# Toggle mouse mode and movement on Escape key press
 		if event is InputEventKey and event.is_action_pressed("ui_cancel"):
 			if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-				# Disable movement
+				# Disable movement (e.g., by setting a flag or disabling input processing)
 				set_physics_process(false)
 			else:
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-				# Enable movement
 				set_physics_process(true)
 		
 		# Handle mouse movement for camera when mouse is captured
-		if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and multiplayer.has_multiplayer_peer():
+		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and multiplayer.has_multiplayer_peer() and event is InputEventMouseMotion:
 			rotate_y(-event.relative.x * mouse_sensitivity)
 			camera.rotate_x(-event.relative.y * mouse_sensitivity)
 			camera.rotation.x = clamp(camera.rotation.x, -PI/2, PI/2)
-		
-		# Toggle crouching (corrected to use Input.is_action_just_pressed)
-		if is_multiplayer_authority() and Input.is_action_just_pressed("Crouch") and is_on_floor() and not is_jumping and not is_dancing and not is_rolling:
-			is_crouching = !is_crouching
+	
+	# Prevent throwing balls in spectator mode
+	if event.is_action_pressed("throw") and not is_spectator and not is_throwing and not is_rolling:
+		start_throw_animation()
 
 		# Prevent throwing balls in spectator mode
 		if event.is_action_pressed("throw") and not is_spectator and not is_throwing and not is_rolling:
 			start_throw_animation()
 
 func _physics_process(delta):
-	if is_multiplayer_authority(): 
-		# Handle gravity
+	if is_multiplayer_authority():
 		if not is_on_floor():
 			velocity.y += gravity * delta
 		else:
@@ -88,37 +83,25 @@ func _physics_process(delta):
 			is_jumping = false
 		var input_vector = Vector2(
 			Input.get_action_strength("move_right") - Input.get_action_strength("move_left"),
-			Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward") 
+			Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
 		).normalized()
-
-		# Get input direction
 		var input_dir = Vector3.ZERO
 		input_dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
 		input_dir.z = Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
 		input_dir = input_dir.normalized()
-
-		# Handle dancing
 		if Input.is_action_just_pressed("dance") and not is_jumping and not is_rolling:
 			is_dancing = true
 			is_crouching = false  # Disable crouching while dancing
 			update_animation.rpc("Dance", false, 1.0)
-
-		# Cancel dancing if moving
 		if is_dancing and input_dir != Vector3.ZERO:
 			is_dancing = false
-
-		# Handle rolling
 		if Input.is_action_just_pressed("roll_input") and is_on_floor() and not is_jumping and not is_dancing and not is_throwing:
 			is_crouching = false  # Disable crouching while rolling
 			start_roll(input_dir)
-
-		# Update roll timer
 		if is_rolling:
 			roll_timer -= delta
-			# Only end rolling when both timer expires and animation finishes
 			if roll_timer <= 0 and not animation_player.is_playing() and current_animation == "Roll":
 				is_rolling = false
-				# Return to previous animation state after roll
 				var current_input_dir = Vector3.ZERO
 				current_input_dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
 				current_input_dir.z = Input.get_action_strength("move_backward") - Input.get_action_strength("move_forward")
@@ -131,10 +114,7 @@ func _physics_process(delta):
 					else:
 						update_animation.rpc("Walk", current_input_dir.z > 0, 1.0)
 				else:
-					if is_crouching:
-						update_animation.rpc("Crouch_Idle", false, 1.0)
-					else:
-						update_animation.rpc("Idle", false, 1.0)
+					update_animation.rpc("Idle", false, 1.0)
 
 		# Calculate movement direction and speed
 		var current_speed = speed
@@ -142,47 +122,34 @@ func _physics_process(delta):
 			current_speed = crouch_speed
 		elif Input.is_action_pressed("sprint") and input_dir != Vector3.ZERO and not is_jumping and not is_dancing and not is_rolling:
 			current_speed = sprint_speed
-
 		var move_direction = input_dir * current_speed
 		if is_rolling:
 			move_direction = roll_direction * roll_speed
 		move_direction = move_direction.rotated(Vector3.UP, rotation.y)
-
-		# Update velocity (no movement if dancing)
 		if not is_dancing:
 			velocity.x = move_direction.x
 			velocity.z = move_direction.z
 		else:
 			velocity.x = 0
 			velocity.z = 0
-
-		# Handle jumping
 		if Input.is_action_just_pressed("jump") and is_on_floor() and not is_dancing and not is_rolling:
 			velocity.y = jump_strength
 			is_jumping = true
 			is_crouching = false  # Disable crouching while jumping
 			update_animation.rpc("Jump_Start", false, 1.0)
-
-		# Apply movement
 		move_and_slide()
-		
-		# Handle pushing balls - Godot 4.4.1 syntax
 		for i in range(get_slide_collision_count()):
 			var collision = get_slide_collision(i)
 			if collision.get_collider() is RigidBody3D and collision.get_collider().is_in_group("balls"):
 				var push_strength = 2.5
-				# Only push if we're actually moving
 				if velocity.length() > 0.1:
 					collision.get_collider().apply_central_impulse(-collision.get_normal() * push_strength * velocity.length())
 				else:
-					# Even when not moving but trying to push
 					if input_vector.length() > 0.1:
 						var push_direction = global_transform.basis * Vector3(input_vector.x, 0, input_vector.y).normalized()
 						collision.get_collider().apply_central_impulse(push_direction * push_strength)
-
-		# Animation logic (authoritative client only)
 		if is_throwing:
-			pass  # Let the throw animation sequence handle itself
+			pass
 		elif is_rolling:
 			if current_animation != "Roll":
 				update_animation.rpc("Roll", false, 1.0)
@@ -195,16 +162,15 @@ func _physics_process(delta):
 			elif is_on_floor() and current_animation != "Jump_Land":
 				update_animation.rpc("Jump_Land", false, 1.0)
 		else:
-			# Determine if moving backward
 			var moving_backward = input_dir.z > 0
 			if moving_backward != is_moving_backward:
 				is_moving_backward = moving_backward
 
 			# Handle movement animations
-			if is_crouching:
-				if input_dir != Vector3.ZERO:
-					if current_animation != "Crouch_Fwd" or is_animation_backward != is_moving_backward:
-						update_animation.rpc("Crouch_Fwd", is_moving_backward, 1.0)
+			if input_dir != Vector3.ZERO:
+				if Input.is_action_pressed("sprint"):
+					if current_animation != "Sprint" or is_animation_backward != is_moving_backward:
+						update_animation.rpc("Sprint", is_moving_backward, 1.0)
 				else:
 					if current_animation != "Crouch_Idle":
 						update_animation.rpc("Crouch_Idle", false, 1.0)
@@ -220,7 +186,6 @@ func _physics_process(delta):
 					if current_animation != "Idle":
 						update_animation.rpc("Idle", false, 1.0)
 
-# RPC to update animation state across all clients
 @rpc("any_peer", "call_local", "reliable")
 func update_animation(anim_name: String, backward: bool, anim_speed: float):
 	current_animation = anim_name
@@ -228,7 +193,6 @@ func update_animation(anim_name: String, backward: bool, anim_speed: float):
 	animation_speed = anim_speed
 	_apply_animation()
 
-# Apply animation state locally
 func _apply_animation():
 	if animation_player.current_animation != current_animation:
 		animation_player.play(current_animation, -1, animation_speed)
@@ -237,7 +201,6 @@ func _apply_animation():
 	else:
 		animation_player.play(current_animation, -1, animation_speed)
 
-# Setter for current_animation to ensure it’s applied
 func _set_current_animation(value: String):
 	current_animation = value
 	if is_inside_tree():
@@ -247,26 +210,22 @@ func start_roll(input_dir: Vector3):
 	if is_multiplayer_authority():
 		is_rolling = true
 		roll_timer = roll_duration
-		# Use input direction or forward if no input
 		roll_direction = input_dir if input_dir != Vector3.ZERO else -transform.basis.z
 		roll_direction = roll_direction.normalized()
 		update_animation.rpc("Roll", false, 1.0)
 
 func start_throw_animation():
+	if not has_ball:
+		return
 	if is_multiplayer_authority() and not is_jumping and not is_dancing and not is_rolling:
 		is_throwing = true
-		# Play Enter animation at double speed
 		update_animation.rpc("Spell_Simple_Enter", false, 2.0)
 		await animation_player.animation_finished
-		# Play Shoot animation at double speed and trigger throw
 		update_animation.rpc("Spell_Simple_Shoot", false, 2.0)
-		# Request the server to spawn the ball
-		spawn_ball.rpc_id(1) # Call the server (peer ID 1 is the server in Godot multiplayer)
+		spawn_ball.rpc_id(1)
 		await animation_player.animation_finished
-		# Play Exit animation at double speed
 		update_animation.rpc("Spell_Simple_Exit", false, 2.0)
 		await animation_player.animation_finished
-		# Return to previous animation
 		if is_multiplayer_authority():
 			var input_dir = Vector3.ZERO
 			input_dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
@@ -290,11 +249,11 @@ func start_throw_animation():
 func spawn_ball():
 	if not multiplayer.is_server():
 		return
-		
+	if not has_ball:
+		return
 	var spawn_direction = -$Camera3D.global_transform.basis.z.normalized()
 	var spawn_distance = 1.5
 	var spawn_position = $Camera3D/BallSpawnPoint.global_position + (spawn_direction * spawn_distance)
-	
 	var space_state = get_world_3d().direct_space_state
 	var query = PhysicsRayQueryParameters3D.create(
 		$Camera3D.global_position,
@@ -302,10 +261,8 @@ func spawn_ball():
 	)
 	query.exclude = [self]
 	var result = space_state.intersect_ray(query)
-	
 	if result:
 		spawn_position = result.position - (spawn_direction * 0.3)
-	
 	var spawn_velocity = spawn_direction * 10
 	var ball_data = {
 		"position": spawn_position,
@@ -318,10 +275,9 @@ func spawn_ball():
 		ball.last_hit_player = self  # Set the player who threw the ball
 	else:
 		push_error("BallSpawner not found at path: " + ball_spawner_path)
-		
+
 @rpc("call_local")
 func update_lives(new_lives):
-	# Update lives locally; actual tracking is done on server
 	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
 		if hit_material != null and new_lives > 0:
 			$MeshInstance3D.material_override = hit_material
@@ -333,13 +289,10 @@ func update_lives(new_lives):
 func set_spectator_mode():
 	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
 		is_spectator = true
-		# Disable collisions
 		collision_layer = 0
 		collision_mask = 0
-		# Hide player model
 		var mannequin = get_node("AnimationLibrary_Godot_Standard/Rig/Skeleton3D/Mannequin")
 		mannequin.visible = false
-		# Ensure camera remains active
 		camera.current = true
 		print("Player ", name, " entered spectator mode")
 
@@ -352,13 +305,16 @@ func respawn():
 			var spawn_point = spawn_points[randi() % spawn_points.size()]
 			position = spawn_point.global_position
 			update_animation.rpc("Idle", false, 1.0)
-		else:
-			print("Warning: No spawn points found for team ", team)
 		# Reset collision and visibility
-		collision_layer = 1  # Default player layer
+		collision_layer = 1  # Restore default player layer
 		collision_mask = 2 | 3  # Collide with balls and environment
 		var mannequin = get_node("AnimationLibrary_Godot_Standard/Rig/Skeleton3D/Mannequin")
 		mannequin.visible = true
 		is_spectator = false
 		is_crouching = false  # Reset crouching on respawn
 		print("Player ", name, " respawned")
+		
+		# In player.gd
+@rpc("any_peer", "call_local")
+func set_has_ball(value: bool):
+	has_ball = value

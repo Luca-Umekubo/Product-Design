@@ -9,6 +9,17 @@ var time_since_last_sync = 0.0
 var player_lives = {}  # Tracks lives for each player (peer_id: lives)
 var team_assignments = {}  # Tracks team for each player (peer_id: team)
 
+# Array of initial ball positions
+var initial_ball_positions = [
+	Vector3(20, 1, 18),
+	Vector3(20, 1, 12),
+	Vector3(20, 1, 6),
+	Vector3(20, 1, 0),
+	Vector3(20, 1, -6),
+	Vector3(20, 1, -12),
+	Vector3(20, 1, -18)
+]
+
 var game_active = false
 
 func _ready():
@@ -37,9 +48,8 @@ func _ready():
 		var team_b_count = 0
 		
 		for peer_id in peer_ids:
-			# Assign to team with fewer players
-			var team = 0 if team_a_count <= team_b_count else 1
-			team_assignments[peer_id] = team
+			var team = 0 if peer_id == multiplayer.get_unique_id() else 1
+			#team_assignments[peer_id] = team
 			player_lives[peer_id] = 2
 			
 			var spawn_points = available_team_a_spawns if team == 0 else available_team_b_spawns
@@ -62,6 +72,12 @@ func _ready():
 				team_a_count += 1
 			else:
 				team_b_count += 1
+		
+		# Spawn initial dodgeballs
+		for pos in initial_ball_positions:
+			var ball_data = {"position": pos, "velocity": Vector3.ZERO}
+			ball_spawner.spawn(ball_data)
+			print("Spawning initial ball at ", pos)
 		
 		game_timer.wait_time = 300.0
 		game_timer.one_shot = true
@@ -156,3 +172,37 @@ func _process(delta):
 		if time_since_last_sync >= sync_interval:
 			timer_sync.time_left = game_timer.time_left
 			time_since_last_sync = 0.0
+
+# Added for ball pickup
+@rpc("any_peer", "call_local")
+func request_pickup_ball(player_name: String):
+	if not multiplayer.is_server():
+		return
+	var player_node = $Players.get_node_or_null(player_name)
+	if player_node and not player_node.has_ball:
+		var space_state = player_node.get_world_3d().direct_space_state
+		var query = PhysicsShapeQueryParameters3D.new()
+		var shape = SphereShape3D.new()
+		shape.radius = 2.0
+		query.shape = shape
+		query.transform = player_node.global_transform
+		query.exclude = [player_node]
+		var results = space_state.intersect_shape(query)
+		var closest_ball = null
+		var min_distance = INF
+		for result in results:
+			var collider = result.collider
+			if collider.is_in_group("balls"):
+				var distance = player_node.global_position.distance_to(collider.global_position)
+				if distance < min_distance:
+					min_distance = distance
+					closest_ball = collider
+		if closest_ball:
+			closest_ball.queue_free()
+			player_node.set_has_ball(true)
+
+func _input(event):
+	# Check if the event is a key press and the key is "Esc"
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+		# Change to the EscapeMenu scene
+		get_tree().change_scene_to_file("res://EscapeMenu.tscn")

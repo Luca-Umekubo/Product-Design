@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bk5k35m6wrcxv" path="res://LobbyList.gd" id="1_cd737"]
 
-[node name="Control" type="Control"]
+[node name="Control2" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -34,6 +34,7 @@ offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/h_separation = 50
+theme_override_constants/v_separation = 50
 columns = 2
 
 [node name="Lobby List" type="Button" parent="GridContainer"]
@@ -46,4 +47,11 @@ custom_minimum_size = Vector2(400, 200)
 layout_mode = 2
 text = "Use Code"
 
+[node name="Back" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(400, 200)
+layout_mode = 2
+text = "Back
+"
+
 [connection signal="pressed" from="GridContainer/Lobby List" to="." method="_on_lobby_list_pressed"]
+[connection signal="pressed" from="GridContainer/Back" to="." method="_on_back_pressed"]
