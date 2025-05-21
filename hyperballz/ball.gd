@@ -6,6 +6,7 @@ var max_respawn_time = 15.0
 var spawn_immunity_time = 0.2
 var last_hit_player = null
 var team_color = null
+var has_bounced = false  # Track if the ball has hit the ground
 
 func _ready():
 	body_entered.connect(_on_body_entered)
@@ -34,6 +35,14 @@ func _ready():
 	
 	# Set initial neutral color
 	apply_neutral_color()
+	
+	# Set initial gravity_scale and connect to gravity multiplier changes
+	gravity_scale = GameState.gravity_multiplier
+	GameState.gravity_multiplier_changed.connect(_on_gravity_multiplier_changed)
+
+# Callback for when gravity multiplier changes
+func _on_gravity_multiplier_changed(new_value: float):
+	gravity_scale = new_value
 
 func _physics_process(delta):
 	if is_active and linear_velocity.length() < 0.1:
@@ -87,7 +96,8 @@ func _on_body_entered(body):
 				global_position = Vector3.ZERO
 				linear_velocity = Vector3.ZERO
 			else:
-				if linear_velocity.length() > 5.0:
+				if linear_velocity.length() > 5.0 and not has_bounced:
+				# Notify server of hit only if the ball hasn't bounced
 					get_tree().get_root().get_node("Game").player_hit(body.name)
 					
 					var bounce_direction = (global_position - body.global_position).normalized()
@@ -113,6 +123,10 @@ func _on_body_entered(body):
 			# When a player of any team touches the ball, update the color
 			last_hit_player = body
 			update_ball_color.rpc(body.team)
+	else:
+		# Check if the collided body is the ground
+		if body.is_in_group("ground"):
+			has_bounced = true  # Mark the ball as having bounced
 
 @rpc("authority", "call_local")
 func update_ball_color(team_index):

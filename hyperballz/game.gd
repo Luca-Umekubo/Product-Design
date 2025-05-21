@@ -11,6 +11,7 @@ var team_assignments = {}  # Tracks team for each player (peer_id: team)
 var peers_ready = {} # Track peers that are ready to change scenes
 
 var game_active = false
+var gravity_halved = false  # Flag to ensure gravity is halved only once
 
 func _ready():
 	multiplayer_spawner.spawn_function = _spawn_player
@@ -58,6 +59,10 @@ func _ready():
 			var player_data = {"peer_id": peer_id, "team": team, "spawn_pos": spawn_pos}
 			print("InGame: Spawning player with data: ", player_data)
 			multiplayer_spawner.spawn(player_data)
+			await get_tree().process_frame
+			var player_node = $Players.get_node_or_null(str(peer_id))
+			if player_node:
+				player_node.update_lives.rpc(player_lives[peer_id])
 			
 			if team == 0:
 				team_a_count += 1
@@ -71,7 +76,7 @@ func _ready():
 	
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
-	
+
 func start_game_timer():
 	if multiplayer.is_server() and not game_active:
 		game_active = true
@@ -168,8 +173,13 @@ func _on_peer_connected(id):
 		var client_data = {"peer_id": id, "team": team, "spawn_pos": spawn_pos}
 		print("Game: Spawning client with data: ", client_data)
 		multiplayer_spawner.spawn(client_data)
-		if game_active:
-			update_timer_display.rpc_id(id, game_timer.time_left)
+		player_lives[id] = 2
+		await get_tree().process_frame
+		var player_node = $Players.get_node_or_null(str(id))
+		if player_node:
+			player_node.update_lives.rpc(player_lives[id])
+	if multiplayer.is_server() and game_active:
+		update_timer_display.rpc_id(id, game_timer.time_left)
 
 func _on_peer_disconnected(id):
 	if multiplayer.is_server():
@@ -195,6 +205,7 @@ func _spawn_ball(data):
 	var ball = preload("res://Ball.tscn").instantiate()
 	ball.position = data["position"]
 	ball.linear_velocity = data["velocity"]
+	ball.gravity_scale = GameState.gravity_multiplier  # Set gravity_scale at spawn
 	
 	# Apply team color if team is specified
 	if data.has("team") and data.team != null:
@@ -223,3 +234,11 @@ func _process(delta):
 		if time_since_last_sync >= sync_interval:
 			timer_sync.time_left = game_timer.time_left
 			time_since_last_sync = 0.0
+		# Check if 30 seconds remain and gravity hasn't been halved yet
+		if not gravity_halved and game_timer.time_left <= 30.0:
+			gravity_halved = true
+			set_gravity_multiplier.rpc(0.5)  # Notify all clients to halve gravity
+
+@rpc("authority", "call_local")
+func set_gravity_multiplier(multiplier: float):
+	GameState.gravity_multiplier = multiplier  # Update the global state

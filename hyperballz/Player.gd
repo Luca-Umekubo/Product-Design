@@ -9,7 +9,7 @@ var crouch_speed = 3.0  # Slower speed while crouching
 var roll_speed = 10.0  # Speed during roll
 var roll_duration = 0.5  # Will be set dynamically to animation length
 var mouse_sensitivity = 0.005
-var gravity = -9.8
+var gravity = -9.8  # Base gravity value
 var jump_strength = 4.5
 var is_jumping = false
 var is_dancing = false
@@ -53,6 +53,12 @@ func _ready():
 	_set_current_animation("Idle")
 	if animation_player.has_animation("Roll"):
 		roll_duration = animation_player.get_animation("Roll").length
+	if not is_multiplayer_authority():
+		$CanvasLayer.visible = false
+	
+	# Set initial gravity and connect to gravity multiplier changes
+	gravity = GameState.gravity_multiplier * -9.8
+	GameState.gravity_multiplier_changed.connect(_on_gravity_multiplier_changed)
 	
 	# Apply team colors
 	apply_team_color()
@@ -239,6 +245,10 @@ func _physics_process(delta):
 					if current_animation != "Idle":
 						update_animation.rpc("Idle", false, 1.0)
 
+# Callback for when gravity multiplier changes
+func _on_gravity_multiplier_changed(new_value: float):
+	gravity = new_value * -9.8
+
 # RPC to update animation state across all clients
 @rpc("any_peer", "call_local", "reliable")
 func update_animation(anim_name: String, backward: bool, anim_speed: float):
@@ -339,8 +349,9 @@ func spawn_ball(multiplier: float = 1.0):
 
 @rpc("call_local", "any_peer")
 func update_lives(new_lives):
-	# Update lives locally; actual tracking is done on server
 	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
+		lives = new_lives
+		update_hearts()
 		if hit_material != null and new_lives > 0:
 			$MeshInstance3D.material_override = hit_material
 			var timer = get_tree().create_timer(0.3)
@@ -391,3 +402,10 @@ func respawn():
 		is_spectator = false
 		is_crouching = false  # Reset crouching on respawn
 		print("Player ", name, " respawned")
+
+func update_hearts():
+	for i in range(3):
+		var heart = $CanvasLayer/Control/HBoxContainer.get_child(i)
+		heart.size = Vector2(16, 16)
+		heart.stretch_mode = TextureRect.STRETCH_SCALE
+		heart.visible = (i < lives)
