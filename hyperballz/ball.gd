@@ -5,6 +5,8 @@ var respawn_timer = 0.0
 var max_respawn_time = 15.0
 var spawn_immunity_time = 0.2
 var last_hit_player = null
+var owner_id = -1  # Track the peer ID of the player who threw the ball
+var has_bounced = false  # Track if the ball has hit the ground
 
 func _ready():
 	body_entered.connect(_on_body_entered)
@@ -60,6 +62,10 @@ func _on_body_entered(body):
 		return
 		
 	if body.is_in_group("players"):
+		# Ignore collision if the body is the ball's owner
+		if body.name == str(owner_id):
+			return
+			
 		var current_scene = get_tree().current_scene
 		if current_scene.name == "Lobby": # Adjust "Lobby" to match your scene name
 			if body.has_method("respawn"):
@@ -70,8 +76,8 @@ func _on_body_entered(body):
 			global_position = Vector3.ZERO # Adjust to dodgeball spawn point
 			linear_velocity = Vector3.ZERO
 		else:
-			if linear_velocity.length() > 5.0:
-				# Notify server of hit instead of calling player RPC
+			if linear_velocity.length() > 5.0 and not has_bounced:
+				# Notify server of hit only if the ball hasn't bounced
 				get_tree().get_root().get_node("Game").player_hit(body.name)
 				
 				var bounce_direction = (global_position - body.global_position).normalized()
@@ -89,3 +95,7 @@ func _on_body_entered(body):
 			else:
 				var push_direction = (global_position - body.global_position).normalized()
 				apply_central_impulse(push_direction * 3.0)
+	else:
+		# Check if the collided body is the ground
+		if body.is_in_group("ground"):
+			has_bounced = true  # Mark the ball as having bounced
