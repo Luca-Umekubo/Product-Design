@@ -101,6 +101,10 @@ func _input(event):
 		if Input.is_action_just_pressed("Crouch") and is_on_floor() and not is_jumping and not is_dancing and not is_rolling:
 			is_crouching = !is_crouching
 
+		# Prevent throwing balls in spectator mode
+		if event.is_action_pressed("throw") and not is_spectator and not is_throwing and not is_rolling:
+			start_throw_animation()
+
 func _physics_process(delta):
 	if is_multiplayer_authority(): 
 		# Handle gravity
@@ -417,4 +421,4 @@ func update_hearts():
 		var heart = $CanvasLayer/Control/HBoxContainer.get_child(i)
 		heart.size = Vector2(16, 16)
 		heart.stretch_mode = TextureRect.STRETCH_SCALE
-		heart.visible = (i < lives)
+		heart.visible = (i <= lives)

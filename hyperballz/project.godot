@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 Network="*res://Network.gd"
 GameState="*res://GameState.gd"
+MusicManager="*res://MusicManager.tscn"
 
 [input]
 

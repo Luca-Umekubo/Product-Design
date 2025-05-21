@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bgnuw4n8l6sj3"
+path="res://.godot/imported/No Room For A Saint (feat. Nathan Nicholson) [From F1® The Movie].mp3-db8aebc64eb4b309755eba453bc75ee7.mp3str"
+
+[deps]
+
+source_file="res://Audio/No Room For A Saint (feat. Nathan Nicholson) [From F1® The Movie].mp3"
+dest_files=["res://.godot/imported/No Room For A Saint (feat. Nathan Nicholson) [From F1® The Movie].mp3-db8aebc64eb4b309755eba453bc75ee7.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
