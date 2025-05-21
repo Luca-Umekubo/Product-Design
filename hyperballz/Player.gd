@@ -337,7 +337,7 @@ func spawn_ball(multiplier: float = 1.0):
 	else:
 		push_error("BallSpawner not found at path: " + ball_spawner_path)
 
-@rpc("call_local")
+@rpc("call_local", "any_peer")
 func update_lives(new_lives):
 	# Update lives locally; actual tracking is done on server
 	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
@@ -370,7 +370,7 @@ func set_spectator_mode():
 				var timer = get_tree().create_timer(0.3)
 				timer.timeout.connect(func(): $MeshInstance3D.material_override = null)
 
-@rpc("call_local")
+@rpc("call_local", "any_peer")
 func respawn():
 	if multiplayer.has_multiplayer_peer() and is_multiplayer_authority():
 		var spawn_group = "TeamASpawnPoints" if team == 0 else "TeamBSpawnPoints"
