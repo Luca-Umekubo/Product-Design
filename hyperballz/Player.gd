@@ -25,6 +25,8 @@ var is_animation_backward: bool = false
 var animation_speed: float = 1.0
 
 func _ready():
+	collision_layer = 1
+	collision_mask = 2 | 4 | 8
 	add_to_group("players")
 	if is_multiplayer_authority():
 		camera.make_current()
