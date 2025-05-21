@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://crkqlx5hw6o1c"]
+[gd_scene load_steps=2 format=3 uid="uid://cdenqdvih4bog"]
 
-[ext_resource type="Script" uid="uid://c3g62w0pns4da" path="res://Keybinds.gd" id="1_wpmci"]
+[ext_resource type="Script" path="res://Keybinds.gd" id="1_wpmci"]
 
-[node name="Control" type="Control"]
+[node name="Control3" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
