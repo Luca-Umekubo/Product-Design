@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://b4vifum7x5j2"
+path="res://.godot/imported/Rocket Rumble.mp3-00c7c4bcc6dfb20a20ed0afae3910e39.mp3str"
+
+[deps]
+
+source_file="res://Audio/Rocket Rumble.mp3"
+dest_files=["res://.godot/imported/Rocket Rumble.mp3-00c7c4bcc6dfb20a20ed0afae3910e39.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

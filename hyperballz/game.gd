@@ -7,6 +7,7 @@ extends Node3D
 var sync_interval = 0.5  # Update every 0.5 seconds
 var time_since_last_sync = 0.0
 var player_lives = {}  # Tracks lives for each player (peer_id: lives)
+var team_assignments = {}  # Tracks team for each player (peer_id: team)
 
 # Array of initial ball positions
 var initial_ball_positions = [
@@ -30,12 +31,47 @@ func _ready():
 	if multiplayer.is_server():
 		var peer_ids = multiplayer.get_peers()
 		peer_ids.append(multiplayer.get_unique_id())  # Include the server itself
+		
+		# Get spawn points for each team
+		var team_a_spawns = get_tree().get_nodes_in_group("TeamASpawnPoints")
+		var team_b_spawns = get_tree().get_nodes_in_group("TeamBSpawnPoints")
+		
+		# Debug prints for available spawn points
+		print("Team A spawn points: ", team_a_spawns.map(func(spawn): return spawn.global_position))
+		print("Team B spawn points: ", team_b_spawns.map(func(spawn): return spawn.global_position))
+		
+		# Arrays to track available spawn points
+		var available_team_a_spawns = team_a_spawns.duplicate()
+		var available_team_b_spawns = team_b_spawns.duplicate()
+		
+		var team_a_count = 0
+		var team_b_count = 0
+		
 		for peer_id in peer_ids:
 			var team = 0 if peer_id == multiplayer.get_unique_id() else 1
+			#team_assignments[peer_id] = team
 			player_lives[peer_id] = 2
-			var player_data = {"peer_id": peer_id, "team": team}
+			
+			var spawn_points = available_team_a_spawns if team == 0 else available_team_b_spawns
+			
+			var spawn_pos
+			if spawn_points.size() > 0:
+				# Take the first available spawn point and remove it from the list
+				var spawn_point = spawn_points.pop_front()
+				spawn_pos = spawn_point.global_position
+			else:
+				# If no spawn points are left, use a default position with an offset
+				print("Warning: No more spawn points available for team ", team, " for player ", peer_id)
+				spawn_pos = Vector3.ZERO + Vector3(randf_range(-2, 2), 0, randf_range(-2, 2)) * (team_a_count + team_b_count)
+			
+			var player_data = {"peer_id": peer_id, "team": team, "spawn_pos": spawn_pos}
 			print("InGame: Spawning player with data: ", player_data)
 			multiplayer_spawner.spawn(player_data)
+			
+			if team == 0:
+				team_a_count += 1
+			else:
+				team_b_count += 1
 		
 		# Spawn initial dodgeballs
 		for pos in initial_ball_positions:
@@ -55,61 +91,59 @@ func start_game_timer():
 	if multiplayer.is_server() and not game_active:
 		game_active = true
 		game_timer.start()
-		# Notify all clients to start their timer display
 		update_timer_display.rpc(game_timer.wait_time)
 
-# RPC to update timer display on clients
 @rpc("authority", "call_local")
 func update_timer_display(time_left):
-	# Clients will update their UI with the time left
-	# This will be implemented in the UI script
 	pass
 
-# Called when the timer reaches zero
 func _on_game_timer_timeout():
 	if multiplayer.is_server():
 		game_active = false
-		# Notify all clients that the game has ended
 		end_game.rpc()
 
-# RPC to end the game
 @rpc("authority", "call_local")
 func end_game():
-	# Return to the home screen or show game over screen
 	get_tree().change_scene_to_file("res://HomeScreen.tscn")
 
 func _on_peer_connected(id):
 	if multiplayer.is_server():
-		# Delay spawn to ensure peer is fully connected
 		await get_tree().create_timer(0.5).timeout
-		var client_data = {"peer_id": id}
+		var team_a_count = team_assignments.values().count(0)
+		var team_b_count = team_assignments.values().count(1)
+		var team = 0 if team_a_count <= team_b_count else 1
+		team_assignments[id] = team
+		player_lives[id] = 2
+		var spawn_points = get_tree().get_nodes_in_group("TeamASpawnPoints" if team == 0 else "TeamBSpawnPoints")
+		var spawn_pos
+		if spawn_points.size() > 0:
+			var spawn_point = spawn_points[randi() % spawn_points.size()]
+			spawn_pos = spawn_point.global_position
+		else:
+			spawn_pos = Vector3.ZERO
+		var client_data = {"peer_id": id, "team": team, "spawn_pos": spawn_pos}
 		print("Game: Spawning client with data: ", client_data)
 		multiplayer_spawner.spawn(client_data)
-		# Initialize lives for new player
-		player_lives[id] = 2
-	if multiplayer.is_server() and game_active:
-		update_timer_display.rpc_id(id, game_timer.time_left)
+		if game_active:
+			update_timer_display.rpc_id(id, game_timer.time_left)
 
 func _on_peer_disconnected(id):
 	if multiplayer.is_server():
-		# Remove player and lives entry
 		if $Players.has_node(str(id)):
 			$Players.get_node(str(id)).queue_free()
 		player_lives.erase(id)
+		team_assignments.erase(id)
 
 func _spawn_player(data):
 	var peer_id = data["peer_id"]
+	var team = data["team"]
+	var spawn_pos = data["spawn_pos"]
 	var player = preload("res://Player.tscn").instantiate()
 	player.name = str(peer_id)
 	player.set_multiplayer_authority(peer_id)
-	# Random spawn point for Game.tscn
-	var spawn_points = get_tree().get_nodes_in_group("spawn_points")
-	if spawn_points.size() > 0:
-		var spawn_point = spawn_points[randi() % spawn_points.size()]
-		player.position = spawn_point.global_position
-		print("Game: Spawned player ", peer_id, " at ", player.position)
-	else:
-		print("Game: Warning: No spawn points found for peer ", peer_id)
+	player.team = team
+	player.position = spawn_pos
+	print("Game: Spawned player ", peer_id, " (team ", team, ") at ", player.position)
 	return player
 
 func _spawn_ball(data):

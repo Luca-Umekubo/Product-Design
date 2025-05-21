@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://suo6tefbdlhd"
+path="res://.godot/imported/Still Sleepless.mp3-0d0aa177830be81ea29e1540129f9ae6.mp3str"
+
+[deps]
+
+source_file="res://Audio/Still Sleepless.mp3"
+dest_files=["res://.godot/imported/Still Sleepless.mp3-0d0aa177830be81ea29e1540129f9ae6.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
