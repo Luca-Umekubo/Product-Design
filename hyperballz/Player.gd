@@ -73,6 +73,10 @@ func _input(event):
 			rotate_y(-event.relative.x * mouse_sensitivity)
 			camera.rotate_x(-event.relative.y * mouse_sensitivity)
 			camera.rotation.x = clamp(camera.rotation.x, -PI/2, PI/2)
+			
+			# Prevent throwing balls in spectator mode or while dodging
+		if event.is_action_pressed("throw") and not is_spectator and not is_throwing and not is_rolling and not is_dodging:
+			start_throw_animation()
 
 func _physics_process(delta):
 	if is_multiplayer_authority():
