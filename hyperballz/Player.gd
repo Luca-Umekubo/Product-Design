@@ -288,7 +288,7 @@ func start_roll(input_dir: Vector3):
 		update_animation.rpc("Roll", false, 1.0)
 
 func start_throw_animation(multiplier: float = 1.0):
-	if is_multiplayer_authority() and not is_dancing and not is_rolling:
+	if is_multiplayer_authority() and not is_dancing and not is_rolling and has_ball:
 		is_throwing = true
 		update_animation.rpc("Spell_Simple_Enter", false, 2.0)
 		await animation_player.animation_finished
