@@ -22,7 +22,7 @@ var roll_direction = Vector3.ZERO
 var lives = 2  # Player starts with 2 lives
 var is_spectator = false
 var team: int = 0 : set = set_team
-var has_ball = true
+var has_ball = false
 
 # Throw charging variables
 var is_charging_throw = false
