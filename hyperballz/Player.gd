@@ -293,7 +293,8 @@ func start_throw_animation(multiplier: float = 1.0):
 		update_animation.rpc("Spell_Simple_Enter", false, 2.0)
 		await animation_player.animation_finished
 		update_animation.rpc("Spell_Simple_Shoot", false, 2.0)
-		spawn_ball.rpc_id(1, multiplier)
+		var throw_direction = -camera.global_transform.basis.z.normalized()
+		spawn_ball.rpc_id(1, throw_direction, multiplier)
 		await animation_player.animation_finished
 		update_animation.rpc("Spell_Simple_Exit", false, 2.0)
 		await animation_player.animation_finished
@@ -320,7 +321,7 @@ func start_throw_animation(multiplier: float = 1.0):
 		is_throwing = false
 
 @rpc("any_peer", "call_local", "reliable")
-func spawn_ball(multiplier: float = 1.0):
+func spawn_ball(direction: Vector3, multiplier: float = 1.0):
 	if not multiplayer.is_server():
 		return
 		
@@ -333,17 +334,17 @@ func spawn_ball(multiplier: float = 1.0):
 	if player_node:
 		player_node.set_has_ball.rpc(false)
 	
-	# Rest of your existing spawn_ball code...
-	var spawn_direction = -camera.global_transform.basis.z.normalized()
+	# Use the provided direction for spawning
+	var spawn_direction = direction.normalized()
 	var spawn_distance = 1.5
-	var spawn_position = camera.global_position + (spawn_direction * spawn_distance)
+	var spawn_position = player_node.camera.global_position + (spawn_direction * spawn_distance)
 	
 	var space_state = get_world_3d().direct_space_state
 	var query = PhysicsRayQueryParameters3D.create(
-		camera.global_position,
+		player_node.camera.global_position,
 		spawn_position
 	)
-	query.exclude = [self]
+	query.exclude = [player_node]
 	var result = space_state.intersect_ray(query)
 	
 	if result:
@@ -353,13 +354,13 @@ func spawn_ball(multiplier: float = 1.0):
 	var ball_data = {
 		"position": spawn_position,
 		"velocity": spawn_velocity,
-		"team": team
+		"team": player_node.team
 	}
 	var root = get_tree().get_root()
 	var ball_spawner_path = "Game/Balls/BallSpawner" if root.has_node("Game") else "Lobby/Balls/BallSpawner"
 	if root.has_node(ball_spawner_path):
 		var ball = root.get_node(ball_spawner_path).spawn(ball_data)
-		ball.last_hit_player = self
+		ball.last_hit_player = player_node
 	else:
 		push_error("BallSpawner not found at path: " + ball_spawner_path)
 
