@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://cufvm5bbgncxd"]
+[gd_scene load_steps=7 format=3 uid="uid://cufvm5bbgncxd"]
 
 [ext_resource type="Script" uid="uid://b0y8ctejf4grr" path="res://Player.gd" id="1_xhfnw"]
 [ext_resource type="PackedScene" uid="uid://tfwgd40g32b2" path="res://Animation Library[Standard]/Godot/AnimationLibrary_Godot_Standard.glb" id="2_kpjcp"]
 [ext_resource type="Texture2D" uid="uid://hrkabctd65ao" path="res://heart.png" id="3_kne1u"]
+[ext_resource type="Texture2D" uid="uid://cotxteocmb0w4" path="res://Reticle_Icon_IW.webp" id="4_e80uo"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kpjcp"]
 radius = 0.6
@@ -117,5 +118,21 @@ texture = ExtResource("3_kne1u")
 [node name="Heart3" type="TextureRect" parent="CanvasLayer/Control/HBoxContainer"]
 layout_mode = 2
 texture = ExtResource("3_kne1u")
+
+[node name="Crosshair" type="CanvasLayer" parent="."]
+
+[node name="Image" type="TextureRect" parent="Crosshair"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = -64.0
+offset_right = 64.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_e80uo")
 
 [editable path="AnimationLibrary_Godot_Standard"]
