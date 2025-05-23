@@ -22,6 +22,7 @@ var roll_direction = Vector3.ZERO
 var lives = 2  # Player starts with 2 lives
 var is_spectator = false
 var team: int = 0 : set = set_team
+var has_ball = false
 
 # Throw charging variables
 var is_charging_throw = false
@@ -37,6 +38,8 @@ var is_animation_backward: bool = false
 var animation_speed: float = 1.0
 
 func _ready():
+	collision_layer = 1
+	collision_mask = 2 | 4 | 8
 	add_to_group("players")
 	if is_multiplayer_authority():
 		camera.make_current()
@@ -100,9 +103,11 @@ func _input(event):
 		# Toggle crouching
 		if Input.is_action_just_pressed("Crouch") and is_on_floor() and not is_jumping and not is_dancing and not is_rolling:
 			is_crouching = !is_crouching
-
+			
+		if Input.is_action_just_pressed("pickup") and not has_ball:
+			try_pickup_ball()
 		# Prevent throwing balls in spectator mode
-		if event.is_action_pressed("throw") and not is_spectator and not is_throwing and not is_rolling:
+		if event.is_action_pressed("throw") and not is_spectator and not is_throwing and not is_rolling and has_ball:
 			start_throw_animation()
 
 func _physics_process(delta):
@@ -125,11 +130,11 @@ func _physics_process(delta):
 		input_dir = input_dir.normalized()
 
 		# Handle throw charging
-		if Input.is_action_just_pressed("throw") and not is_throwing and not is_rolling and not is_spectator:
+		if Input.is_action_just_pressed("throw") and not is_throwing and not is_rolling and not is_spectator and has_ball:
 			is_charging_throw = true
 			throw_start_time = Time.get_ticks_msec() / 1000.0
 
-		if is_charging_throw and Input.is_action_just_released("throw"):
+		if is_charging_throw and Input.is_action_just_released("throw") and has_ball:
 			is_charging_throw = false
 			var hold_time = (Time.get_ticks_msec() / 1000.0) - throw_start_time
 			throw_multiplier = 2.5 if hold_time <= 1.5 else 6.0
@@ -283,7 +288,7 @@ func start_roll(input_dir: Vector3):
 		update_animation.rpc("Roll", false, 1.0)
 
 func start_throw_animation(multiplier: float = 1.0):
-	if is_multiplayer_authority() and not is_dancing and not is_rolling:
+	if is_multiplayer_authority() and not is_dancing and not is_rolling and has_ball:
 		is_throwing = true
 		update_animation.rpc("Spell_Simple_Enter", false, 2.0)
 		await animation_player.animation_finished
@@ -319,12 +324,20 @@ func spawn_ball(multiplier: float = 1.0):
 	if not multiplayer.is_server():
 		return
 		
-	# Get spawn position further away from player to avoid collision
+	# Set has_ball to false since we're throwing the ball
+	var player_id = multiplayer.get_remote_sender_id()
+	if player_id == 0:  # Server called it
+		player_id = multiplayer.get_unique_id()
+	
+	var player_node = get_tree().get_root().get_node("Game/Players/" + str(player_id))
+	if player_node:
+		player_node.set_has_ball.rpc(false)
+	
+	# Rest of your existing spawn_ball code...
 	var spawn_direction = -$Camera3D.global_transform.basis.z.normalized()
 	var spawn_distance = 1.5
 	var spawn_position = $Camera3D/BallSpawnPoint.global_position + (spawn_direction * spawn_distance)
 	
-	# Check if spawn position is valid (not inside another object)
 	var space_state = get_world_3d().direct_space_state
 	var query = PhysicsRayQueryParameters3D.create(
 		$Camera3D.global_position,
@@ -333,7 +346,6 @@ func spawn_ball(multiplier: float = 1.0):
 	query.exclude = [self]
 	var result = space_state.intersect_ray(query)
 	
-	# If the ray hits something, adjust spawn position to be in front of that object
 	if result:
 		spawn_position = result.position - (spawn_direction * 0.3)
 	var base_speed = 10.0
@@ -341,13 +353,13 @@ func spawn_ball(multiplier: float = 1.0):
 	var ball_data = {
 		"position": spawn_position,
 		"velocity": spawn_velocity,
-		"team": team  # Pass the team information to the ball
+		"team": team
 	}
 	var root = get_tree().get_root()
 	var ball_spawner_path = "Game/Balls/BallSpawner" if root.has_node("Game") else "Lobby/Balls/BallSpawner"
 	if root.has_node(ball_spawner_path):
 		var ball = root.get_node(ball_spawner_path).spawn(ball_data)
-		ball.last_hit_player = self  # Set the player who threw the ball
+		ball.last_hit_player = self
 	else:
 		push_error("BallSpawner not found at path: " + ball_spawner_path)
 
@@ -422,3 +434,54 @@ func update_hearts():
 		heart.size = Vector2(16, 16)
 		heart.stretch_mode = TextureRect.STRETCH_SCALE
 		heart.visible = (i <= lives)
+
+func try_pickup_ball():
+	if not is_multiplayer_authority() or has_ball:
+		return
+	
+	# Find nearby balls within 2 unit radius
+	var nearby_balls = []
+	for ball in get_tree().get_nodes_in_group("balls"):
+		if is_instance_valid(ball):
+			var distance = global_position.distance_to(ball.global_position)
+			if distance <= 2.0:
+				nearby_balls.append(ball)
+	
+	# Pick up the closest ball
+	if nearby_balls.size() > 0:
+		var closest_ball = null
+		var closest_distance = INF
+		
+		for ball in nearby_balls:
+			var distance = global_position.distance_to(ball.global_position)
+			if distance < closest_distance:
+				closest_distance = distance
+				closest_ball = ball
+		
+		if closest_ball:
+			pickup_ball.rpc_id(1, closest_ball.name)  # Send to server
+
+@rpc("any_peer", "call_local", "reliable")
+func pickup_ball(ball_name: String):
+	if not multiplayer.is_server():
+		return
+	
+	# Find the ball by name and remove it
+	for ball in get_tree().get_nodes_in_group("balls"):
+		if is_instance_valid(ball) and ball.name == ball_name:
+			ball.queue_free()
+			break
+	
+	# Set has_ball to true for the player who picked it up
+	var player_id = multiplayer.get_remote_sender_id()
+	if player_id == 0:  # Server called it
+		player_id = multiplayer.get_unique_id()
+	
+	var player_node = get_tree().get_root().get_node("Game/Players/" + str(player_id))
+	if player_node:
+		player_node.set_has_ball.rpc(true)
+
+@rpc("call_local", "any_peer", "reliable")
+func set_has_ball(value: bool):
+	has_ball = value
+	print("Player ", name, " has_ball: ", has_ball)

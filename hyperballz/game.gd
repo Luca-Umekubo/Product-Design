@@ -10,6 +10,16 @@ var player_lives = {}  # Tracks lives for each player (peer_id: lives)
 var team_assignments = {}  # Tracks team for each player (peer_id: team)
 var peers_ready = {} # Track peers that are ready to change scenes
 
+var initial_ball_positions = [
+	Vector3(20, 1, 18),
+	Vector3(20, 1, 12),
+	Vector3(20, 1, 6),
+	Vector3(20, 1, 0),
+	Vector3(20, 1, -6),
+	Vector3(20, 1, -12),
+	Vector3(20, 1, -18)
+]
+
 var game_active = false
 var gravity_halved = false  # Flag to ensure gravity is halved only once
 
@@ -37,6 +47,12 @@ func _ready():
 		
 		var team_a_count = 0
 		var team_b_count = 0
+		
+		# Spawn initial dodgeballs
+		for pos in initial_ball_positions:
+			var ball_data = {"position": pos, "velocity": Vector3.ZERO}
+			ball_spawner.spawn(ball_data)
+			print("Spawning initial ball at ", pos)
 		
 		for peer_id in peer_ids:
 			# Assign to team with fewer players
