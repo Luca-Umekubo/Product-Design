@@ -10,6 +10,10 @@ var player_lives = {}  # Tracks lives for each player (peer_id: lives)
 var team_assignments = {}  # Tracks team for each player (peer_id: team)
 var peers_ready = {} # Track peers that are ready to change scenes
 
+# Preload the escape menu scene
+var escape_menu_scene = preload("res://EscapeMenu.tscn")
+var escape_menu = null  # Will hold the instance of the escape menu
+
 var initial_ball_positions = [
 	Vector3(20, 1, 18),
 	Vector3(20, 1, 12),
@@ -28,6 +32,11 @@ func _ready():
 	ball_spawner.spawn_function = _spawn_ball
 	multiplayer_spawner.set_multiplayer_authority(1)
 	ball_spawner.set_multiplayer_authority(1)
+	
+	# Create and add the escape menu
+	escape_menu = escape_menu_scene.instantiate()
+	add_child(escape_menu)
+	escape_menu.visible = false  # Hide the menu initially
 	
 	if multiplayer.is_server():
 		var peer_ids = multiplayer.get_peers()
@@ -93,6 +102,17 @@ func _ready():
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 
+# Handle input for toggling the escape menu
+func _input(event):
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+		if escape_menu:
+			escape_menu.visible = !escape_menu.visible  # Toggle menu visibility
+			# Optional: Lock/unlock mouse if your game uses mouse input
+			if escape_menu.visible:
+				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			else:
+				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
 func start_game_timer():
 	if multiplayer.is_server() and not game_active:
 		game_active = true
@@ -100,7 +120,7 @@ func start_game_timer():
 		update_timer_display.rpc(game_timer.wait_time)
 
 @rpc("authority", "call_local")
-func update_timer_display(time_left):
+func update_timer_display(_time_left):
 	pass
 
 func _on_game_timer_timeout():
@@ -256,9 +276,9 @@ func player_hit(player_id: String):
 				game_active = false
 				prepare_for_scene_change.rpc()	
 
-func _process(delta):
+func _process(_delta):
 	if multiplayer.is_server() and game_active:
-		time_since_last_sync += delta
+		time_since_last_sync += _delta
 		if time_since_last_sync >= sync_interval:
 			timer_sync.time_left = game_timer.time_left
 			time_since_last_sync = 0.0

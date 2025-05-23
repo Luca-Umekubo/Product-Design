@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://cxdg4ywukq1dn"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0350178, 0.259632, 0.242635, 1)
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 25
+theme_override_constants/v_separation = 25
+columns = 6
+
+[node name="Volume" type="Label" parent="GridContainer"]
+layout_mode = 2
+text = "Volume:"
+
+[node name="VolumeSlider" type="HSlider" parent="GridContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
+[node name="Sensitivity" type="Label" parent="GridContainer"]
+layout_mode = 2
+text = "Sensitivity:"
+
+[node name="SenseSlider" type="HSlider" parent="GridContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
+[node name="Volume2" type="Label" parent="GridContainer"]
+layout_mode = 2
+text = "FOV:"
+
+[node name="FOVSlider" type="HSlider" parent="GridContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
+[node name="Return" type="Button" parent="GridContainer"]
+layout_mode = 2
+text = "Return"
+
+[connection signal="pressed" from="GridContainer/Return" to="." method="_on_return_pressed"]

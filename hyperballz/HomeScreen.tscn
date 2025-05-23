@@ -4,7 +4,7 @@
 
 [sub_resource type="Theme" id="Theme_xvoux"]
 
-[node name="Control3" type="Control"]
+[node name="Control4" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -49,17 +49,6 @@ text = "Join"
 custom_minimum_size = Vector2(400, 200)
 layout_mode = 2
 text = "Host"
-
-[node name="Test" type="Button" parent="GridContainer"]
-custom_minimum_size = Vector2(400, 200)
-layout_mode = 2
-text = "Test"
-
-[node name="Exit Program" type="Button" parent="GridContainer"]
-custom_minimum_size = Vector2(400, 200)
-layout_mode = 2
-size_flags_horizontal = 4
-text = "Exit Program"
 
 [connection signal="pressed" from="GridContainer/Join" to="." method="_on_join_pressed"]
 [connection signal="pressed" from="GridContainer/Host" to="." method="_on_host_pressed"]

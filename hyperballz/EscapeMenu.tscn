@@ -1,0 +1,57 @@
+[gd_scene load_steps=2 format=3 uid="uid://b5i8ys84e4k4u"]
+
+[ext_resource type="Script" uid="uid://djpdrkw7682jw" path="res://EscapeMenu.gd" id="1_ddgu6"]
+
+[node name="Control3" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ddgu6")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.795519, 0.608005, 0.334392, 1)
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -425.0
+offset_top = -225.0
+offset_right = 425.0
+offset_bottom = 225.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 50
+theme_override_constants/v_separation = 50
+columns = 2
+
+[node name="Game Settings" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(400, 200)
+layout_mode = 2
+text = "Game Settings"
+
+[node name="Keybinds" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(400, 200)
+layout_mode = 2
+text = "Keybinds"
+
+[node name="Quit" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(400, 200)
+layout_mode = 2
+text = "Quit"
+
+[connection signal="pressed" from="GridContainer/Game Settings" to="." method="_on_game_settings_pressed"]
+[connection signal="pressed" from="GridContainer/Keybinds" to="." method="_on_keybinds_pressed"]
+[connection signal="pressed" from="GridContainer/Quit" to="." method="_on_quit_pressed"]
