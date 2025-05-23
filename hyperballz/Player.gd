@@ -106,9 +106,7 @@ func _input(event):
 			
 		if Input.is_action_just_pressed("pickup") and not has_ball:
 			try_pickup_ball()
-		# Prevent throwing balls in spectator mode
-		if event.is_action_pressed("throw") and not is_spectator and not is_throwing and not is_rolling and has_ball:
-			start_throw_animation()
+		# No immediate throw here
 
 func _physics_process(delta):
 	if is_multiplayer_authority(): 
@@ -137,7 +135,11 @@ func _physics_process(delta):
 		if is_charging_throw and Input.is_action_just_released("throw") and has_ball:
 			is_charging_throw = false
 			var hold_time = (Time.get_ticks_msec() / 1000.0) - throw_start_time
-			throw_multiplier = 2.5 if hold_time <= 1.5 else 6.0
+			# Adjusted multiplier: 1.0 for quick press, up to 3.0 for 1.5s hold
+			var min_multiplier = 1.0
+			var max_multiplier = 3.0
+			var charge_time = 1.5
+			throw_multiplier = min_multiplier + (max_multiplier - min_multiplier) * clamp(hold_time / charge_time, 0.0, 1.0)
 			start_throw_animation(throw_multiplier)
 
 		# Calculate movement speed
@@ -349,7 +351,7 @@ func spawn_ball(direction: Vector3, multiplier: float = 1.0):
 	
 	if result:
 		spawn_position = result.position - (spawn_direction * 0.3)
-	var base_speed = 10.0
+	var base_speed = 20.0  # Increased from 10.0 for faster throws
 	var spawn_velocity = spawn_direction * base_speed * multiplier
 	var ball_data = {
 		"position": spawn_position,
