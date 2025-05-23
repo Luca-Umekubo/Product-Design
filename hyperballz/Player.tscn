@@ -1,9 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://cufvm5bbgncxd"]
+[gd_scene load_steps=7 format=3 uid="uid://cufvm5bbgncxd"]
 
 [ext_resource type="Script" uid="uid://b0y8ctejf4grr" path="res://Player.gd" id="1_xhfnw"]
 [ext_resource type="PackedScene" uid="uid://tfwgd40g32b2" path="res://Animation Library[Standard]/Godot/AnimationLibrary_Godot_Standard.glb" id="2_kpjcp"]
+[ext_resource type="Texture2D" uid="uid://hrkabctd65ao" path="res://heart.png" id="3_kne1u"]
+[ext_resource type="Texture2D" uid="uid://cotxteocmb0w4" path="res://Reticle_Icon_IW.webp" id="4_e80uo"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kpjcp"]
+radius = 0.6
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_xhfnw"]
 properties/0/path = NodePath(".:position")
@@ -14,6 +17,7 @@ properties/1/spawn = true
 properties/1/replication_mode = 1
 
 [node name="Player" type="CharacterBody3D"]
+collision_mask = 6
 script = ExtResource("1_xhfnw")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
@@ -78,12 +82,57 @@ bones/51/rotation = Quaternion(-0.529073, -0.000328095, 0.000343458, 0.848576)
 bones/52/rotation = Quaternion(-0.000137176, 0.964307, -0.264787, -0.000499427)
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.916914, 0.399085, 0, -0.399085, 0.916914, 0, 2.12742, 1.44104)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 
 [node name="BallSpawnPoint" type="Node3D" parent="Camera3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.385802, -2.06564)
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_xhfnw")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 40.0
+grow_vertical = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Heart1" type="TextureRect" parent="CanvasLayer/Control/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_kne1u")
+expand_mode = 1
+
+[node name="Heart2" type="TextureRect" parent="CanvasLayer/Control/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_kne1u")
+
+[node name="Heart3" type="TextureRect" parent="CanvasLayer/Control/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_kne1u")
+
+[node name="Crosshair" type="CanvasLayer" parent="."]
+
+[node name="Image" type="TextureRect" parent="Crosshair"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = -64.0
+offset_right = 64.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_e80uo")
 
 [editable path="AnimationLibrary_Godot_Standard"]
