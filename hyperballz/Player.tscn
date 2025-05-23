@@ -80,7 +80,7 @@ bones/51/rotation = Quaternion(-0.529073, -0.000328095, 0.000343458, 0.848576)
 bones/52/rotation = Quaternion(-0.000137176, 0.964307, -0.264787, -0.000499427)
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.916914, 0.399085, 0, -0.399085, 0.916914, 0, 2.12742, 1.44104)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 
 [node name="BallSpawnPoint" type="Node3D" parent="Camera3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.385802, -2.06564)

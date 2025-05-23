@@ -334,13 +334,13 @@ func spawn_ball(multiplier: float = 1.0):
 		player_node.set_has_ball.rpc(false)
 	
 	# Rest of your existing spawn_ball code...
-	var spawn_direction = -$Camera3D.global_transform.basis.z.normalized()
+	var spawn_direction = -camera.global_transform.basis.z.normalized()
 	var spawn_distance = 1.5
-	var spawn_position = $Camera3D/BallSpawnPoint.global_position + (spawn_direction * spawn_distance)
+	var spawn_position = camera.global_position + (spawn_direction * spawn_distance)
 	
 	var space_state = get_world_3d().direct_space_state
 	var query = PhysicsRayQueryParameters3D.create(
-		$Camera3D.global_position,
+		camera.global_position,
 		spawn_position
 	)
 	query.exclude = [self]
@@ -381,21 +381,11 @@ func set_spectator_mode():
 		# Disable collisions
 		collision_layer = 0
 		collision_mask = 0
-		# Hide player model
-		var mannequin = get_node("AnimationLibrary_Godot_Standard/Rig/Skeleton3D/Mannequin")
-		mannequin.visible = false
 		# Ensure camera remains active
 		camera.current = true
 		print("Player ", name, " entered spectator mode")
 		lives -= 1
 		update_lives.rpc(lives)
-		#if lives <= 0:
-			#despawn()
-		#else:
-			#if hit_material != null:
-				#$MeshInstance3D.material_override = hit_material
-				#var timer = get_tree().create_timer(0.3)
-				#timer.timeout.connect(func(): $MeshInstance3D.material_override = null)
 
 @rpc("call_local", "any_peer")
 func respawn():
@@ -413,20 +403,15 @@ func respawn():
 		# Reset collision and visibility
 		collision_layer = 1  # Default player layer
 		collision_mask = 2 | 3  # Collide with balls and environment
-		var mannequin = get_node("AnimationLibrary_Godot_Standard/Rig/Skeleton3D/Mannequin")
-		mannequin.visible = true
 		is_spectator = false
 		is_crouching = false  # Reset crouching on respawn
 		print("Player ", name, " respawned")
-		
-		
+
 @rpc("call_local", "any_peer")
 func despawn():
-		var mannequin = get_node("AnimationLibrary_Godot_Standard/Rig/Skeleton3D/Mannequin")
-		mannequin.visible = false
-		is_spectator = true
-		lives = 0
-		update_lives.rpc(lives)
+	is_spectator = true
+	lives = 0
+	update_lives.rpc(lives)
 
 func update_hearts():
 	for i in range(3):
@@ -485,3 +470,9 @@ func pickup_ball(ball_name: String):
 func set_has_ball(value: bool):
 	has_ball = value
 	print("Player ", name, " has_ball: ", has_ball)
+
+func _process(delta):
+	if is_spectator:
+		mannequin.visible = false
+	else:
+		mannequin.visible = not is_multiplayer_authority()
